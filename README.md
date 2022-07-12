@@ -1,6 +1,7 @@
 ## Setup
 ----
 Install Dependencies
+
 `$ npm install` 
 
 Create an `.env` file in the cloned root directory. It should contain:
@@ -13,6 +14,7 @@ NODE_ENV=<node_envrionment>
 > **Note that** you can omit NODE_ENV if you're just running the default development server.
 
 Create the *iev_development* Postgres database
+
 `$ npx sequelize db:create`
 > This will create a new database using your given Postgres credentials
 
