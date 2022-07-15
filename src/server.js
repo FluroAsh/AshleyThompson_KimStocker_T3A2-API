@@ -1,8 +1,10 @@
 const express = require('express');
-const app = express();
-const PORT = process.env.PORT || 3000;
 const cors = require('cors');
 require('dotenv').config();
+
+const { userRouter } = require('./routes/user-routes');
+const app = express();
+const PORT = process.env.PORT || 3001;
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
@@ -13,6 +15,8 @@ app.use(express.urlencoded({ extended: true }));
 app.get('/', (req, res) => {
   res.status(200).send('Hello World!');
 });
+
+app.use('/', userRouter);
 
 module.exports = {
   app,

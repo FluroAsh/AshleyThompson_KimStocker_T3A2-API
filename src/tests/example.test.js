@@ -1,5 +1,6 @@
 const request = require('supertest');
-const { app } = require('../server.js');
+// const { app } = require('../server.js');
+import { app } from '../server.js';
 // GUIDE: https://www.albertgao.xyz/2017/05/24/how-to-test-expressjs-with-jest-and-supertest/
 // JEST MATCHERS: https://jestjs.io/docs/using-matchers
 
