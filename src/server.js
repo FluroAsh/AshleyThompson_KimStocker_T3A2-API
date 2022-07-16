@@ -3,6 +3,7 @@ const cors = require('cors');
 require('dotenv').config();
 
 const { userRouter } = require('./routes/user-routes');
+const { vehiclesRouter } = require('./routes/vehicle-routes');
 const app = express();
 const PORT = process.env.PORT || 3001;
 
@@ -16,7 +17,8 @@ app.get('/', (req, res) => {
   res.status(200).send('Hello World!');
 });
 
-app.use('/', userRouter);
+app.use('/users', userRouter);
+app.use('/vehicles', vehiclesRouter);
 
 module.exports = {
   app,
