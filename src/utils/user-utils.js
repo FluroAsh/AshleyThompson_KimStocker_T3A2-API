@@ -3,10 +3,16 @@ const User = db.User;
 const Op = db.Sequelize.Op;
 
 /** Returns a promise */
-const getAllUsers = User.findAll();
+exports.getAllUsers = User.findAll();
 
-module.exports = {
-  getAllUsers,
+exports.getUserById = (id) => {
+  const user = User.findByPk(id);
+  return user;
 };
+
+// module.exports = {
+//   getAllUsers,
+//   getUserById,
+// };
 
 // User{ dataValues: { id: 1, firstName: 'John'}}
