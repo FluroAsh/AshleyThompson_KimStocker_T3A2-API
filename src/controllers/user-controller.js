@@ -2,7 +2,7 @@
 const { getAllUsers, getUserById } = require('../utils/user-utils');
 
 async function getUsers(req, res) {
-  const users = await getAllUsers;
+  const users = await getAllUsers();
 
   if (!users) {
     res.json({ error: 'No users found' });
