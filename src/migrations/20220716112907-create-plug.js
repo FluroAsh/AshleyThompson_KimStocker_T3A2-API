@@ -1,30 +1,16 @@
 'use strict';
 module.exports = {
   async up(queryInterface, Sequelize) {
-    /** TODO: Add validation for columns in new migration */
-    await queryInterface.createTable('Users', {
+    await queryInterface.createTable('Plugs', {
       id: {
         allowNull: false,
         autoIncrement: true,
         primaryKey: true,
         type: Sequelize.INTEGER,
       },
-      firstName: {
-        type: Sequelize.STRING,
-      },
-      lastName: {
-        type: Sequelize.STRING,
-      },
-      email: {
+      plugName: {
         type: Sequelize.STRING,
         unique: true,
-      },
-      username: {
-        type: Sequelize.STRING,
-        unique: true,
-      },
-      password: {
-        type: Sequelize.STRING,
       },
       createdAt: {
         allowNull: false,
@@ -37,6 +23,6 @@ module.exports = {
     });
   },
   async down(queryInterface, Sequelize) {
-    await queryInterface.dropTable('Users');
+    await queryInterface.dropTable('Plugs');
   },
 };
