@@ -1,6 +1,7 @@
 'use strict';
 module.exports = {
   async up(queryInterface, Sequelize) {
+    /** TODO: Add validation for columns in new migration */
     await queryInterface.createTable('Users', {
       id: {
         allowNull: false,
