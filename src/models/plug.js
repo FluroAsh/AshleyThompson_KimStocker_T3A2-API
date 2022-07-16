@@ -1,5 +1,6 @@
 'use strict';
 const { Model } = require('sequelize');
+
 const Vehicle = require('./vehicle');
 module.exports = (sequelize, DataTypes) => {
   class Plug extends Model {
@@ -12,11 +13,6 @@ module.exports = (sequelize, DataTypes) => {
       Plug.hasMany(Vehicle, {
         onDelete: 'NULL',
         onUpdate: 'NULL',
-      });
-      Vehicle.belongsTo(Plug, {
-        foreignKey: {
-          name: 'plug_id',
-        },
       });
     }
   }
