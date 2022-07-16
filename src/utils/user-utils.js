@@ -8,3 +8,5 @@ const getAllUsers = User.findAll();
 module.exports = {
   getAllUsers,
 };
+
+// User{ dataValues: { id: 1, firstName: 'John'}}
