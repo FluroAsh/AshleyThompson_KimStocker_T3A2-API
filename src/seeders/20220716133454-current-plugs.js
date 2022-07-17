@@ -19,7 +19,6 @@ module.exports = {
         updatedAt: new Date(),
       },
     ]);
-    console.log(createdObjects);
   },
 
   async down(queryInterface, Sequelize) {

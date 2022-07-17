@@ -1,8 +1,9 @@
-const { getAllVehicles } = require('../utils/vehicle-utils');
+const { getAllVehicles, getVehiclePlugs } = require('../utils/vehicle-utils');
 
 async function getVehicles(req, res) {
   try {
-    const vehicles = await getAllVehicles;
+    const vehicles = await getAllVehicles();
+    console.log(vehicles);
     if (!vehicles) {
       throw Error;
     }

@@ -1,7 +1,6 @@
 'use strict';
 const { Model } = require('sequelize');
 
-const Vehicle = require('./vehicle');
 module.exports = (sequelize, DataTypes) => {
   class Plug extends Model {
     /**
@@ -10,10 +9,7 @@ module.exports = (sequelize, DataTypes) => {
      * The `models/index` file will call this method automatically.
      */
     static associate(models) {
-      Plug.hasMany(Vehicle, {
-        onDelete: 'NULL',
-        onUpdate: 'NULL',
-      });
+      Plug.hasMany(models.Vehicle);
     }
   }
   Plug.init(
