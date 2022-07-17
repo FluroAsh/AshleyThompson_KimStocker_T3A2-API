@@ -2,12 +2,13 @@ const express = require('express');
 const cors = require('cors');
 require('dotenv').config();
 const app = express();
-const PORT = process.env.PORT || 3000;
+const PORT = process.env.PORT || 3001;
 const jwt = require('jsonwebtoken');
 const { authRouter }  = require('./routes/auth-routes.js');
 const { userRouter }  = require('./routes/user-routes.js');
 
 app.use(cors())
+
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 // TODO: Add CORS once localhost version stable
