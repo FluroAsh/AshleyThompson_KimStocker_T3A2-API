@@ -23,6 +23,8 @@ module.exports = {
           model: 'Plugs',
           key: 'id',
         },
+        onUpdate: 'CASCADE',
+        onDelete: 'SET NULL',
       },
       createdAt: {
         allowNull: false,
