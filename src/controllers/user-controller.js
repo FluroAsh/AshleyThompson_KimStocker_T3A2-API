@@ -7,11 +7,7 @@ async function getUsers(req, res) {
     if (!users) {
       throw Error;
     }
-    let usersArray = []
-    for (let user of users) {
-      usersArray.push(user.dataValues)
-    }
-    res.status(200).json(usersArray);
+    res.status(200).json(users);
   } catch (err) {
     res.status(404).json({ error: 'No users found' });
   }
