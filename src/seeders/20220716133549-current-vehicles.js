@@ -2,7 +2,6 @@
 
 module.exports = {
   async up(queryInterface, Sequelize) {
-    // TODO: Add associations and assign a plug_id to each vehicle
     return queryInterface.bulkInsert('Vehicles', [
       {
         make: 'Audi',
@@ -24,12 +23,6 @@ module.exports = {
   },
 
   async down(queryInterface, Sequelize) {
-    /**
-     * Add commands to revert seed here.
-     *
-     * Example:
-     * await queryInterface.bulkDelete('People', null, {});
-     */
     return queryInterface.bulkDelete('Vehicles');
   },
 };
