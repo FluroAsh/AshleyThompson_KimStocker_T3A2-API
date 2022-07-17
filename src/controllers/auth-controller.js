@@ -70,7 +70,20 @@ async function signIn(req, res) {
 
 }
 
+// use loginRequired in other model routes. See example in user_controller (similar to before action authenticate in rails)
+const loginRequired = (req, res, next) => {
+    if (req.user){
+        next()
+    } else{
+        res.status(401)
+        return res.json({error: "Unauthorised operation"})
+    }
+}
+
+// const checkOwnership to handle update and delete 
+
 module.exports = {
     signUp,
-    signIn
+    signIn,
+    loginRequired
 }
