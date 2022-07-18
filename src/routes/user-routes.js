@@ -5,9 +5,12 @@ const { loginRequired } = require('../controllers/auth-controller');
 
 const userRouter = express.Router();
 
-userRouter.use(loginRequired)
+/** 'Public' requests */
 userRouter.get('/users', getUsers);
 userRouter.get('/user/:id', getUser);
+
+/** 'Private'  requests */
+userRouter.use(loginRequired) 
 
 module.exports = {
   userRouter,

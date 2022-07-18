@@ -22,7 +22,7 @@ async function signUp(req, res) {
             console.log("new User----", newUser.dataValues)
             console.log("username----", username)
 
-            const token = jwt.sign({username, email: email, id: id}, process.env.SECRET_KEY)
+            const token = jwt.sign({username, email, id}, process.env.SECRET_KEY)
 
             res.status(201)
 
@@ -45,7 +45,7 @@ async function signIn(req, res) {
     try {
         // const user = findUser(req.body.email);
 
-        const user = await User.findOne({ where: {email: `${req.body.email}` }});
+        const user = await User.findOne({ where: {email: req.body.email }});
 
         const {username, email, id, password} = user.dataValues
 
