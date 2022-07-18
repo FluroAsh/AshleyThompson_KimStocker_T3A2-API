@@ -10,31 +10,33 @@ module.exports = (sequelize, DataTypes) => {
      * The `models/index` file will call this method automatically.
      */
     static associate(models) {
-      // define association here
+      User.hasOne(models.Address);
     }
   }
-  User.init({
-    firstName: DataTypes.STRING,
-    lastName: DataTypes.STRING,
-    email: DataTypes.STRING,
-    username: DataTypes.STRING,
-    password: DataTypes.STRING
-  }, 
-  {
-    sequelize,
-    modelName: 'User',
-    hooks: {
-      beforeCreate: (user, options) => {
-        if (user.isNewRecord) {
-          const hashedPassword = bcrypt.hashSync(user.getDataValue('password'), 10)
-          user.setDataValue('password', hashedPassword);
-        }
-      }
+  User.init(
+    {
+      firstName: DataTypes.STRING,
+      lastName: DataTypes.STRING,
+      email: DataTypes.STRING,
+      username: DataTypes.STRING,
+      password: DataTypes.STRING,
+    },
+    {
+      sequelize,
+      modelName: 'User',
+      hooks: {
+        beforeCreate: (user, options) => {
+          if (user.isNewRecord) {
+            const hashedPassword = bcrypt.hashSync(
+              user.getDataValue('password'),
+              10
+            );
+            user.setDataValue('password', hashedPassword);
+          }
+        },
+      },
     }
-
-  });
+  );
 
   return User;
 };
-
-
