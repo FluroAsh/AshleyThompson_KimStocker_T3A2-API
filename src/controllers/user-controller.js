@@ -1,4 +1,3 @@
-// import { getAllUsers } from '../utils/user-utils';
 const { getAllUsers, getUserById } = require('../utils/user-utils');
 
 async function getUsers(req, res) {

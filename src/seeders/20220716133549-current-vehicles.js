@@ -3,6 +3,7 @@
 module.exports = {
   async up(queryInterface, Sequelize) {
     return queryInterface.bulkInsert('Vehicles', [
+      // TODO: Update to include ALL cars
       {
         make: 'Audi',
         model: 'e-tron SUV',
