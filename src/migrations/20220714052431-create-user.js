@@ -10,50 +10,22 @@ module.exports = {
         type: Sequelize.INTEGER,
       },
       firstName: {
-<<<<<<< HEAD
         type: Sequelize.STRING,
         allowNull: false
-||||||| 90f2ba7
-        type: Sequelize.STRING
-=======
-        type: Sequelize.STRING,
->>>>>>> dev
       },
       lastName: {
-<<<<<<< HEAD
         type: Sequelize.STRING,
         allowNull: false
-||||||| 90f2ba7
-        type: Sequelize.STRING
-=======
-        type: Sequelize.STRING,
->>>>>>> dev
       },
       email: {
-<<<<<<< HEAD
         type: Sequelize.STRING,
         allowNull: false,
         unique: true
-||||||| 90f2ba7
-        type: Sequelize.STRING
-=======
-        type: Sequelize.STRING,
-        unique: true,
->>>>>>> dev
       },
-<<<<<<< HEAD
       userName: {
         type: Sequelize.STRING,
         allowNull: false,
         unique: true
-||||||| 90f2ba7
-      userName: {
-        type: Sequelize.STRING
-=======
-      username: {
-        type: Sequelize.STRING,
-        unique: true,
->>>>>>> dev
       },
       password: {
         type: Sequelize.STRING,
