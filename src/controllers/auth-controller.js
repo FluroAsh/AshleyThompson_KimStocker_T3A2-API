@@ -17,16 +17,16 @@ async function signUp(req, res) {
             
             const newUser = await User.create(req.body);
 
-            const {userName, email, id} = newUser.dataValues
+            const {username, email, id} = newUser.dataValues
 
             console.log("new User----", newUser.dataValues)
-            console.log("username----", userName)
+            console.log("username----", username)
 
-            const token = jwt.sign({username: userName, email: email, id: id}, process.env.SECRET_KEY)
+            const token = jwt.sign({username, email, id}, process.env.SECRET_KEY)
 
             res.status(201)
 
-            return res.json({username: userName, jwt: token})
+            return res.json({username, jwt: token})
 
         } catch (err) {
             res.status(500)
@@ -45,9 +45,9 @@ async function signIn(req, res) {
     try {
         // const user = findUser(req.body.email);
 
-        const user = await User.findOne({ where: {email: `${req.body.email}` }});
+        const user = await User.findOne({ where: {email: req.body.email }});
 
-        const {userName, email, id, password} = user.dataValues
+        const {username, email, id, password} = user.dataValues
 
         if (!user || !bcrypt.compareSync(req.body.password, password))  {
             res.status(400)
@@ -55,8 +55,8 @@ async function signIn(req, res) {
         } else {
             res.status(200)  
             //res.send(user.username)
-            const token = jwt.sign({username: userName, email: email, id: id}, process.env.SECRET_KEY)
-            return res.json({username: userName, jwt: token})
+            const token = jwt.sign({username, email, id}, process.env.SECRET_KEY)
+            return res.json({username, jwt: token})
         }
 
 
