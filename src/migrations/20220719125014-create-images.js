@@ -1,27 +1,27 @@
 'use strict';
 module.exports = {
   async up(queryInterface, Sequelize) {
-    await queryInterface.createTable('Vehicles', {
+    await queryInterface.createTable('images', {
       id: {
         allowNull: false,
         autoIncrement: true,
         primaryKey: true,
-        type: Sequelize.INTEGER,
+        type: Sequelize.INTEGER
       },
-      make: {
-        type: Sequelize.STRING,
+      id: {
+        type: Sequelize.UUID
       },
-      model: {
-        type: Sequelize.STRING,
+      bucket: {
+        type: Sequelize.STRING
       },
-      variant: {
-        type: Sequelize.STRING,
+      key: {
+        type: Sequelize.STRING
       },
-      PlugId: {
+      ChargerId: {
         type: Sequelize.INTEGER,
         allowNull: false,
         references: {
-          model: 'Plugs',
+          model: 'Chargers',
           key: 'id',
         },
         onUpdate: 'CASCADE',
@@ -29,15 +29,15 @@ module.exports = {
       },
       createdAt: {
         allowNull: false,
-        type: Sequelize.DATE,
+        type: Sequelize.DATE
       },
       updatedAt: {
         allowNull: false,
-        type: Sequelize.DATE,
-      },
+        type: Sequelize.DATE
+      }
     });
   },
   async down(queryInterface, Sequelize) {
-    await queryInterface.dropTable('Vehicles');
-  },
+    await queryInterface.dropTable('images');
+  }
 };
