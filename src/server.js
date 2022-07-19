@@ -43,6 +43,9 @@ app.use((req, res, next) => {
 app.use('/auth', authRouter);
 app.use('/', userRouter);
 app.use('/', vehiclesRouter);
+app.use('/', chargerRouter);
+
+
 
 module.exports = {
   app,
