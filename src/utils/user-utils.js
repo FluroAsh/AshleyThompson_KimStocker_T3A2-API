@@ -7,5 +7,7 @@ exports.getAllUsers = () => User.findAll();
 
 exports.getUserById = (id) =>
   User.findByPk(id, {
-    include: Address,
+    include: {
+      model: Address,
+    },
   });

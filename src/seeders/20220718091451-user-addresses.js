@@ -9,8 +9,6 @@ module.exports = {
         postcode: 2386,
         state: 'New South Wales',
         UserId: 1,
-        createdAt: new Date(),
-        updatedAt: new Date(),
       },
       {
         address: '123 Fake Street',
@@ -18,8 +16,6 @@ module.exports = {
         postcode: 3000,
         state: 'Victoria',
         UserId: 2,
-        createdAt: new Date(),
-        updatedAt: new Date(),
       },
     ]);
   },
