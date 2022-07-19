@@ -1,5 +1,5 @@
 const db = require('../models');
-const { User, Address } = db;
+const { User, Address, UserVehicle } = db;
 const Op = db.Sequelize.Op;
 
 /** Returns a promise */
@@ -7,6 +7,5 @@ exports.getAllUsers = () => User.findAll();
 
 exports.getUserById = (id) =>
   User.findByPk(id, {
-    include: Address,
-    // UserVehicle
+    include: [{ model: Address }, { model: UserVehicle }],
   });

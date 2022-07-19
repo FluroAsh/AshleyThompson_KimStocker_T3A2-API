@@ -11,7 +11,7 @@ module.exports = (sequelize, DataTypes) => {
      */
     static associate(models) {
       User.hasOne(models.Address);
-      // hasOne(models.UserVehicle)
+      User.hasOne(models.UserVehicle);
     }
   }
   User.init(
