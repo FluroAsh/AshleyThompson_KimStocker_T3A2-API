@@ -10,7 +10,6 @@ module.exports = (sequelize, DataTypes) => {
      */
     static associate(models) {
       Plug.hasMany(models.Vehicle);
-      Plug.hasMany(models.Charger);
 
     }
   }

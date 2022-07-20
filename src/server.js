@@ -7,6 +7,7 @@ const PORT = process.env.PORT || 3001;
 const jwt = require('jsonwebtoken');
 const { authRouter } = require('./routes/auth-routes.js');
 const { userRouter } = require('./routes/user-routes.js');
+const { chargerRouter } = require('./routes/charger-routes')
 const { vehiclesRouter } = require('./routes/vehicle-routes');
 
 app.use(cors());
