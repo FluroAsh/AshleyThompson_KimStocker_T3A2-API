@@ -11,7 +11,8 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "aws-sdk": "^2.1177.0",
+    "@aws-sdk/client-s3": "^3.131.0",
+    "@aws-sdk/s3-request-presigner": "^3.131.0",
     "bcrypt": "^5.0.1",
     "cors": "^2.8.5",
     "dotenv": "^16.0.1",

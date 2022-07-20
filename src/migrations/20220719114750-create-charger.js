@@ -19,15 +19,16 @@ module.exports = {
       },
       name: {
         type: Sequelize.STRING,
-        allowNull: false,
+        unique: true,
+        allowNull: false
       },
       instructions: {
         type: Sequelize.TEXT,
-        allowNull: false,
+        allowNull: false
       },
       price: {
         type: Sequelize.INTEGER,
-        allowNull: false,
+        allowNull: false
       },
       status: {
         type: Sequelize.ENUM('pending', 'active', 'disabled')

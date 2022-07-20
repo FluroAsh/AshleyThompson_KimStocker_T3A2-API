@@ -7,8 +7,24 @@ const {
 } = require('../controllers/charger-controller')
 const express = require('express');
 const multer = require("multer");
+
+
 const storage = multer.memoryStorage();
-const upload = multer({ storage: storage });
+const fileFilter = (req, file, cb) => {
+    if (file.mimetype.split("/")[0] === "image") {
+      cb(null, true);
+    } else {
+      cb(new multer.MulterError("LIMIT_UNEXPECTED_FILE"), false);
+    }
+  };
+
+const upload = multer({ 
+    storage: storage,
+    limits: { fileSize:100000, files: 1 },
+    fileFilter,
+    rename: function (fieldname, filename) {
+        return filename.replace(/\W+/g, '-').toLowerCase();}
+});
 
 const chargerRouter = express.Router();
 
