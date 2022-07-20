@@ -1,4 +1,5 @@
 const db = require("../models");
+const sequelize = db.sequelize
 const Charger = db.Charger;
 const { v4: uuidv4 } = require("uuid");
 const { getAllChargers } = require("../utils/charger-utils");
@@ -41,6 +42,8 @@ async function getChargers(req, res) {
       };
     })
   );
+
+  // TODO: Exclude key, bucket and region out of the returned charger data
   res.send(chargersWithUrls);
 }
 
@@ -55,12 +58,21 @@ async function createCharger(req, res) {
   data["key"] = key;
 
   try {
-    const newCharger = await Charger.create(data);
-    // TODO: handle the error thrown by failed image upload
-    const result = await uploadImageToS3(req.file, key);
-    console.log("s3 result", result);
-    res.status(201);
-    return res.json(newCharger);
+
+    // transaction ensure the record will be rolledback if an error occured during the try/catch block
+    await sequelize.transaction(async (t) => {
+
+      const newCharger = await Charger.create(data, { transaction: t });
+      const imageData = await uploadImageToS3(req.file, key);
+      console.log("s3 result", imageData);
+
+      res.status(201);
+
+      // TODO: Exclude key, bucket and region out of the returned charger data
+      return res.json(newCharger);  
+    });
+  
+
   } catch (err) {
     res.status(500);
     return res.json({ error: err.message });
