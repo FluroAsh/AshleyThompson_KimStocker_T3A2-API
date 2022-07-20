@@ -1,7 +1,7 @@
 const express = require("express");
 // const models = require("../../models");
 const db = require('../models');
-const { Charger, Image } = db;
+const Charger = db.Charger;
 const sharp = require("sharp");
 const { v4: uuidv4 } = require("uuid");
 const aws = require("aws-sdk");
@@ -11,7 +11,7 @@ const s3 = new aws.S3({
   region: "ap-southeast-2",
 });
 
-const S3_BUCKET = "image-upload-storage";
+const S3_BUCKET = "iev";
 
 
 async function uploadImageToS3(key, buffer, mimetype) {
@@ -64,20 +64,22 @@ async function getChargers(req, res) {
   res.send(chargers);
 }
 
-async function createCharger() {
+async function createCharger(req, res) {
   const uuid = uuidv4();
   await Promise.all([
-    uploadImageToS3(`images/${id}`, req.file.buffer, req.file.mimetype),
+    uploadImageToS3(`images/${uuid}`, req.file.buffer, req.file.mimetype),
   ]);
 
   const data = {...req.body}
   data["uuid"] = uuid;
   data["bucket"] = S3_BUCKET;
-  data["key"] = `images/${id}`;
+  data["key"] = `images/${uuid}`;
 
   try {
 
-  const newCharger = await Charger.create(data)
+    const newCharger = await Charger.create(data);
+    res.status(201);
+    return res.json(newCharger);
 
   } catch (err) {
     res.status(500);

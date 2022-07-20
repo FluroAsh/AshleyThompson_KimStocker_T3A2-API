@@ -12,6 +12,8 @@ module.exports = (sequelize, DataTypes) => {
     static associate(models) {
       // define association here
       Charger.belongsTo(models.User);
+      Charger.belongsTo(models.Address);
+
 
     }
   }
@@ -25,12 +27,12 @@ module.exports = (sequelize, DataTypes) => {
     status: DataTypes.ENUM('pending', 'active', 'disabled')
   }, {
     sequelize,
-    modelName: 'Chargers',
+    modelName: 'Charger',
     hooks: {
       beforeCreate: (charger, options) => {
         if (charger.isNewRecord) {
            
-          const convertedPrice = charger.getDataValue('price')*100
+          const convertedPrice = Number(charger.getDataValue('price'))*100
           charger.setDataValue('price', convertedPrice);
         }
       },

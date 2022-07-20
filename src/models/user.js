@@ -13,7 +13,7 @@ module.exports = (sequelize, DataTypes) => {
      */
     static associate(models) {
       User.hasOne(models.Address);
-      User.hasMany(models.Chargers);
+      User.hasMany(models.Charger);
 
 
     }

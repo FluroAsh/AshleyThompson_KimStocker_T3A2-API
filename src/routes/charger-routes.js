@@ -14,7 +14,7 @@ const chargerRouter = express.Router();
 
 chargerRouter.get('/chargers', getChargers)
 chargerRouter.get('/chargers/:id', getCharger)
-chargerRouter.post('/chargers', upload.single('image'), createCharger)
+chargerRouter.post('/chargers/new', upload.single('image'), createCharger)
 chargerRouter.put('/chargers/:id', updateCharger)
 chargerRouter.patch('/chargers/:id', updateCharger)
 chargerRouter.delete('/chargers/:id', deleteCharger)
