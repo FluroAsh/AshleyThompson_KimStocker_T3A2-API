@@ -12,12 +12,14 @@ module.exports = (sequelize, DataTypes) => {
     static associate(models) {
       // define association here
       Charger.belongsTo(models.User);
-      Charger.hasMany(models.Image);
 
     }
   }
   Charger.init({
     name: DataTypes.STRING,
+    uuid: DataTypes.UUID,
+    bucket: DataTypes.STRING,
+    key: DataTypes.STRING,
     instructions: DataTypes.TEXT,
     price: DataTypes.INTEGER,
     status: DataTypes.ENUM('pending', 'active', 'disabled')

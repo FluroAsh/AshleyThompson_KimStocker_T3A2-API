@@ -5,6 +5,7 @@ const { Charger, Image } = db;
 const sharp = require("sharp");
 const { v4: uuidv4 } = require("uuid");
 const aws = require("aws-sdk");
+const { S3 } = require("aws-sdk");
 const s3 = new aws.S3({
   signatureVersion: "v4",
   region: "ap-southeast-2",
@@ -51,7 +52,7 @@ async function getChargers(req, res) {
   chargers = await Promise.all(
     chargers.map(async (charger) => {
       const imageUrl = await Promise.all([
-        getSignedUrl(charger.image.bucket, charger.image.key),
+        getSignedUrl(charger.bucket, charger.key),
       ]);
       return {
         ...charger.toJSON(),
@@ -64,22 +65,19 @@ async function getChargers(req, res) {
 }
 
 async function createCharger() {
-  const id = uuidv4();
+  const uuid = uuidv4();
   await Promise.all([
     uploadImageToS3(`images/${id}`, req.file.buffer, req.file.mimetype),
   ]);
 
+  const data = {...req.body}
+  data["uuid"] = uuid;
+  data["bucket"] = S3_BUCKET;
+  data["key"] = `images/${id}`;
+
   try {
 
-  const newCharger = await Charger.create(req.body)
-
-  const newImage = await Image.create({
-    id,
-    bucket: S3_BUCKET,
-    key: `images/${id}`,
-    "ChargerId": newCharger.id
-  })
-
+  const newCharger = await Charger.create(data)
 
   } catch (err) {
     res.status(500);

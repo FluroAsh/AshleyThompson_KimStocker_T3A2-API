@@ -9,7 +9,6 @@ module.exports = (sequelize, DataTypes) => {
      */
     static associate(models) {
       Address.belongsTo(models.User);
-      Address.hasMany(models.Charger);
 
     }
   }

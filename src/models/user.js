@@ -15,6 +15,7 @@ module.exports = (sequelize, DataTypes) => {
       User.hasOne(models.Address);
       User.hasMany(models.Charger);
 
+
     }
   }
   User.init(
