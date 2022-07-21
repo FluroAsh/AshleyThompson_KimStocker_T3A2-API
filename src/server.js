@@ -1,18 +1,15 @@
 const express = require('express');
 const cors = require('cors');
 require('dotenv').config();
-const multer = require("multer");
-
+const multer = require('multer');
 
 const app = express();
 const PORT = process.env.PORT || 3001;
 const jwt = require('jsonwebtoken');
 const { authRouter } = require('./routes/auth-routes.js');
 const { userRouter } = require('./routes/user-routes.js');
-const { chargerRouter } = require('./routes/charger-routes')
+const { chargerRouter } = require('./routes/charger-routes');
 const { vehiclesRouter } = require('./routes/vehicle-routes');
-
-
 
 app.use(cors());
 
@@ -45,33 +42,30 @@ app.use((error, req, res, next) => {
   }
 
   if (error instanceof multer.MulterError) {
-    if (error.code === "LIMIT_FILE_SIZE") {
+    if (error.code === 'LIMIT_FILE_SIZE') {
       return res.status(400).json({
-        message: "File is too large",
+        message: 'File is too large',
       });
     }
 
-    if (error.code === "LIMIT_FILE_COUNT") {
+    if (error.code === 'LIMIT_FILE_COUNT') {
       return res.status(400).json({
-        message: "File limit reached",
+        message: 'File limit reached',
       });
     }
 
-    if (error.code === "LIMIT_UNEXPECTED_FILE") {
+    if (error.code === 'LIMIT_UNEXPECTED_FILE') {
       return res.status(400).json({
-        message: "File must be an image",
+        message: 'File must be an image',
       });
     }
   }
 });
 
-
 app.use('/auth', authRouter);
 app.use('/', userRouter);
 app.use('/', vehiclesRouter);
 app.use('/', chargerRouter);
-
-
 
 module.exports = {
   app,

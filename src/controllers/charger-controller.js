@@ -1,39 +1,45 @@
-const db = require("../models");
-const sequelize = db.sequelize
+const db = require('../models');
+const sequelize = db.sequelize;
 const Charger = db.Charger;
-const { v4: uuidv4 } = require("uuid");
-const { getAllChargers } = require("../utils/charger-utils");
-const { getSignedUrl } = require("@aws-sdk/s3-request-presigner");
+const { getAllChargers, getOneCharger } = require('../utils/charger-utils');
+
+const { v4: uuidv4 } = require('uuid');
 const {
-  S3Client,
-  GetObjectCommand,
-  PutObjectCommand,
-} = require("@aws-sdk/client-s3");
+  uploadImageToS3,
+  getSignedS3Url,
+} = require('../services/awsS3-services');
 
-async function uploadImageToS3(file, key) {
-  const s3client = new S3Client();
+// TODO: Double check all res.status
 
-  return await s3client.send(
-    new PutObjectCommand({
-      Bucket: process.env.AWS_BUCKET_NAME,
-      Key: key,
-      Body: file.buffer,
-    })
-  );
-}
+async function createCharger(req, res) {
+  const data = { ...req.body };
 
-async function getSignedS3Url(bucket, key, expires = 3600) {
-  const client = new S3Client();
-  const command = new GetObjectCommand({
-    Bucket: bucket,
-    Key: key,
-  });
-  return await getSignedUrl(client, command, { expiresIn: expires });
+  const key = `uploads/${uuidv4()}-${req.file.originalname}`;
+
+  data['bucket'] = process.env.AWS_BUCKET_NAME;
+  data['key'] = key;
+
+  try {
+    // transaction ensure the record will be rolledback if an error occured during the try/catch block
+    await sequelize.transaction(async (t) => {
+      const newCharger = await Charger.create(data, { transaction: t });
+      await uploadImageToS3(req.file, key);
+
+      res.status(200);
+
+      // TODO: Exclude key, bucket and region out of the returned charger data
+      return res.json(newCharger);
+    });
+  } catch (err) {
+    res.status(500);
+    return res.json({ error: err.message });
+  }
 }
 
 async function getChargers(req, res) {
-  let chargers = await getAllChargers();
-  let chargersWithUrls = await Promise.all(
+  const chargers = await getAllChargers();
+
+  const chargersWithUrls = await Promise.all(
     chargers.map(async (charger) => {
       const imageUrl = await getSignedS3Url(charger.bucket, charger.key);
       return {
@@ -43,42 +49,36 @@ async function getChargers(req, res) {
     })
   );
 
+  res.status(201);
   // TODO: Exclude key, bucket and region out of the returned charger data
   res.send(chargersWithUrls);
 }
 
-async function createCharger(req, res) {
-
-  const data = { ...req.body };
-
-  const key = `uploads/${uuidv4()}-${req.file.originalname}`;
-
-  data["bucket"] = process.env.AWS_BUCKET_NAME;
-  data["key"] = key;
-
+async function getCharger(req, res) {
   try {
+    const charger = await getOneCharger(req.params.id);
 
-    // transaction ensure the record will be rolledback if an error occured during the try/catch block
-    await sequelize.transaction(async (t) => {
+    if (!charger) {
+      throw Error;
+    }
 
-      const newCharger = await Charger.create(data, { transaction: t });
-      const imageData = await uploadImageToS3(req.file, key);
-      console.log("s3 result", imageData);
+    const imageUrl = await getSignedS3Url(charger.bucket, charger.key);
 
-      res.status(200);
+    const chargerWithUrl = {
+      ...charger.toJSON(),
+      imageUrl,
+    };
+    // TODO: handle return data excluding key,bucket info
 
-      // TODO: Exclude key, bucket and region out of the returned charger data
-      return res.json(newCharger);  
-    });
-  
-
+    res.status(200);
+    res.send(chargerWithUrl);
   } catch (err) {
-    res.status(500);
-    return res.json({ error: err.message });
+    res.status(404);
+    res.json({ error: 'No charger found' });
   }
-}
 
-async function getCharger() {}
+  // TODO: Exclude key, bucket and region out of the returned charger data
+}
 
 async function updateCharger() {}
 async function deleteCharger() {}
