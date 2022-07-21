@@ -1,6 +1,8 @@
 'use strict';
 const bcrypt = require('bcrypt');
 const { Model } = require('sequelize');
+const saltRounds = 10;
+
 
 module.exports = (sequelize, DataTypes) => {
   class User extends Model {
@@ -11,6 +13,9 @@ module.exports = (sequelize, DataTypes) => {
      */
     static associate(models) {
       User.hasOne(models.Address);
+      User.hasMany(models.Charger);
+
+
     }
   }
   User.init(
@@ -26,10 +31,11 @@ module.exports = (sequelize, DataTypes) => {
       modelName: 'User',
       hooks: {
         beforeCreate: (user, options) => {
+          const salt = bcrypt.genSaltSync(saltRounds);
           if (user.isNewRecord) {
             const hashedPassword = bcrypt.hashSync(
               user.getDataValue('password'),
-              10
+              salt
             );
             user.setDataValue('password', hashedPassword);
           }
@@ -40,3 +46,5 @@ module.exports = (sequelize, DataTypes) => {
 
   return User;
 };
+
+

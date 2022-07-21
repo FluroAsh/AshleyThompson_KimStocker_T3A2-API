@@ -2,6 +2,7 @@
 
 module.exports = {
   async up(queryInterface, Sequelize) {
+    console.log("adding seed Users");
     return queryInterface.bulkInsert('Users', [
       {
         firstName: 'John',
