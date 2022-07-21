@@ -26,7 +26,7 @@ async function getAllChargers() {
   }
 }
 
-async function getOneCharger(id) {
+async function getChargerById(id) {
   // TODO: eager loading doesnt work
   try {
     const charger = await Charger.findOne({
@@ -51,7 +51,14 @@ async function getOneCharger(id) {
   }
 }
 
+async function deleteChargerById(id) {
+    Charger.destroy({
+        where: { id }
+      });
+}
+
 module.exports = {
   getAllChargers,
-  getOneCharger,
+  getChargerById,
+  deleteChargerById
 };
