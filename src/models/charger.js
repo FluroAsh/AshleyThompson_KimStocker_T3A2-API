@@ -19,7 +19,6 @@ module.exports = (sequelize, DataTypes) => {
   }
   Charger.init({
     name: DataTypes.STRING,
-    uuid: DataTypes.UUID,
     bucket: DataTypes.STRING,
     key: DataTypes.STRING,
     instructions: DataTypes.TEXT,
