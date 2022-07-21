@@ -19,6 +19,7 @@ module.exports = {
       },
       PlugId: {
         type: Sequelize.INTEGER,
+        allowNull: false,
         references: {
           model: 'Plugs',
           key: 'id',
