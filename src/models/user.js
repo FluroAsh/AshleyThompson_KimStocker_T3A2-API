@@ -3,7 +3,6 @@ const bcrypt = require('bcrypt');
 const { Model } = require('sequelize');
 const saltRounds = 10;
 
-
 module.exports = (sequelize, DataTypes) => {
   class User extends Model {
     /**
@@ -13,9 +12,10 @@ module.exports = (sequelize, DataTypes) => {
      */
     static associate(models) {
       User.hasOne(models.Address);
+      User.hasOne(models.UserVehicle);
       User.hasMany(models.Charger);
-
-
+      User.hasMany(models.Booking, { as: 'Buyer', foreignKey: 'BuyerId' });
+      User.hasMany(models.Booking, { as: 'Host', foreignKey: 'HostId' });
     }
   }
   User.init(
@@ -46,5 +46,3 @@ module.exports = (sequelize, DataTypes) => {
 
   return User;
 };
-
-

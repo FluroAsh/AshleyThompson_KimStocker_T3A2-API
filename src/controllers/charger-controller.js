@@ -21,8 +21,8 @@ async function createCharger(req, res) {
   console.log("FILE NAME", req.file);
   const key = `uploads/${uuidv4()}-${req.file.originalname}`;
 
-  data["bucket"] = process.env.AWS_BUCKET_NAME;
-  data["key"] = key;
+  data['bucket'] = process.env.AWS_BUCKET_NAME;
+  data['key'] = key;
 
   try {
     // transaction ensure the record will be rolledback if an error occured during the try/catch block
