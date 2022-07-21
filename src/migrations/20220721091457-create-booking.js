@@ -1,36 +1,14 @@
 'use strict';
 module.exports = {
   async up(queryInterface, Sequelize) {
-    await queryInterface.createTable('Chargers', {
+    await queryInterface.createTable('Bookings', {
       id: {
         allowNull: false,
         autoIncrement: true,
         primaryKey: true,
         type: Sequelize.INTEGER,
       },
-      bucket: {
-        type: Sequelize.STRING,
-      },
-      key: {
-        type: Sequelize.STRING,
-      },
-      name: {
-        type: Sequelize.STRING,
-        unique: true,
-        allowNull: false,
-      },
-      instructions: {
-        type: Sequelize.TEXT,
-        allowNull: false,
-      },
-      price: {
-        type: Sequelize.INTEGER,
-        allowNull: false,
-      },
-      status: {
-        type: Sequelize.ENUM('pending', 'active', 'disabled'),
-      },
-      UserId: {
+      BuyerId: {
         type: Sequelize.INTEGER,
         allowNull: false,
         references: {
@@ -40,25 +18,37 @@ module.exports = {
         onUpdate: 'CASCADE',
         onDelete: 'SET NULL',
       },
-      AddressId: {
+      HostId: {
         type: Sequelize.INTEGER,
         allowNull: false,
         references: {
-          model: 'Addresses',
+          model: 'Users',
           key: 'id',
         },
         onUpdate: 'CASCADE',
         onDelete: 'SET NULL',
       },
-      PlugId: {
+      ChargerId: {
         type: Sequelize.INTEGER,
         allowNull: false,
         references: {
-          model: 'Plugs',
+          model: 'Chargers',
           key: 'id',
         },
         onUpdate: 'CASCADE',
         onDelete: 'SET NULL',
+      },
+      bookingDate: {
+        allowNull: false,
+        type: Sequelize.DATE,
+      },
+      price: {
+        type: Sequelize.INTEGER,
+        allowNull: false,
+      },
+      status: {
+        allowNull: false,
+        type: Sequelize.ENUM('approved', 'rejected', 'pending', 'cancelled'),
       },
       createdAt: {
         allowNull: false,
@@ -71,6 +61,6 @@ module.exports = {
     });
   },
   async down(queryInterface, Sequelize) {
-    await queryInterface.dropTable('Chargers');
+    await queryInterface.dropTable('Bookings');
   },
 };

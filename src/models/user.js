@@ -14,7 +14,9 @@ module.exports = (sequelize, DataTypes) => {
       User.hasOne(models.Address);
       User.hasOne(models.UserVehicle);
       User.hasMany(models.Charger);
-    } 
+      User.hasMany(models.Booking, { as: 'Buyer', foreignKey: 'BuyerId' });
+      User.hasMany(models.Booking, { as: 'Host', foreignKey: 'HostId' });
+    }
   }
   User.init(
     {

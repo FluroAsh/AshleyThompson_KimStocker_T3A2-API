@@ -1,7 +1,5 @@
 const db = require('../models');
-const vehicle = require('../models/vehicle');
-const { User, Address, Vehicle, UserVehicle, Plug } = db;
-const Op = db.Sequelize.Op;
+const { User, Address, Vehicle, UserVehicle } = db;
 
 exports.getAllUsers = () => User.findAll();
 

@@ -10,6 +10,7 @@ const { authRouter } = require('./routes/auth-routes.js');
 const { userRouter } = require('./routes/user-routes.js');
 const { chargerRouter } = require('./routes/charger-routes');
 const { vehiclesRouter } = require('./routes/vehicle-routes');
+const { bookingRouter } = require('./routes/booking-routes');
 
 app.use(cors());
 
@@ -66,6 +67,7 @@ app.use('/auth', authRouter);
 app.use('/', userRouter);
 app.use('/', vehiclesRouter);
 app.use('/', chargerRouter);
+app.use('/', bookingRouter);
 
 module.exports = {
   app,
