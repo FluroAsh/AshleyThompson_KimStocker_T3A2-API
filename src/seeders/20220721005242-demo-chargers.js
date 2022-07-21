@@ -6,7 +6,7 @@ module.exports = {
       {
         name: "Seed Charger 1",
         instructions: "Go to garage and charge",
-        price: 20,
+        price: 2000,
         status: "active",
         UserId: 1,
         PlugId: 2,
@@ -19,7 +19,7 @@ module.exports = {
       {
         name: "Seed Charger 2",
         instructions: "Go to garage and charge",
-        price: 40,
+        price: 4000,
         status: "active",
         UserId: 1,
         PlugId: 2,

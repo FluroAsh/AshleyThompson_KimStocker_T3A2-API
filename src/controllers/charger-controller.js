@@ -1,51 +1,16 @@
 const db = require("../models");
 const sequelize = db.sequelize
 const Charger = db.Charger;
+const { getAllChargers, getOneCharger } = require("../utils/charger-utils");
+
 const { v4: uuidv4 } = require("uuid");
-const { getAllChargers } = require("../utils/charger-utils");
-const { getSignedUrl } = require("@aws-sdk/s3-request-presigner");
-const {
-  S3Client,
-  GetObjectCommand,
-  PutObjectCommand,
-} = require("@aws-sdk/client-s3");
+const {     
+  uploadImageToS3,
+  getSignedS3Url
+} = require("../services/awsS3-services")
 
-async function uploadImageToS3(file, key) {
-  const s3client = new S3Client();
+// TODO: Double check all res.status
 
-  return await s3client.send(
-    new PutObjectCommand({
-      Bucket: process.env.AWS_BUCKET_NAME,
-      Key: key,
-      Body: file.buffer,
-    })
-  );
-}
-
-async function getSignedS3Url(bucket, key, expires = 3600) {
-  const client = new S3Client();
-  const command = new GetObjectCommand({
-    Bucket: bucket,
-    Key: key,
-  });
-  return await getSignedUrl(client, command, { expiresIn: expires });
-}
-
-async function getChargers(req, res) {
-  let chargers = await getAllChargers();
-  let chargersWithUrls = await Promise.all(
-    chargers.map(async (charger) => {
-      const imageUrl = await getSignedS3Url(charger.bucket, charger.key);
-      return {
-        ...charger.toJSON(),
-        imageUrl,
-      };
-    })
-  );
-
-  // TODO: Exclude key, bucket and region out of the returned charger data
-  res.send(chargersWithUrls);
-}
 
 async function createCharger(req, res) {
 
@@ -62,8 +27,7 @@ async function createCharger(req, res) {
     await sequelize.transaction(async (t) => {
 
       const newCharger = await Charger.create(data, { transaction: t });
-      const imageData = await uploadImageToS3(req.file, key);
-      console.log("s3 result", imageData);
+      await uploadImageToS3(req.file, key);
 
       res.status(200);
 
@@ -78,7 +42,54 @@ async function createCharger(req, res) {
   }
 }
 
-async function getCharger() {}
+async function getChargers(req, res) {
+  const chargers = await getAllChargers();
+
+  const chargersWithUrls = await Promise.all(
+    chargers.map(async (charger) => {
+      const imageUrl = await getSignedS3Url(charger.bucket, charger.key);
+      return {
+        ...charger.toJSON(),
+        imageUrl
+      };
+    })
+  );
+
+  res.status(201)
+  // TODO: Exclude key, bucket and region out of the returned charger data
+  res.send(chargersWithUrls);
+}
+
+async function getCharger(req, res) {
+
+  try {
+
+    const charger = await getOneCharger(req.params.id);
+
+    if (!charger) {
+      throw Error;
+    }
+
+    const imageUrl = await getSignedS3Url(charger.bucket, charger.key);
+
+    const chargerWithUrl = {
+      ...charger.toJSON(),
+      imageUrl
+
+    }
+    // TODO: handle return data excluding key,bucket info
+
+    res.status(200)
+    res.send(chargerWithUrl);
+
+  } catch (err) {
+    res.status(404)
+    res.json({ error: 'No charger found' });
+  }
+  
+
+  // TODO: Exclude key, bucket and region out of the returned charger data
+}
 
 async function updateCharger() {}
 async function deleteCharger() {}

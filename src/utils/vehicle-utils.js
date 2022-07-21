@@ -3,7 +3,22 @@ const { Vehicle } = db;
 const Plug = db.Plug;
 const Op = db.Sequelize.Op;
 
-exports.getAllVehicles = () =>
-  Vehicle.findAll({
-    include: Plug,
-  });
+async function getAllVehicles() {
+  
+  try {
+
+    return await Vehicle.findAll({
+      include: Plug,
+    });
+
+  } catch (err) {
+
+    res.status(500);
+    return res.json({ error: err.message });
+    
+  }
+}
+
+module.exports = {
+  getAllVehicles
+}

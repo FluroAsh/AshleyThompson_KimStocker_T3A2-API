@@ -13,5 +13,5 @@ async function findUser(email) {
 }
 
 module.exports = {
-  findUser,
+  findUser
 };

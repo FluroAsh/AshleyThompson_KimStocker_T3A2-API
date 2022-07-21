@@ -1,19 +1,38 @@
-const db = require('../models');
-const { Charger, Image } = db;
+const db = require("../models");
+const { Charger, User, Address } = db;
 const Op = db.Sequelize.Op;
 
 /** Returns a promise */
-exports.getAllChargers = () => Charger.findAll({
-    include: Image,
-    as: "image"
-});
+async function getAllChargers() {
+  try {
+    const chargers = await Charger.findAll({
+      include: Address,
+    });
 
-// exports.getUserById = (id) =>
-//   User.findByPk(id, {
-//     include: Address,
-//   });
+    return chargers;
+  } catch (err) {
+    res.status(500);
+    return res.json({ error: err.message });
+  }
+}
 
-// exports.getAllVehicles = () =>
-//   Vehicle.findAll({
-//     include: Plug,
-//   });
+async function getOneCharger(id) {
+  try {
+    const charger = await Charger.findOne(
+      { where: { id: `${id}` } },
+      {
+        include: User,
+      }
+    );
+
+    return charger;
+  } catch (err) {
+    res.status(500);
+    return res.json({ error: err.message });
+  }
+}
+
+module.exports = {
+  getAllChargers,
+  getOneCharger,
+};
