@@ -53,7 +53,6 @@ async function createCharger(req, res) {
 
   const key = `uploads/${uuidv4()}-${req.file.originalname}`;
 
-  data["uuid"] = uuidv4();
   data["bucket"] = process.env.AWS_BUCKET_NAME;
   data["key"] = key;
 
@@ -66,7 +65,7 @@ async function createCharger(req, res) {
       const imageData = await uploadImageToS3(req.file, key);
       console.log("s3 result", imageData);
 
-      res.status(201);
+      res.status(200);
 
       // TODO: Exclude key, bucket and region out of the returned charger data
       return res.json(newCharger);  
