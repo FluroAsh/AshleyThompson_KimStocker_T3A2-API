@@ -1,10 +1,14 @@
-const { getBookingById, getAllBookings } = require('../utils/booking-utils');
+const db = require('../models');
+const sequelize = db.sequelize;
+const { Booking } = db;
+const {
+  getBookingById,
+  getAllBookings,
+} = require('../utils/booking-utils');
 
 async function getBooking(req, res) {
   try {
-    console.log('params', req.params.id);
     const booking = await getBookingById(req.params.id);
-    console.log('booking', booking);
     if (!booking) {
       throw Error;
     }
@@ -26,7 +30,26 @@ async function getBookings(req, res) {
   }
 }
 
+async function createBooking(req, res) {
+  const data = { ...req.body };
+  try {
+    await sequelize.transaction(async (t) => {
+      const booking = await Booking.create(data, { transaction: t });
+      res.status(201).json(booking);
+    });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+}
+
+/** TODOs: */
+async function updateBooking() {}
+async function deleteBooking() {}
+
 module.exports = {
   getBooking,
   getBookings,
+  createBooking,
+  updateBooking,
+  deleteBooking,
 };

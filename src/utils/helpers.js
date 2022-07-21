@@ -1,6 +1,8 @@
 exports.randomDate = () => {
-  const minDate = new Date(Date.UTC(2012, 1, 1, 1));
-  const maxDate = Date.now();
-  const timestamp = Math.floor(Math.random() * (maxDate - minDate));
-  return new Date(timestamp);
+  let start = new Date(); // 'today'
+  let end = new Date(2023, 0, 1); // Jan 1st 2023
+
+  return new Date(
+    start.getTime() + Math.random() * (end.getTime() - start.getTime())
+  );
 };
