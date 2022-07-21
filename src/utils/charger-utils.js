@@ -1,19 +1,58 @@
-const db = require('../models');
-const { Charger, Image } = db;
+const { PublicAccessBlockConfiguration } = require("@aws-sdk/client-s3");
+const db = require("../models");
+const { Charger, User, Address, Plug } = db;
 const Op = db.Sequelize.Op;
 
 /** Returns a promise */
-exports.getAllChargers = () => Charger.findAll({
-    include: Image,
-    as: "image"
-});
+async function getAllChargers() {
+  try {
+    const chargers = await Charger.findAll({
+      include: [
+        {
+          model: Address,
+          as: "Address",
+        },
+        {
+          model: User,
+          as: "User",
+        }
+      ],
+    });
 
-// exports.getUserById = (id) =>
-//   User.findByPk(id, {
-//     include: Address,
-//   });
+    return chargers;
+  } catch (err) {
+    res.status(500);
+    return res.json({ error: err.message });
+  }
+}
 
-// exports.getAllVehicles = () =>
-//   Vehicle.findAll({
-//     include: Plug,
-//   });
+async function getOneCharger(id) {
+  // TODO: eager loading doesnt work
+  try {
+    const charger = await Charger.findOne({
+      where: { id },
+
+      include: [
+        {
+          model: Address,
+          as: "Address",
+        },
+        {
+          model: User,
+          as: "User",
+        },
+        
+      ],
+    });
+
+    return charger;
+  } catch (err) {
+    res.status(500);
+    return res.json({ error: err.message });
+  }
+}
+
+module.exports = {
+  getAllChargers,
+  getOneCharger,
+};

@@ -45,7 +45,7 @@ async function signIn(req, res) {
     try {
         // const user = findUser(req.body.email);
 
-        const user = await User.findOne({ where: {email: req.body.email }});
+        const user = await findUser(req.body.email);
 
         const {username, email, id, password} = user.dataValues
 
