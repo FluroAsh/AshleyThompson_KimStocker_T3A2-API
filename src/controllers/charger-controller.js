@@ -163,7 +163,6 @@ async function getUserChargers(req, res) {
     // TODO handle errors and make userchargerwithurls a separated function
 
     const user = await findUser(req.user.email);
-
     const chargers = await Promise.all(
       Charger.findAll({
         where: {
@@ -172,17 +171,9 @@ async function getUserChargers(req, res) {
       })
     );
 
-    const UserChargersWithUrls = await Promise.all(
-      chargers.map(async (charger) => {
-        const imageUrl = await getSignedS3Url(charger.bucket, charger.key);
-        return {
-          ...charger.toJSON(),
-          imageUrl,
-        };
-      })
-    );
+    const chargersWithUrls = await getChargersWithUrl(chargers);
     res.status(200);
-    res.send(UserChargersWithUrls);
+    res.send(chargersWithUrls);
   } catch (err) {
     res.status(500);
     res.json({ error: 'No chargers found' });
