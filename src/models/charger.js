@@ -6,6 +6,7 @@ module.exports = (sequelize, DataTypes) => {
       Charger.belongsTo(models.User);
       Charger.belongsTo(models.Address);
       Charger.hasMany(models.Booking);
+      Charger.belongsTo(models.Plug);
     }
   }
   Charger.init(

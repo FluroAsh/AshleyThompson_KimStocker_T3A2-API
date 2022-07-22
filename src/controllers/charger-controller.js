@@ -1,24 +1,61 @@
-const db = require("../models");
+const db = require('../models');
 const sequelize = db.sequelize;
 const Charger = db.Charger;
 const {
   getAllChargers,
   getChargerById,
   deleteChargerById,
-} = require("../utils/charger-utils");
-const { findUser } = require("../utils/auth-utils");
-const { v4: uuidv4 } = require("uuid");
+  getChargersByLocation,
+} = require('../utils/charger-utils');
+const { findUser } = require('../utils/auth-utils');
+const { v4: uuidv4 } = require('uuid');
 const {
   uploadImageToS3,
   getSignedS3Url,
-} = require("../services/awsS3-services");
+} = require('../services/awsS3-services');
 
 // TODO: Double check all res.status
+
+/** S3 Charger URL Helper Method */
+async function getChargersWithUrl(chargers) {
+  console.log('Chargers:', chargers);
+  const chargersWithUrls = await Promise.all(
+    chargers.map(async (charger) => {
+      const imageUrl = await getSignedS3Url(charger.bucket, charger.key);
+      return {
+        ...charger.toJSON(),
+        imageUrl,
+      };
+    })
+  );
+  return chargersWithUrls;
+}
+
+/** Action Methods */
+async function searchChargersLocation(req, res) {
+  // Query will always be received as a string
+  let { location } = req.query;
+  // frontend replaces spaces with +'s and trims leading and trailing spaces
+  location = location.replaceAll('+', ' ');
+  try {
+    const chargers = await getChargersByLocation(location);
+    // Even if 0 objects returned, will return an empty object (which equates to true)
+    // Thus check length of Object keys array (should be 0 if empty)
+    if (!Object.keys(chargers).length) {
+      return res.status(404).json({ error: 'No chargers found' });
+    }
+
+    const urlChargers = await getChargersWithUrl(chargers);
+    res.status(200).json(urlChargers);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+}
 
 async function createCharger(req, res) {
   const data = { ...req.body };
 
-  console.log("FILE NAME", req.file);
+  console.log('FILE NAME', req.file);
   const key = `uploads/${uuidv4()}-${req.file.originalname}`;
 
   data['bucket'] = process.env.AWS_BUCKET_NAME;
@@ -43,16 +80,7 @@ async function createCharger(req, res) {
 
 async function getChargers(req, res) {
   const chargers = await getAllChargers();
-
-  const chargersWithUrls = await Promise.all(
-    chargers.map(async (charger) => {
-      const imageUrl = await getSignedS3Url(charger.bucket, charger.key);
-      return {
-        ...charger.toJSON(),
-        imageUrl,
-      };
-    })
-  );
+  const chargersWithUrls = await getChargersWithUrl(chargers);
 
   res.status(201);
   // TODO: Exclude key, bucket and region out of the returned charger data
@@ -79,7 +107,7 @@ async function getCharger(req, res) {
     res.send(chargerWithUrl);
   } catch (err) {
     res.status(404);
-    res.json({ error: "No charger found" });
+    res.json({ error: 'No charger found' });
   }
 
   // TODO: Exclude key, bucket and region out of the returned charger data
@@ -99,8 +127,8 @@ async function updateCharger(req, res) {
 
       const key = `uploads/${uuidv4()}-${req.file.originalname}`;
 
-      data["bucket"] = process.env.AWS_BUCKET_NAME;
-      data["key"] = key;
+      data['bucket'] = process.env.AWS_BUCKET_NAME;
+      data['key'] = key;
       ////
 
       const updatedCharger = await charger.update(data, { transaction: t });
@@ -157,7 +185,7 @@ async function getUserChargers(req, res) {
     res.send(UserChargersWithUrls);
   } catch (err) {
     res.status(500);
-    res.json({ error: "No chargers found" });
+    res.json({ error: 'No chargers found' });
   }
 }
 
@@ -168,4 +196,5 @@ module.exports = {
   updateCharger,
   deleteCharger,
   getUserChargers,
+  searchChargersLocation,
 };

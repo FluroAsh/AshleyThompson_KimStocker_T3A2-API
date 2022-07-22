@@ -6,14 +6,14 @@ module.exports = {
       {
         address: '1 Sesame Street',
         city: 'Sydney',
-        postcode: 2386,
+        postcode: '2386',
         state: 'New South Wales',
         UserId: 1,
       },
       {
         address: '123 Fake Street',
         city: 'Melbourne',
-        postcode: 3000,
+        postcode: '3000',
         state: 'Victoria',
         UserId: 2,
       },
