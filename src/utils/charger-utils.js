@@ -62,6 +62,7 @@ async function getChargersByLocation(location) {
     include: [
       {
         model: Address,
+        attributes: { exclude: ['UserId'] },
         where: {
           [Op.or]: {
             city: { [Op.iLike]: `%${location}%` },
@@ -73,6 +74,11 @@ async function getChargersByLocation(location) {
       },
       {
         model: Plug,
+      },
+      {
+        model: User,
+        as: 'Host',
+        attributes: { exclude: ['email', 'password'] },
       },
     ],
   });
