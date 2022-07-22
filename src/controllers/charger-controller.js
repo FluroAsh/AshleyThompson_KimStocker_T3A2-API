@@ -5,6 +5,7 @@ const {
   getAllChargers,
   getChargerById,
   deleteChargerById,
+  getPlugId,
 } = require("../utils/charger-utils");
 const { findUser } = require("../utils/auth-utils");
 const { v4: uuidv4 } = require("uuid");
@@ -12,17 +13,35 @@ const {
   uploadImageToS3,
   getSignedS3Url,
 } = require("../services/awsS3-services");
+const plug = require("../models/plug");
 
 // TODO: Double check all res.status
 
 async function createCharger(req, res) {
   const data = { ...req.body };
 
-  console.log("FILE NAME", req.file);
-  const key = `uploads/${uuidv4()}-${req.file.originalname}`;
+  console.log("THIS IS FORM DATA", data);
 
-  data['bucket'] = process.env.AWS_BUCKET_NAME;
-  data['key'] = key;
+  // TODO: Handle error when user not found
+  const user = await findUser(data.username);
+
+  // if (user) {
+  //   // res.status(500)
+  //   res.json({error: "Pls log in first"})
+  // }
+  const plugId = await getPlugId(data.plugName);
+
+  console.log("THIS IS USER ", user);
+  data["UserId"] = user.id;
+  data["AddressId"] = user.Address.dataValues.id;
+  data["PlugId"] = plugId;
+
+  console.log("FILE NAME", req.file);
+  const key = `uploads/${uuidv4()}`;
+  // -${req.file.originalname}
+
+  data["bucket"] = process.env.AWS_BUCKET_NAME;
+  data["key"] = key;
 
   try {
     // transaction ensure the record will be rolledback if an error occured during the try/catch block
@@ -36,6 +55,7 @@ async function createCharger(req, res) {
       return res.json(newCharger);
     });
   } catch (err) {
+    console.log(err.message);
     res.status(500);
     return res.json({ error: err.message });
   }
@@ -97,7 +117,8 @@ async function updateCharger(req, res) {
       // TODO: Create function for the below
       const data = { ...req.body };
 
-      const key = `uploads/${uuidv4()}-${req.file.originalname}`;
+      const key = `uploads/${uuidv4()}`;
+      // -${req.file.originalname}
 
       data["bucket"] = process.env.AWS_BUCKET_NAME;
       data["key"] = key;

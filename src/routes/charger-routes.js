@@ -20,7 +20,7 @@ const fileFilter = (req, file, cb) => {
 
 const upload = multer({ 
     storage: storage,
-    limits: { fileSize:100000, files: 1 },
+    limits: { fileSize: 10_000_000, files: 1 },
     fileFilter,
     rename: function (fieldname, filename) {
         return filename.replace(/\W+/g, '-').toLowerCase();}

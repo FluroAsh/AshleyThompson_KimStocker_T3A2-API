@@ -1,5 +1,5 @@
-const { PublicAccessBlockConfiguration } = require('@aws-sdk/client-s3');
-const db = require('../models');
+const { PublicAccessBlockConfiguration } = require("@aws-sdk/client-s3");
+const db = require("../models");
 const { Charger, User, Address, Plug } = db;
 const Op = db.Sequelize.Op;
 
@@ -10,19 +10,22 @@ async function getAllChargers() {
       include: [
         {
           model: Address,
-          as: 'Address',
+          as: "Address",
         },
         {
           model: User,
-          as: 'User',
+          as: "User",
         },
       ],
     });
 
     return chargers;
   } catch (err) {
-    res.status(500);
-    return res.json({ error: err.message });
+
+    console.log(err.message)
+
+    // res.status(500);
+    // return res.json({ error: err.message });
   }
 }
 
@@ -35,30 +38,47 @@ async function getChargerById(id) {
       include: [
         {
           model: Address,
-          as: 'Address',
+          as: "Address",
         },
         {
           model: User,
-          as: 'User',
+          as: "User",
         },
       ],
     });
 
     return charger;
   } catch (err) {
-    res.status(500);
-    return res.json({ error: err.message });
+    // res.status(500);
+    // return res.json({ error: err.message });
+    console.log(err.message)
+
   }
 }
 
 async function deleteChargerById(id) {
-    Charger.destroy({
-        where: { id }
-      });
+  Charger.destroy({
+    where: { id },
+  });
+}
+
+async function getPlugId(plugName) {
+  try {
+    const plug = await Plug.findOne({
+      where: { plugName }
+    });
+
+    return plug.id;
+  } catch (err) {
+    console.log(err.message)
+    // res.status(500);
+    // return res.json({ error: err.message });
+  }
 }
 
 module.exports = {
   getAllChargers,
   getChargerById,
-  deleteChargerById
+  deleteChargerById,
+  getPlugId
 };
