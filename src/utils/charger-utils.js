@@ -22,7 +22,8 @@ async function getAllChargers() {
     return chargers;
   } catch (err) {
 
-    console.log(err.message)
+    console.log(err.message);
+    // TODO: propagate error
 
     // res.status(500);
     // return res.json({ error: err.message });
@@ -47,7 +48,7 @@ async function getChargerById(id) {
       ],
     });
 
-    return charger;
+    return charger.dataValues;
   } catch (err) {
     // res.status(500);
     // return res.json({ error: err.message });

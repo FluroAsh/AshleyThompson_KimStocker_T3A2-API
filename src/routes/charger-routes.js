@@ -3,10 +3,12 @@ const {
     getChargers, 
     createCharger, 
     updateCharger, 
-    deleteCharger 
+    deleteCharger,
+    getMyChargers
 } = require('../controllers/charger-controller')
 const express = require('express');
 const multer = require("multer");
+const { loginRequired } = require('../controllers/auth-controller');
 
 
 const storage = multer.memoryStorage();
@@ -30,10 +32,14 @@ const chargerRouter = express.Router();
 
 chargerRouter.get('/chargers', getChargers)
 chargerRouter.get('/chargers/:id', getCharger)
+
+chargerRouter.use(loginRequired)
 chargerRouter.post('/chargers/new', upload.single('image'), createCharger)
+chargerRouter.get('/chargers/mychargers', getMyChargers)
 chargerRouter.put('/chargers/:id', updateCharger)
 chargerRouter.patch('/chargers/:id', updateCharger)
 chargerRouter.delete('/chargers/:id', deleteCharger)
+
 
 
 module.exports = {

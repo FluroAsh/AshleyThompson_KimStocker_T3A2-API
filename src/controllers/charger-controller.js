@@ -49,7 +49,7 @@ async function createCharger(req, res) {
       const newCharger = await Charger.create(data, { transaction: t });
       await uploadImageToS3(req.file, key);
 
-      res.status(200);
+      res.status(204);
 
       // TODO: Exclude key, bucket and region out of the returned charger data
       return res.json(newCharger);
@@ -59,24 +59,6 @@ async function createCharger(req, res) {
     res.status(500);
     return res.json({ error: err.message });
   }
-}
-
-async function getChargers(req, res) {
-  const chargers = await getAllChargers();
-
-  const chargersWithUrls = await Promise.all(
-    chargers.map(async (charger) => {
-      const imageUrl = await getSignedS3Url(charger.bucket, charger.key);
-      return {
-        ...charger.toJSON(),
-        imageUrl,
-      };
-    })
-  );
-
-  res.status(201);
-  // TODO: Exclude key, bucket and region out of the returned charger data
-  res.send(chargersWithUrls);
 }
 
 async function getCharger(req, res) {
@@ -151,11 +133,33 @@ async function deleteCharger(req, res) {
   }
 }
 
-async function getUserChargers(req, res) {
+async function getChargers(req, res) {
+  const chargers = await getAllChargers();
+
+  const chargersWithUrls = await Promise.all(
+    chargers.map(async (charger) => {
+      const imageUrl = await getSignedS3Url(charger.bucket, charger.key);
+      return {
+        ...charger.toJSON(),
+        imageUrl,
+      };
+    })
+  );
+
+  console.log("CHARGER WITH URL GET CHARGERS", chargersWithUrls)
+  res.status(201);
+  // TODO: Exclude key, bucket and region out of the returned charger data
+  res.send(chargersWithUrls);
+}
+
+
+async function getMyChargers(req, res) {
+
+  console.log(req.user)
+
   try {
     // TODO handle errors and make userchargerwithurls a separated function
-
-    const user = await findUser(req.user.email);
+    const user = await findUser(req.user.username);
 
     const chargers = await Promise.all(
       Charger.findAll({
@@ -166,7 +170,7 @@ async function getUserChargers(req, res) {
     );
 
     const UserChargersWithUrls = await Promise.all(
-      chargers.map(async (charger) => {
+      chargers.dataValues.map(async (charger) => {
         const imageUrl = await getSignedS3Url(charger.bucket, charger.key);
         return {
           ...charger.toJSON(),
@@ -182,11 +186,13 @@ async function getUserChargers(req, res) {
   }
 }
 
+
+
 module.exports = {
   getCharger,
   getChargers,
   createCharger,
   updateCharger,
   deleteCharger,
-  getUserChargers,
+  getMyChargers
 };

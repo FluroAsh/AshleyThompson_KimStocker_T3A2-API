@@ -60,6 +60,8 @@ async function signIn(req, res) {
 // use loginRequired in other model routes. See example in user_controller (similar to before action authenticate in rails)
 const loginRequired = (req, res, next) => {
   if (req.user) {
+
+    // TODO: Add navigate back instead of go back to the root route
     next();
   } else {
     res.status(401);
