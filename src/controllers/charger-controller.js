@@ -52,7 +52,9 @@ async function createCharger(req, res) {
       res.status(204);
 
       // TODO: Exclude key, bucket and region out of the returned charger data
-      return res.json(newCharger);
+      // return res.json(newCharger);
+
+      res.send(chargersWithUrls);
     });
   } catch (err) {
     console.log(err.message);
@@ -64,9 +66,10 @@ async function createCharger(req, res) {
 async function getCharger(req, res) {
   try {
     const charger = await getChargerById(req.params.id);
-
-    if (!charger) {
-      throw Error;
+    if (charger === null) {
+      res.status(404);
+      res.json({ error: "No charger found" });
+      return;
     }
 
     const imageUrl = await getSignedS3Url(charger.bucket, charger.key);
@@ -80,10 +83,9 @@ async function getCharger(req, res) {
     res.status(200);
     res.send(chargerWithUrl);
   } catch (err) {
-    res.status(404);
-    res.json({ error: "No charger found" });
+    res.status(500);
+    return res.json({ error: err.message });
   }
-
   // TODO: Exclude key, bucket and region out of the returned charger data
 }
 
@@ -114,7 +116,8 @@ async function updateCharger(req, res) {
       res.status(200);
 
       // TODO: Exclude key, bucket and region out of the returned charger data
-      return res.json(updatedCharger);
+      // return res.json(updatedCharger);
+      res.send(updatedCharger);
     });
   } catch (err) {
     res.status(404);
@@ -146,47 +149,47 @@ async function getChargers(req, res) {
     })
   );
 
-  console.log("CHARGER WITH URL GET CHARGERS", chargersWithUrls)
-  res.status(201);
+  console.log("CHARGER WITH URL GET CHARGERS", chargersWithUrls);
+  res.status(200);
   // TODO: Exclude key, bucket and region out of the returned charger data
   res.send(chargersWithUrls);
 }
 
-
 async function getMyChargers(req, res) {
+  console.log("req.user", req.user);
+  if (req.user) {
+    try {
+      // TODO handle errors and make userchargerwithurls a separated function
+      const user = await findUser(req.user.username);
 
-  console.log(req.user)
-
-  try {
-    // TODO handle errors and make userchargerwithurls a separated function
-    const user = await findUser(req.user.username);
-
-    const chargers = await Promise.all(
-      Charger.findAll({
+      const chargers = await Charger.findAll({
         where: {
           UserId: user.id,
         },
-      })
-    );
+      });
 
-    const UserChargersWithUrls = await Promise.all(
-      chargers.dataValues.map(async (charger) => {
-        const imageUrl = await getSignedS3Url(charger.bucket, charger.key);
-        return {
-          ...charger.toJSON(),
-          imageUrl,
-        };
-      })
-    );
-    res.status(200);
-    res.send(UserChargersWithUrls);
-  } catch (err) {
-    res.status(500);
-    res.json({ error: "No chargers found" });
+      console.log("THIS IS MY CHARGERS", chargers);
+
+      const UserChargersWithUrls = await Promise.all(
+        chargers.map(async (charger) => {
+          const imageUrl = await getSignedS3Url(charger.bucket, charger.key);
+          return {
+            ...charger.toJSON(),
+            imageUrl,
+          };
+        })
+      );
+      res.status(200);
+      res.send(UserChargersWithUrls);
+    } catch (err) {
+      console.trace();
+      res.status(500);
+      res.json({ error: err.message });
+    }
+  } else {
+    res.json({ error: "log in the see your list of chargers" });
   }
 }
-
-
 
 module.exports = {
   getCharger,
@@ -194,5 +197,5 @@ module.exports = {
   createCharger,
   updateCharger,
   deleteCharger,
-  getMyChargers
+  getMyChargers,
 };

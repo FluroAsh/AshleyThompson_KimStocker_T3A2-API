@@ -31,14 +31,17 @@ const upload = multer({
 const chargerRouter = express.Router();
 
 chargerRouter.get('/chargers', getChargers)
-chargerRouter.get('/chargers/:id', getCharger)
+
+chargerRouter.get('/charger/:id', getCharger)
 
 chargerRouter.use(loginRequired)
-chargerRouter.post('/chargers/new', upload.single('image'), createCharger)
 chargerRouter.get('/chargers/mychargers', getMyChargers)
-chargerRouter.put('/chargers/:id', updateCharger)
-chargerRouter.patch('/chargers/:id', updateCharger)
-chargerRouter.delete('/chargers/:id', deleteCharger)
+
+chargerRouter.post('/charger/new', upload.single('image'), createCharger)
+
+chargerRouter.put('/charger/:id', updateCharger)
+chargerRouter.patch('/charger/:id', updateCharger)
+chargerRouter.delete('/charger/:id', deleteCharger)
 
 
 

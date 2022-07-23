@@ -21,7 +21,6 @@ async function getAllChargers() {
 
     return chargers;
   } catch (err) {
-
     console.log(err.message);
     // TODO: propagate error
 
@@ -32,29 +31,20 @@ async function getAllChargers() {
 
 async function getChargerById(id) {
   // TODO: eager loading doesnt work
-  try {
-    const charger = await Charger.findOne({
-      where: { id },
+  return await Charger.findOne({
+    where: { id },
 
-      include: [
-        {
-          model: Address,
-          as: "Address",
-        },
-        {
-          model: User,
-          as: "User",
-        },
-      ],
-    });
-
-    return charger.dataValues;
-  } catch (err) {
-    // res.status(500);
-    // return res.json({ error: err.message });
-    console.log(err.message)
-
-  }
+    include: [
+      {
+        model: Address,
+        as: "Address",
+      },
+      {
+        model: User,
+        as: "User",
+      },
+    ],
+  });
 }
 
 async function deleteChargerById(id) {
@@ -66,12 +56,12 @@ async function deleteChargerById(id) {
 async function getPlugId(plugName) {
   try {
     const plug = await Plug.findOne({
-      where: { plugName }
+      where: { plugName },
     });
 
     return plug.id;
   } catch (err) {
-    console.log(err.message)
+    console.log(err.message);
     // res.status(500);
     // return res.json({ error: err.message });
   }
@@ -81,5 +71,5 @@ module.exports = {
   getAllChargers,
   getChargerById,
   deleteChargerById,
-  getPlugId
+  getPlugId,
 };
