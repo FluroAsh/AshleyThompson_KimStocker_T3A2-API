@@ -1,6 +1,6 @@
 const db = require("../models");
 const sequelize = db.sequelize;
-const Charger = db.Charger;
+const { Charger, Address, User } = db;
 const {
   getAllChargers,
   getChargerById,
@@ -165,7 +165,16 @@ async function getMyChargers(req, res) {
       const chargers = await Charger.findAll({
         where: {
           UserId: user.id,
-        },
+        }, include: [
+          {
+            model: Address,
+            as: "Address",
+          },
+          {
+            model: User,
+            as: "User",
+          },
+        ],
       });
 
       console.log("THIS IS MY CHARGERS", chargers);
