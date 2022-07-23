@@ -1,5 +1,4 @@
 const db = require('../models');
-const sequelize = db.sequelize;
 const { Booking, User } = db;
 
 exports.getBookingById = (id) =>

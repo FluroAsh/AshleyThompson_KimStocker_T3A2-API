@@ -52,13 +52,43 @@ async function getChargerById(id) {
 }
 
 async function deleteChargerById(id) {
-    Charger.destroy({
-        where: { id }
-      });
+  Charger.destroy({
+    where: { id },
+  });
+}
+
+async function getChargersByLocation(location) {
+  const chargers = await Charger.findAll({
+    include: [
+      {
+        model: Address,
+        attributes: { exclude: ['UserId'] },
+        where: {
+          [Op.or]: {
+            city: { [Op.iLike]: `%${location}%` },
+            address: { [Op.iLike]: `%${location}%` },
+            postcode: location,
+            state: { [Op.iLike]: `%${location}%` },
+          },
+        },
+      },
+      {
+        model: Plug,
+      },
+      {
+        model: User,
+        as: 'Host',
+        attributes: { exclude: ['email', 'password'] },
+      },
+    ],
+  });
+
+  return chargers;
 }
 
 module.exports = {
   getAllChargers,
   getChargerById,
-  deleteChargerById
+  deleteChargerById,
+  getChargersByLocation,
 };
