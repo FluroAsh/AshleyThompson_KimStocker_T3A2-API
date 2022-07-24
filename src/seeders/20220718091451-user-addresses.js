@@ -8,14 +8,14 @@ module.exports = {
         city: "Sydney",
         postcode: "2386",
         state: "New South Wales",
-        HostId: 1,
+        UserId: 1,
       },
       {
         address: "123 Fake Street",
         city: "Melbourne",
         postcode: "3000",
         state: "Victoria",
-        HostId: 2,
+        UserId: 2,
       },
     ]);
   },
