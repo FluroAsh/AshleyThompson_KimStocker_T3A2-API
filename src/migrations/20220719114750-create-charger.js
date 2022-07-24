@@ -1,7 +1,7 @@
-'use strict';
+"use strict";
 module.exports = {
   async up(queryInterface, Sequelize) {
-    await queryInterface.createTable('Chargers', {
+    await queryInterface.createTable("Chargers", {
       id: {
         allowNull: false,
         autoIncrement: true,
@@ -28,37 +28,37 @@ module.exports = {
         allowNull: false,
       },
       status: {
-        type: Sequelize.ENUM('pending', 'active', 'disabled'),
+        type: Sequelize.ENUM("pending", "active", "disabled"),
       },
-      UserId: {
+      HostId: {
         type: Sequelize.INTEGER,
         allowNull: false,
         references: {
-          model: 'Users',
-          key: 'id',
+          model: "Users",
+          key: "id",
         },
-        onUpdate: 'CASCADE',
-        onDelete: 'SET NULL',
+        onUpdate: "CASCADE",
+        onDelete: "SET NULL",
       },
       AddressId: {
         type: Sequelize.INTEGER,
         allowNull: false,
         references: {
-          model: 'Addresses',
-          key: 'id',
+          model: "Addresses",
+          key: "id",
         },
-        onUpdate: 'CASCADE',
-        onDelete: 'SET NULL',
+        onUpdate: "CASCADE",
+        onDelete: "SET NULL",
       },
       PlugId: {
         type: Sequelize.INTEGER,
         allowNull: false,
         references: {
-          model: 'Plugs',
-          key: 'id',
+          model: "Plugs",
+          key: "id",
         },
-        onUpdate: 'CASCADE',
-        onDelete: 'SET NULL',
+        onUpdate: "CASCADE",
+        onDelete: "SET NULL",
       },
       createdAt: {
         allowNull: false,
@@ -71,6 +71,6 @@ module.exports = {
     });
   },
   async down(queryInterface, Sequelize) {
-    await queryInterface.dropTable('Chargers');
+    await queryInterface.dropTable("Chargers");
   },
 };

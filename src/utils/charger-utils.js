@@ -8,14 +8,21 @@ async function getAllChargers() {
   return await Charger.findAll({
     include: [
       {
-        model: Address,
-        as: "Address",
+        model: User,
+        as: "Host",
       },
       {
+<<<<<<< HEAD
         model: User,
         as: "User",
         attributes: { exclude: ["password", "createdAt", "updatedAt"] },
 
+||||||| e066c7c
+        model: User,
+        as: "User",
+=======
+        model: Address,
+>>>>>>> origin/dev
       },
     ],
   });
@@ -27,13 +34,13 @@ async function getChargerById(id) {
   return await Charger.findByPk(id, {
     include: [
       {
-        model: Address,
-        // attributes: { exclude: ['UserId'] },
-      },
-      {
         model: User,
         as: "User",
         attributes: { exclude: ["password", "createdAt", "updatedAt"] },
+      },
+      {
+        model: Address,
+        as: "Address",
       },
     ],
   });
