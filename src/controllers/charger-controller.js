@@ -52,9 +52,9 @@ async function createCharger(req, res) {
       res.status(204);
 
       // TODO: Exclude key, bucket and region out of the returned charger data
-      // return res.json(newCharger);
+      return res.json(newCharger);
 
-      res.send(chargersWithUrls);
+      // res.send(chargersWithUrls);
     });
   } catch (err) {
     console.log(err.message);
@@ -66,6 +66,8 @@ async function createCharger(req, res) {
 async function getCharger(req, res) {
   try {
     const charger = await getChargerById(req.params.id);
+
+    // TODO: handle all no found data like this
     if (charger === null) {
       res.status(404);
       res.json({ error: "No charger found" });
@@ -81,7 +83,7 @@ async function getCharger(req, res) {
     // TODO: handle return data excluding key,bucket info
 
     res.status(200);
-    res.send(chargerWithUrl);
+    res.json(chargerWithUrl);
   } catch (err) {
     res.status(500);
     return res.json({ error: err.message });
@@ -95,7 +97,9 @@ async function updateCharger(req, res) {
       const charger = await getChargerById(req.params.id);
 
       if (!charger) {
-        throw Error;
+        res.status(404);
+        res.json({ error: "No charger found" });
+        return;
       }
 
       // TODO: Create function for the below
@@ -117,7 +121,7 @@ async function updateCharger(req, res) {
 
       // TODO: Exclude key, bucket and region out of the returned charger data
       // return res.json(updatedCharger);
-      res.send(updatedCharger);
+      res.json(updatedCharger);
     });
   } catch (err) {
     res.status(404);
@@ -138,6 +142,12 @@ async function deleteCharger(req, res) {
 
 async function getChargers(req, res) {
   const chargers = await getAllChargers();
+
+  if (chargers === null) {
+    res.status(404);
+    res.json({ error: "No chargers found" });
+    return;
+  }
 
   const chargersWithUrls = await Promise.all(
     chargers.map(async (charger) => {
