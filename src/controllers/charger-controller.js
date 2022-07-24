@@ -18,7 +18,6 @@ const {
 
 /** S3 Charger URL Helper Method */
 async function getChargersWithUrl(chargers) {
-  console.log('Chargers:', chargers);
   const chargersWithUrls = await Promise.all(
     chargers.map(async (charger) => {
       const imageUrl = await getSignedS3Url(charger.bucket, charger.key);
