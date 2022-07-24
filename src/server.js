@@ -1,16 +1,16 @@
-const express = require('express');
-const cors = require('cors');
-require('dotenv').config();
-const multer = require('multer');
+const express = require("express");
+const cors = require("cors");
+require("dotenv").config();
+const multer = require("multer");
 
 const app = express();
 const PORT = process.env.PORT || 3001;
-const jwt = require('jsonwebtoken');
-const { authRouter } = require('./routes/auth-routes.js');
-const { userRouter } = require('./routes/user-routes.js');
-const { chargerRouter } = require('./routes/charger-routes');
-const { vehiclesRouter } = require('./routes/vehicle-routes');
-const { bookingRouter } = require('./routes/booking-routes');
+const jwt = require("jsonwebtoken");
+const { authRouter } = require("./routes/auth-routes.js");
+const { userRouter } = require("./routes/user-routes.js");
+const { chargerRouter } = require("./routes/charger-routes");
+const { vehiclesRouter } = require("./routes/vehicle-routes");
+const { bookingRouter } = require("./routes/booking-routes");
 
 app.use(cors());
 
@@ -25,13 +25,13 @@ app.use(express.urlencoded({ extended: true }));
 app.use((req, res, next) => {
   if (req.headers && req.headers.authorization) {
     jwt.verify(
-      req.headers.authorization.split(' ')[1],
+      req.headers.authorization.split(" ")[1],
       process.env.SECRET_KEY,
       (err, user) => {
         if (err) {
           req.user = undefined;
         } else {
-          console.log('decode', user);
+          console.log("decode", user);
           req.user = user;
         }
         next();
@@ -63,11 +63,11 @@ app.use((req, res, next) => {
   // }
 });
 
-app.use('/auth', authRouter);
-app.use('/', userRouter);
-app.use('/', vehiclesRouter);
-app.use('/', chargerRouter);
-app.use('/', bookingRouter);
+app.use("/auth", authRouter);
+app.use("/", userRouter);
+app.use("/", vehiclesRouter);
+app.use("/", chargerRouter);
+app.use("/", bookingRouter);
 
 module.exports = {
   app,

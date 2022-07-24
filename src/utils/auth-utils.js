@@ -11,7 +11,7 @@ async function findUser(username) {
     });
     return user.dataValues;
   } catch (err) {
-    console.log(err.message)
+    console.log(err.message);
 
     // res.status(500);
     // return res.json({ error: err.message });

@@ -1,4 +1,4 @@
-const { getAllVehicles } = require('../utils/vehicle-utils');
+const { getAllVehicles } = require("../utils/vehicle-utils");
 
 async function getVehicles(req, res) {
   try {
@@ -8,7 +8,7 @@ async function getVehicles(req, res) {
     }
     res.status(200).json(vehicles);
   } catch (err) {
-    res.status(404).json({ error: 'No vehicles found!' });
+    res.status(404).json({ error: "No vehicles found!" });
   }
 }
 
