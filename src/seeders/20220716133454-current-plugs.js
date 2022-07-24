@@ -4,17 +4,17 @@ module.exports = {
   async up(queryInterface, Sequelize) {
     return await queryInterface.bulkInsert('Plugs', [
       {
-        plugName: 'Type 2 (Mennekes)',
+        plugName: 'typeOne',
         createdAt: new Date(),
         updatedAt: new Date(),
       },
       {
-        plugName: 'Combined Charging System (CCS)',
+        plugName: 'typeTwo',
         createdAt: new Date(),
         updatedAt: new Date(),
       },
       {
-        plugName: 'Charge de Move (CHAdeMO)',
+        plugName: 'typeThree',
         createdAt: new Date(),
         updatedAt: new Date(),
       },

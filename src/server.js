@@ -22,7 +22,7 @@ app.use(express.urlencoded({ extended: true }));
 // EG >> app.use('/', router) for charging stations
 
 /** Verify JWT if incoming request contains authorization header */
-app.use((error, req, res, next) => {
+app.use((req, res, next) => {
   if (req.headers && req.headers.authorization) {
     jwt.verify(
       req.headers.authorization.split(' ')[1],
@@ -42,25 +42,25 @@ app.use((error, req, res, next) => {
     next();
   }
 
-  if (error instanceof multer.MulterError) {
-    if (error.code === 'LIMIT_FILE_SIZE') {
-      return res.status(400).json({
-        message: 'File is too large',
-      });
-    }
+  // if (error instanceof multer.MulterError) {
+  //   if (error.code === 'LIMIT_FILE_SIZE') {
+  //     return res.status(400).json({
+  //       message: 'File is too large',
+  //     });
+  //   }
 
-    if (error.code === 'LIMIT_FILE_COUNT') {
-      return res.status(400).json({
-        message: 'File limit reached',
-      });
-    }
+  //   if (error.code === 'LIMIT_FILE_COUNT') {
+  //     return res.status(400).json({
+  //       message: 'File limit reached',
+  //     });
+  //   }
 
-    if (error.code === 'LIMIT_UNEXPECTED_FILE') {
-      return res.status(400).json({
-        message: 'File must be an image',
-      });
-    }
-  }
+  //   if (error.code === 'LIMIT_UNEXPECTED_FILE') {
+  //     return res.status(400).json({
+  //       message: 'File must be an image',
+  //     });
+  //   }
+  // }
 });
 
 app.use('/auth', authRouter);

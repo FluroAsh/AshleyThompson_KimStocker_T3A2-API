@@ -38,9 +38,9 @@ async function signIn(req, res) {
   try {
     // const user = findUser(req.body.email);
 
-    const user = await findUser(req.body.email);
+    const user = await findUser(req.body.username);
 
-    const { username, email, id, password } = user.dataValues;
+    const { username, email, id, password } = user;
 
     if (!user || !bcrypt.compareSync(req.body.password, password)) {
       res.status(400);
@@ -60,6 +60,8 @@ async function signIn(req, res) {
 // use loginRequired in other model routes. See example in user_controller (similar to before action authenticate in rails)
 const loginRequired = (req, res, next) => {
   if (req.user) {
+
+    // TODO: Add navigate back instead of go back to the root route
     next();
   } else {
     res.status(401);

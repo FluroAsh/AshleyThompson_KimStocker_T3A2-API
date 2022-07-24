@@ -1,5 +1,5 @@
-const { PublicAccessBlockConfiguration } = require('@aws-sdk/client-s3');
-const db = require('../models');
+const { PublicAccessBlockConfiguration } = require("@aws-sdk/client-s3");
+const db = require("../models");
 const { Charger, User, Address, Plug } = db;
 const Op = db.Sequelize.Op;
 
@@ -10,11 +10,11 @@ async function getAllChargers() {
       include: [
         {
           model: Address,
-          as: 'Address',
+          as: "Address",
         },
         {
           model: User,
-          as: 'User',
+          as: "User",
         },
       ],
     });
@@ -35,11 +35,11 @@ async function getChargerById(id) {
       include: [
         {
           model: Address,
-          as: 'Address',
+          as: "Address",
         },
         {
           model: User,
-          as: 'User',
+          as: "User",
         },
       ],
     });
@@ -62,7 +62,7 @@ async function getChargersByLocation(location) {
     include: [
       {
         model: Address,
-        attributes: { exclude: ['UserId'] },
+        attributes: { exclude: ["UserId"] },
         where: {
           [Op.or]: {
             city: { [Op.iLike]: `%${location}%` },
@@ -77,8 +77,8 @@ async function getChargersByLocation(location) {
       },
       {
         model: User,
-        as: 'Host',
-        attributes: { exclude: ['email', 'password'] },
+        as: "Host",
+        attributes: { exclude: ["email", "password"] },
       },
     ],
   });

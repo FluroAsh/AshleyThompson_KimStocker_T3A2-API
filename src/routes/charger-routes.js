@@ -4,38 +4,47 @@ const {
   createCharger,
   updateCharger,
   deleteCharger,
+  getMyChargers,
   searchChargersLocation,
-} = require('../controllers/charger-controller');
-const express = require('express');
-const multer = require('multer');
+} = require("../controllers/charger-controller");
+const express = require("express");
+const multer = require("multer");
+const { loginRequired } = require("../controllers/auth-controller");
 
 const storage = multer.memoryStorage();
 const fileFilter = (req, file, cb) => {
-  if (file.mimetype.split('/')[0] === 'image') {
+  if (file.mimetype.split("/")[0] === "image") {
     cb(null, true);
   } else {
-    cb(new multer.MulterError('LIMIT_UNEXPECTED_FILE'), false);
+    cb(new multer.MulterError("LIMIT_UNEXPECTED_FILE"), false);
   }
 };
 
 const upload = multer({
   storage: storage,
-  limits: { fileSize: 100000, files: 1 },
+  limits: { fileSize: 10_000_000, files: 1 },
   fileFilter,
   rename: function(fieldname, filename) {
-    return filename.replace(/\W+/g, '-').toLowerCase();
+    return filename.replace(/\W+/g, "-").toLowerCase();
   },
 });
 
 const chargerRouter = express.Router();
 
-chargerRouter.get('/search', searchChargersLocation);
-chargerRouter.get('/chargers', getChargers);
-chargerRouter.get('/chargers/:id', getCharger);
-chargerRouter.post('/chargers/new', upload.single('image'), createCharger);
-chargerRouter.put('/chargers/:id', updateCharger);
-chargerRouter.patch('/chargers/:id', updateCharger);
-chargerRouter.delete('/chargers/:id', deleteCharger);
+chargerRouter.get("/chargers", getChargers);
+
+chargerRouter.get("/charger/:id", getCharger);
+
+chargerRouter.get("/search", searchChargersLocation);
+
+chargerRouter.use(loginRequired);
+chargerRouter.get("/chargers/mychargers", getMyChargers);
+
+chargerRouter.post("/charger/new", upload.single("image"), createCharger);
+
+chargerRouter.put("/charger/:id", updateCharger);
+chargerRouter.patch("/charger/:id", updateCharger);
+chargerRouter.delete("/charger/:id", deleteCharger);
 
 module.exports = {
   chargerRouter,
