@@ -3,8 +3,8 @@ const { Model } = require("sequelize");
 module.exports = (sequelize, DataTypes) => {
   class Charger extends Model {
     static associate(models) {
-      Charger.belongsTo(models.User, { as: "Host" });
-      Charger.belongsTo(models.Address, { foreignKey: "HostId" });
+      Charger.belongsTo(models.User);
+      Charger.belongsTo(models.Address);
       Charger.hasMany(models.Booking);
       Charger.belongsTo(models.Plug);
     }

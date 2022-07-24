@@ -12,7 +12,17 @@ async function getAllChargers() {
         as: "Host",
       },
       {
+<<<<<<< HEAD
+        model: User,
+        as: "User",
+        attributes: { exclude: ["password", "createdAt", "updatedAt"] },
+
+||||||| e066c7c
+        model: User,
+        as: "User",
+=======
         model: Address,
+>>>>>>> origin/dev
       },
     ],
   });
@@ -25,28 +35,16 @@ async function getChargerById(id) {
     include: [
       {
         model: User,
-        as: "Host",
+        as: "User",
+        attributes: { exclude: ["password", "createdAt", "updatedAt"] },
       },
       {
         model: Address,
+        as: "Address",
       },
     ],
   });
 }
-// return await Charger.findOne({
-//   where: { id },
-
-//   include: [
-//     {
-//       model: Address,
-//       as: "Address",
-//     },
-//     {
-//       model: User,
-//       as: "User",
-//     },
-//   ],
-// });
 
 async function deleteChargerById(id) {
   Charger.destroy({
@@ -74,8 +72,8 @@ async function getChargersByLocation(location) {
       },
       {
         model: User,
-        as: "Host",
-        attributes: { exclude: ["email", "password"] },
+        as: "User",
+        attributes: { exclude: ["password", "createdAt", "updatedAt"] },
       },
     ],
   });
