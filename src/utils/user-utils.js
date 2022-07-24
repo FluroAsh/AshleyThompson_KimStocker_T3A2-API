@@ -1,4 +1,4 @@
-const db = require('../models');
+const db = require("../models");
 const { User, Address, Vehicle, UserVehicle } = db;
 
 exports.getAllUsers = () => User.findAll();
@@ -9,14 +9,14 @@ exports.getUserById = (id) =>
     include: [
       {
         model: Address,
-        attributes: { exclude: ['UserId'] },
+        attributes: { exclude: ["HostId"] },
       },
       {
         model: UserVehicle,
         include: [
           {
             model: Vehicle,
-            attributes: { exclude: ['createdAt', 'updatedAt'] },
+            attributes: { exclude: ["createdAt", "updatedAt"] },
           },
         ],
       },
