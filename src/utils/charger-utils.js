@@ -14,7 +14,7 @@ async function getAllChargers() {
       },
       {
         model: Address,
-        as: "Address"
+        as: "Address",
       },
     ],
   });
