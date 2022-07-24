@@ -4,7 +4,8 @@ const {
     createCharger, 
     updateCharger, 
     deleteCharger,
-    getMyChargers
+    getMyChargers,
+    searchChargersLocation
 } = require('../controllers/charger-controller')
 const express = require('express');
 const multer = require("multer");
@@ -42,7 +43,7 @@ chargerRouter.post('/charger/new', upload.single('image'), createCharger)
 chargerRouter.put('/charger/:id', updateCharger)
 chargerRouter.patch('/charger/:id', updateCharger)
 chargerRouter.delete('/charger/:id', deleteCharger)
-
+chargerRouter.get('/search', searchChargersLocation);
 
 
 module.exports = {

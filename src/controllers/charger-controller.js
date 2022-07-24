@@ -253,4 +253,5 @@ module.exports = {
   updateCharger,
   deleteCharger,
   getMyChargers,
+  searchChargersLocation
 };
