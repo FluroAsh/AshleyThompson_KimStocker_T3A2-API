@@ -1,9 +1,9 @@
-const db = require('../models');
+const db = require("../models");
 const User = db.User;
 const Op = db.Sequelize.Op;
-const jwt = require('jsonwebtoken');
-const { findUser } = require('../utils/auth-utils.js');
-const bcrypt = require('bcrypt');
+const jwt = require("jsonwebtoken");
+const { findUser } = require("../utils/auth-utils.js");
+const bcrypt = require("bcrypt");
 
 // TODO check the password and password_confirmation match can be done in front end?
 
@@ -14,8 +14,8 @@ async function signUp(req, res) {
 
       const { username, email, id } = newUser.dataValues;
 
-      console.log('new User----', newUser.dataValues);
-      console.log('username----', username);
+      console.log("new User----", newUser.dataValues);
+      console.log("username----", username);
 
       const token = jwt.sign({ username, email, id }, process.env.SECRET_KEY);
 
@@ -29,7 +29,7 @@ async function signUp(req, res) {
   } else {
     // res.status(402)
     return res.json({
-      error: 'Password confirmation does not match password entered',
+      error: "Password confirmation does not match password entered",
     });
   }
 }
@@ -44,7 +44,7 @@ async function signIn(req, res) {
 
     if (!user || !bcrypt.compareSync(req.body.password, password)) {
       res.status(400);
-      return res.json({ error: 'authentication failed' });
+      return res.json({ error: "authentication failed" });
     } else {
       res.status(200);
       //res.send(user.username)
@@ -60,12 +60,11 @@ async function signIn(req, res) {
 // use loginRequired in other model routes. See example in user_controller (similar to before action authenticate in rails)
 const loginRequired = (req, res, next) => {
   if (req.user) {
-
     // TODO: Add navigate back instead of go back to the root route
     next();
   } else {
     res.status(401);
-    return res.json({ error: 'Unauthorised operation' });
+    return res.json({ error: "Unauthorised operation" });
   }
 };
 

@@ -24,7 +24,7 @@ const upload = multer({
   storage: storage,
   limits: { fileSize: 10_000_000, files: 1 },
   fileFilter,
-  rename: function(fieldname, filename) {
+  rename: function (fieldname, filename) {
     return filename.replace(/\W+/g, "-").toLowerCase();
   },
 });

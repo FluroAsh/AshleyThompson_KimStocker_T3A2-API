@@ -27,6 +27,6 @@ async function getSignedS3Url(bucket, key, expires = 3600) {
 }
 
 module.exports = {
-    uploadImageToS3,
-    getSignedS3Url
-}
+  uploadImageToS3,
+  getSignedS3Url,
+};
