@@ -9,20 +9,12 @@ async function getAllChargers() {
     include: [
       {
         model: User,
-        as: "Host",
-      },
-      {
-<<<<<<< HEAD
-        model: User,
         as: "User",
         attributes: { exclude: ["password", "createdAt", "updatedAt"] },
-
-||||||| e066c7c
-        model: User,
-        as: "User",
-=======
+      },
+      {
         model: Address,
->>>>>>> origin/dev
+        as: "Address",
       },
     ],
   });
