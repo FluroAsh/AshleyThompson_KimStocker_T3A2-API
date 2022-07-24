@@ -1,4 +1,4 @@
-const db = require("../models");
+const db = require('../models');
 const sequelize = db.sequelize;
 const { Charger, Address, User } = db;
 const {
@@ -16,6 +16,42 @@ const {
 const plug = require("../models/plug");
 
 // TODO: Double check all res.status
+
+/** S3 Charger URL Helper Method */
+async function getChargersWithUrl(chargers) {
+  console.log('Chargers:', chargers);
+  const chargersWithUrls = await Promise.all(
+    chargers.map(async (charger) => {
+      const imageUrl = await getSignedS3Url(charger.bucket, charger.key);
+      return {
+        ...charger.toJSON(),
+        imageUrl,
+      };
+    })
+  );
+  return chargersWithUrls;
+}
+
+/** Action Methods */
+async function searchChargersLocation(req, res) {
+  // Query will always be received as a string
+  let { location } = req.query;
+  // frontend replaces spaces with +'s and trims leading and trailing spaces
+  location = location.replaceAll('+', ' ');
+  try {
+    const chargers = await getChargersByLocation(location);
+    // Even if 0 objects returned, will return an empty object (which equates to true)
+    // Thus check length of Object keys array (should be 0 if empty)
+    if (!Object.keys(chargers).length) {
+      return res.status(404).json({ error: 'No chargers found' });
+    }
+
+    const urlChargers = await getChargersWithUrl(chargers);
+    res.status(200).json(urlChargers);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+}
 
 async function createCharger(req, res) {
   const data = { ...req.body };
@@ -108,8 +144,8 @@ async function updateCharger(req, res) {
       const key = `uploads/${uuidv4()}`;
       // -${req.file.originalname}
 
-      data["bucket"] = process.env.AWS_BUCKET_NAME;
-      data["key"] = key;
+      data['bucket'] = process.env.AWS_BUCKET_NAME;
+      data['key'] = key;
       ////
 
       const updatedCharger = await charger.update(data, { transaction: t });
