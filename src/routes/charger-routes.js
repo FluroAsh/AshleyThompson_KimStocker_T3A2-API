@@ -14,10 +14,10 @@ const { loginRequired } = require('../controllers/auth-controller');
 
 const storage = multer.memoryStorage();
 const fileFilter = (req, file, cb) => {
-  if (file.mimetype.split('/')[0] === 'image') {
+  if (file.mimetype.split("/")[0] === "image") {
     cb(null, true);
   } else {
-    cb(new multer.MulterError('LIMIT_UNEXPECTED_FILE'), false);
+    cb(new multer.MulterError("LIMIT_UNEXPECTED_FILE"), false);
   }
 };
 
@@ -31,20 +31,20 @@ const upload = multer({
 
 const chargerRouter = express.Router();
 
-chargerRouter.get('/chargers', getChargers)
+chargerRouter.get("/chargers", getChargers);
 
-chargerRouter.get('/charger/:id', getCharger)
+chargerRouter.get("/charger/:id", getCharger);
 
-chargerRouter.use(loginRequired)
-chargerRouter.get('/chargers/mychargers', getMyChargers)
+chargerRouter.get("/search", searchChargersLocation);
 
-chargerRouter.post('/charger/new', upload.single('image'), createCharger)
+chargerRouter.use(loginRequired);
+chargerRouter.get("/chargers/mychargers", getMyChargers);
 
-chargerRouter.put('/charger/:id', updateCharger)
-chargerRouter.patch('/charger/:id', updateCharger)
-chargerRouter.delete('/charger/:id', deleteCharger)
-chargerRouter.get('/search', searchChargersLocation);
+chargerRouter.post("/charger/new", upload.single("image"), createCharger);
 
+chargerRouter.put("/charger/:id", updateCharger);
+chargerRouter.patch("/charger/:id", updateCharger);
+chargerRouter.delete("/charger/:id", deleteCharger);
 
 module.exports = {
   chargerRouter,
