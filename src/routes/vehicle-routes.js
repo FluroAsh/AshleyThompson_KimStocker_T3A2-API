@@ -1,9 +1,9 @@
-const express = require('express');
+const express = require("express");
 const vehiclesRouter = express.Router();
 
-const { getVehicles } = require('../controllers/vehicle-controller');
+const { getVehicles } = require("../controllers/vehicle-controller");
 
-vehiclesRouter.get('/vehicles', getVehicles);
+vehiclesRouter.get("/vehicles", getVehicles);
 
 module.exports = {
   vehiclesRouter,

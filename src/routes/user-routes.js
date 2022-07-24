@@ -1,12 +1,12 @@
-const express = require('express');
+const express = require("express");
 const userRouter = express.Router();
 
-const { getUsers, getUser } = require('../controllers/user-controller');
-const { loginRequired } = require('../controllers/auth-controller');
+const { getUsers, getUser } = require("../controllers/user-controller");
+const { loginRequired } = require("../controllers/auth-controller");
 
 /** 'Public' requests */
-userRouter.get('/users', getUsers);
-userRouter.get('/user/:id', getUser);
+userRouter.get("/users", getUsers);
+userRouter.get("/user/:id", getUser);
 
 /** 'Private'  requests */
 /**

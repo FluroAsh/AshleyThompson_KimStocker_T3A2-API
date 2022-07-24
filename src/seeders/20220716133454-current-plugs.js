@@ -1,20 +1,20 @@
-'use strict';
+"use strict";
 
 module.exports = {
   async up(queryInterface, Sequelize) {
-    return await queryInterface.bulkInsert('Plugs', [
+    return await queryInterface.bulkInsert("Plugs", [
       {
-        plugName: 'typeOne',
+        plugName: "typeOne",
         createdAt: new Date(),
         updatedAt: new Date(),
       },
       {
-        plugName: 'typeTwo',
+        plugName: "typeTwo",
         createdAt: new Date(),
         updatedAt: new Date(),
       },
       {
-        plugName: 'typeThree',
+        plugName: "typeThree",
         createdAt: new Date(),
         updatedAt: new Date(),
       },
@@ -22,7 +22,7 @@ module.exports = {
   },
 
   async down(queryInterface, Sequelize) {
-    return queryInterface.bulkDelete('Plugs', null, {
+    return queryInterface.bulkDelete("Plugs", null, {
       cascade: true,
       truncate: true,
       restartIdentity: true,
