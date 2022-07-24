@@ -1,4 +1,4 @@
-const db = require('../models');
+const db = require("../models");
 const { Booking, User } = db;
 
 exports.getBookingById = (id) =>
@@ -6,13 +6,8 @@ exports.getBookingById = (id) =>
     include: [
       {
         model: User,
-        as: 'Buyer',
-        attributes: { exclude: ['password', 'createdAt', 'updatedAt'] },
-      },
-      {
-        model: User,
-        as: 'Host',
-        attributes: { exclude: ['password', 'createdAt', 'updatedAt'] },
+        as: "User",
+        attributes: { exclude: ["password", "createdAt", "updatedAt"] },
       },
     ],
   });
@@ -22,13 +17,8 @@ exports.getAllBookings = () =>
     include: [
       {
         model: User,
-        as: 'Buyer',
-        attributes: { exclude: ['password', 'createdAt', 'updatedAt'] },
-      },
-      {
-        model: User,
-        as: 'Host',
-        attributes: { exclude: ['password', 'createdAt', 'updatedAt'] },
+        as: "User",
+        attributes: { exclude: ["password", "createdAt", "updatedAt"] },
       },
     ],
   });
