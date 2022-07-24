@@ -9,7 +9,7 @@ exports.getUserById = (id) =>
     include: [
       {
         model: Address,
-        attributes: { exclude: ["HostId"] },
+        attributes: { exclude: ["UserId"] },
       },
       {
         model: UserVehicle,

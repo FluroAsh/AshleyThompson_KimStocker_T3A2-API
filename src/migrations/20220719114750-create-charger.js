@@ -30,7 +30,7 @@ module.exports = {
       status: {
         type: Sequelize.ENUM("pending", "active", "disabled"),
       },
-      HostId: {
+      UserId: {
         type: Sequelize.INTEGER,
         allowNull: false,
         references: {
