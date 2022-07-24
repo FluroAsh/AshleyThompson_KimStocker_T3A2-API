@@ -5,51 +5,49 @@ const Op = db.Sequelize.Op;
 
 /** Returns a promise */
 async function getAllChargers() {
-  try {
-    const chargers = await Charger.findAll({
-      include: [
-        {
-          model: Address,
-          as: "Address",
-        },
-        {
-          model: User,
-          as: "User",
-        },
-      ],
-    });
-
-    return chargers;
-  } catch (err) {
-    res.status(500);
-    return res.json({ error: err.message });
-  }
+  return await Charger.findAll({
+    include: [
+      {
+        model: Address,
+        as: "Address",
+      },
+      {
+        model: User,
+        as: "User",
+      },
+    ],
+  });
 }
 
 async function getChargerById(id) {
   // TODO: eager loading doesnt work
-  try {
-    const charger = await Charger.findOne({
-      where: { id },
 
-      include: [
-        {
-          model: Address,
-          as: "Address",
-        },
-        {
-          model: User,
-          as: "User",
-        },
-      ],
-    });
-
-    return charger;
-  } catch (err) {
-    res.status(500);
-    return res.json({ error: err.message });
-  }
+  return await Charger.findByPk(id, {
+    include: [
+      {
+        model: Address,
+        // attributes: { exclude: ['UserId'] },
+      },
+      {
+        model: User,
+      },
+    ],
+  });
 }
+// return await Charger.findOne({
+//   where: { id },
+
+//   include: [
+//     {
+//       model: Address,
+//       as: "Address",
+//     },
+//     {
+//       model: User,
+//       as: "User",
+//     },
+//   ],
+// });
 
 async function deleteChargerById(id) {
   Charger.destroy({
@@ -86,9 +84,18 @@ async function getChargersByLocation(location) {
   return chargers;
 }
 
+async function getPlugId(plugName) {
+  const plug = await Plug.findOne({
+    where: { plugName },
+  });
+
+  return plug.id;
+}
+
 module.exports = {
   getAllChargers,
   getChargerById,
   deleteChargerById,
+  getPlugId,
   getChargersByLocation,
 };
