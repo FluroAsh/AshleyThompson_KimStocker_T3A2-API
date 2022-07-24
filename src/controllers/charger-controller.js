@@ -195,7 +195,7 @@ async function getChargers(req, res) {
     })
   );
 
-  console.log("CHARGER WITH URL GET CHARGERS", chargersWithUrls);
+  // console.log("CHARGER WITH URL GET CHARGERS", chargersWithUrls);
   res.status(200);
   // TODO: Exclude key, bucket and region out of the returned charger data
   res.send(chargersWithUrls);
