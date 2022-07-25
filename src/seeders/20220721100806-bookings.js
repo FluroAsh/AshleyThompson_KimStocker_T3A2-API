@@ -1,28 +1,41 @@
 "use strict";
-const { randomDate } = require("../utils/helpers");
+
+
+function getRandomInt(min, max) {
+  min = Math.ceil(min);
+  max = Math.floor(max);
+  return Math.floor(Math.random() * (max - min) + min);
+}
+
+function randomDate(){
+  let start = new Date(); // 'today'
+  let end = new Date(2023, 0, 1); // Jan 1st 2023
+
+  return new Date(
+    start.getTime() + Math.random() * (end.getTime() - start.getTime())
+  );
+};
+
+
+const bookings = [...Array(15)].map((booking) => {
+  const status = ["approved", "rejected", "pending", "cancelled"];
+  const statusIndex = getRandomInt(0, 3);
+
+  return {
+    UserId: getRandomInt(1, 10),
+    ChargerId: getRandomInt(1, 15),
+    bookingDate: randomDate(),
+    price: getRandomInt(20, 50),
+    status: status[statusIndex],
+    createdAt: new Date(),
+    updatedAt: new Date(),
+  };
+});
+
 
 module.exports = {
   async up(queryInterface, Sequelize) {
-    return queryInterface.bulkInsert("Bookings", [
-      {
-        UserId: 2,
-        ChargerId: 1,
-        bookingDate: randomDate(),
-        price: 2000,
-        status: "pending",
-        createdAt: new Date(),
-        updatedAt: new Date(),
-      },
-      {
-        UserId: 1,
-        ChargerId: 2,
-        bookingDate: randomDate(),
-        price: 4000,
-        status: "pending",
-        createdAt: new Date(),
-        updatedAt: new Date(),
-      },
-    ]);
+    return queryInterface.bulkInsert("Bookings", bookings);
   },
 
   async down(queryInterface, Sequelize) {
