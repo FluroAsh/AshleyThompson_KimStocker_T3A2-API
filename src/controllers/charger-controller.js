@@ -46,7 +46,9 @@ async function searchChargersLocation(req, res) {
       return res.status(404).json({ error: "No chargers found" });
     }
 
-    const urlChargers = await getChargersWithUrl(chargers);
+    const filteredChargers = chargers.filter((charger) => charger.status === "active" && req.user.username !== charger.User.username )
+
+    const urlChargers = await getChargersWithUrl(filteredChargers);
     res.status(200).json(urlChargers);
   } catch (err) {
     res.status(500).json({ error: err.message });
@@ -185,17 +187,10 @@ async function getChargers(req, res) {
     return;
   }
 
-  const chargersWithUrls = await Promise.all(
-    chargers.map(async (charger) => {
-      const imageUrl = await getSignedS3Url(charger.bucket, charger.key);
-      return {
-        ...charger.toJSON(),
-        imageUrl,
-      };
-    })
-  );
+  const filteredChargers = chargers.filter((charger) => charger.status === "active" && req.user.username !== charger.User.username )
+  
+  const chargersWithUrls = await getChargersWithUrl(filteredChargers);
 
-  // console.log("CHARGER WITH URL GET CHARGERS", chargersWithUrls);
   res.status(200);
   // TODO: Exclude key, bucket and region out of the returned charger data
   res.send(chargersWithUrls);
@@ -226,15 +221,8 @@ async function getMyChargers(req, res) {
 
       console.log("THIS IS MY CHARGERS", chargers);
 
-      const UserChargersWithUrls = await Promise.all(
-        chargers.map(async (charger) => {
-          const imageUrl = await getSignedS3Url(charger.bucket, charger.key);
-          return {
-            ...charger.toJSON(),
-            imageUrl,
-          };
-        })
-      );
+      const UserChargersWithUrls = await getChargersWithUrl(chargers);
+
       res.status(200);
       res.send(UserChargersWithUrls);
     } catch (err) {
