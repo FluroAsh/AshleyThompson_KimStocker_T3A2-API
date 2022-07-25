@@ -10,15 +10,13 @@ module.exports = (sequelize, DataTypes) => {
   }
   Booking.init(
     {
-      UserId: DataTypes.INTEGER,
-      ChargerId: DataTypes.INTEGER,
       bookingDate: DataTypes.DATE,
       price: DataTypes.INTEGER,
-      status: DataTypes.ENUM("approved", "rejected", "pending", "cancelled"),
+      status: DataTypes.ENUM("approved", "rejected", "pending", "cancelled")
     },
     {
       sequelize,
-      modelName: "Booking",
+      modelName: "Booking"
     }
   );
   return Booking;
