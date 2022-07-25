@@ -6,13 +6,13 @@ const {
   getChargerById,
   deleteChargerById,
   getPlugId,
-  getChargersByLocation,
+  getChargersByLocation
 } = require("../utils/charger-utils");
 const { findUser } = require("../utils/auth-utils");
 const { v4: uuidv4 } = require("uuid");
 const {
   uploadImageToS3,
-  getSignedS3Url,
+  getSignedS3Url
 } = require("../services/awsS3-services");
 const plug = require("../models/plug");
 
@@ -21,11 +21,11 @@ const plug = require("../models/plug");
 /** S3 Charger URL Helper Method */
 async function getChargersWithUrl(chargers) {
   const chargersWithUrls = await Promise.all(
-    chargers.map(async (charger) => {
+    chargers.map(async charger => {
       const imageUrl = await getSignedS3Url(charger.bucket, charger.key);
       return {
         ...charger.toJSON(),
-        imageUrl,
+        imageUrl
       };
     })
   );
@@ -40,13 +40,21 @@ async function searchChargersLocation(req, res) {
   location = location.replaceAll("+", " ");
   try {
     const chargers = await getChargersByLocation(location);
-    // Even if 0 objects returned, will return an empty object (which equates to true)
-    // Thus check length of Object keys array (should be 0 if empty)
-    if (!Object.keys(chargers).length) {
+    // Uses the ?. (optional chaining method) to return undefined if username doesn't exist
+    // resulting in no match between req.user.username and charger.User.username
+    const filteredChargers = chargers.filter(
+      charger =>
+        charger.status === "active" &&
+        req.user?.username !== charger.User.username
+    );
+
+    /**
+     * Chargers that return empty object === true, so raise an error if it doesn't have any keys in the object
+     * .filter returns empty array, so check if it's length is equal to 0 and raise an error if true
+     */
+    if (!Object.keys(chargers) || filteredChargers.length === 0) {
       return res.status(404).json({ error: "No chargers found" });
     }
-
-    const filteredChargers = chargers.filter((charger) => charger.status === "active" && req.user.username !== charger.User.username )
 
     const urlChargers = await getChargersWithUrl(filteredChargers);
     res.status(200).json(urlChargers);
@@ -83,7 +91,7 @@ async function createCharger(req, res) {
 
   try {
     // transaction ensure the record will be rolledback if an error occured during the try/catch block
-    const result = await sequelize.transaction(async (t) => {
+    const result = await sequelize.transaction(async t => {
       const newCharger = await Charger.create(data, { transaction: t });
       await uploadImageToS3(req.file, key);
 
@@ -116,7 +124,7 @@ async function getCharger(req, res) {
 
     const chargerWithUrl = {
       ...charger.toJSON(),
-      imageUrl,
+      imageUrl
     };
     // TODO: handle return data excluding key,bucket info
 
@@ -131,7 +139,7 @@ async function getCharger(req, res) {
 
 async function updateCharger(req, res) {
   try {
-    await sequelize.transaction(async (t) => {
+    await sequelize.transaction(async t => {
       const charger = await getChargerById(req.params.id);
 
       if (!charger) {
@@ -187,8 +195,12 @@ async function getChargers(req, res) {
     return;
   }
 
-  const filteredChargers = chargers.filter((charger) => charger.status === "active" && req.user.username !== charger.User.username )
-  
+  const filteredChargers = chargers.filter(
+    charger =>
+      charger.status === "active" &&
+      req.user?.username !== charger.User.username
+  );
+
   const chargersWithUrls = await getChargersWithUrl(filteredChargers);
 
   res.status(200);
@@ -205,18 +217,18 @@ async function getMyChargers(req, res) {
 
       const chargers = await Charger.findAll({
         where: {
-          UserId: user.id,
+          UserId: user.id
         },
         include: [
           {
             model: Address,
-            as: "Address",
+            as: "Address"
           },
           {
             model: User,
-            as: "User",
-          },
-        ],
+            as: "User"
+          }
+        ]
       });
 
       console.log("THIS IS MY CHARGERS", chargers);
@@ -242,5 +254,5 @@ module.exports = {
   updateCharger,
   deleteCharger,
   getMyChargers,
-  searchChargersLocation,
+  searchChargersLocation
 };

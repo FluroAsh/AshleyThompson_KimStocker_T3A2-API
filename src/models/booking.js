@@ -12,11 +12,11 @@ module.exports = (sequelize, DataTypes) => {
     {
       bookingDate: DataTypes.DATE,
       price: DataTypes.INTEGER,
-      status: DataTypes.ENUM("approved", "rejected", "pending", "cancelled"),
+      status: DataTypes.ENUM("approved", "rejected", "pending", "cancelled")
     },
     {
       sequelize,
-      modelName: "Booking",
+      modelName: "Booking"
     }
   );
   return Booking;

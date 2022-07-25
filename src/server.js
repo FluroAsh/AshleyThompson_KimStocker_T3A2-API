@@ -12,7 +12,11 @@ const { chargerRouter } = require("./routes/charger-routes");
 const { vehiclesRouter } = require("./routes/vehicle-routes");
 const { bookingRouter } = require("./routes/booking-routes");
 
-app.use(cors());
+const corsOptions = {
+  origin: ["http://localhost:3000", "https://iev-client.netlify.app/"],
+  optionSuccessStatus: 200
+};
+app.use(cors(corsOptions));
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
@@ -71,5 +75,5 @@ app.use("/", bookingRouter);
 
 module.exports = {
   app,
-  PORT,
+  PORT
 };
