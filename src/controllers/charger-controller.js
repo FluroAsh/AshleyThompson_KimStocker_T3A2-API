@@ -185,8 +185,10 @@ async function getChargers(req, res) {
     return;
   }
 
+
+  const filteredChargers = chargers.filter((charger) => charger.status === "active" && req.user.username !== charger.User.username )
   const chargersWithUrls = await Promise.all(
-    chargers.map(async (charger) => {
+    filteredChargers.map(async (charger) => {
       const imageUrl = await getSignedS3Url(charger.bucket, charger.key);
       return {
         ...charger.toJSON(),
@@ -194,6 +196,7 @@ async function getChargers(req, res) {
       };
     })
   );
+
 
   // console.log("CHARGER WITH URL GET CHARGERS", chargersWithUrls);
   res.status(200);
