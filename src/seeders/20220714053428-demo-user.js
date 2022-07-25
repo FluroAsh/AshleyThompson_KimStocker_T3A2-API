@@ -1,16 +1,24 @@
 "use strict";
+const bcrypt = require("bcrypt")
 
 const casual = require("casual");
 
-const users = [...Array(10)].map((user) => ({
-  firstName: casual.first_name,
-  lastName: casual.last_name,
-  email: casual.username,
-  username: casual.email,
-  password: casual.password,
-  createdAt: new Date(),
-  updatedAt: new Date(),
-}));
+const users = [...Array(10)].map((user) => {
+  const saltRounds = 10;
+  const salt = bcrypt.genSaltSync(saltRounds);
+  const pw = "123456";
+  const hashedPassword = bcrypt.hashSync(pw, salt);
+
+  return {
+    firstName: casual.first_name,
+    lastName: casual.last_name,
+    email: casual.email,
+    username: casual.username,
+    password: hashedPassword,
+    createdAt: new Date(),
+    updatedAt: new Date(),
+  };
+});
 
 module.exports = {
   async up(queryInterface, Sequelize) {
