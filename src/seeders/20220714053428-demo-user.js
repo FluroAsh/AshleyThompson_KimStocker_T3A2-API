@@ -1,10 +1,11 @@
 "use strict";
+const bcrypt = require("bcrypt")
 
 const casual = require("casual");
 
 const users = [...Array(10)].map((user) => {
+  const saltRounds = 10;
   const salt = bcrypt.genSaltSync(saltRounds);
-
   const pw = "123456";
   const hashedPassword = bcrypt.hashSync(pw, salt);
 
