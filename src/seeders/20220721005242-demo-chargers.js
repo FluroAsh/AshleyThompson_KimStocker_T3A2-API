@@ -30,7 +30,7 @@ const chargers = [...Array(15)].map((charger) => {
   return {
     name: casual.title,
     instructions: casual.description,
-    price: getRandomInt(20, 50),
+    price: getRandomInt(2000, 5000),
     status: status[statusIndex],
     UserId: randomUserAndAddressId,
     PlugId: getRandomInt(1, 3),

@@ -29,7 +29,7 @@ const bookings = [...Array(15)].map((booking) => {
     bookingDate: randomDate(),
     // price can be random as owner may change the charging price every now and then, 
     // this price is at time of booking :)
-    price: getRandomInt(20, 50),
+    price: getRandomInt(2000, 5000),
     status: status[statusIndex],
     createdAt: new Date(),
     updatedAt: new Date(),
