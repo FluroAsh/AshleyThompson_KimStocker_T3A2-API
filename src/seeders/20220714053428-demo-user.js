@@ -5,8 +5,8 @@ const casual = require("casual");
 const users = [...Array(10)].map((user) => ({
   firstName: casual.first_name,
   lastName: casual.last_name,
-  email: casual.username,
-  username: casual.email,
+  email: casual.email,
+  username: casual.username,
   password: casual.password,
   createdAt: new Date(),
   updatedAt: new Date(),
