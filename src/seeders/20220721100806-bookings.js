@@ -1,21 +1,19 @@
 "use strict";
 
-
 function getRandomInt(min, max) {
   min = Math.ceil(min);
   max = Math.floor(max);
   return Math.floor(Math.random() * (max - min) + min);
 }
 
-function randomDate(){
+function randomDate() {
   let start = new Date(); // 'today'
   let end = new Date(2023, 0, 1); // Jan 1st 2023
 
   return new Date(
     start.getTime() + Math.random() * (end.getTime() - start.getTime())
   );
-};
-
+}
 
 const bookings = [...Array(15)].map((booking) => {
   const status = ["approved", "rejected", "pending", "cancelled"];
@@ -31,7 +29,6 @@ const bookings = [...Array(15)].map((booking) => {
     updatedAt: new Date(),
   };
 });
-
 
 module.exports = {
   async up(queryInterface, Sequelize) {
