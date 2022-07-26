@@ -13,7 +13,7 @@ const { vehiclesRouter } = require("./routes/vehicle-routes");
 const { bookingRouter } = require("./routes/booking-routes");
 
 const corsOptions = {
-  origin: ["http://localhost:3000", "https://iev-client.netlify.app/"],
+  origin: ["http://localhost:3000", "https://iev-client.netlify.app"],
   optionSuccessStatus: 200
 };
 app.use(cors(corsOptions));
