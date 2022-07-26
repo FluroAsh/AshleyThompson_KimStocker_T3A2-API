@@ -16,6 +16,7 @@ exports.getUserBookings = (UserId) =>
   Booking.findAll({
     where: { UserId },
     include: [
+      { model: User, attributes: { exclude: ["username", "password"] } },
       {
         model: Charger,
         include: [

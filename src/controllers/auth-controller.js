@@ -4,6 +4,7 @@ const Op = db.Sequelize.Op;
 const jwt = require("jsonwebtoken");
 const { findUser } = require("../utils/auth-utils.js");
 const bcrypt = require("bcrypt");
+const user = require("../models/user");
 
 // TODO check the password and password_confirmation match can be done in front end?
 
@@ -68,16 +69,10 @@ const loginRequired = (req, res, next) => {
   }
 };
 
-const checkOwnership = (req, res, next) => {
-  // TBC
-  console.log(req);
-};
-
 // const checkOwnership to handle update and delete
 
 module.exports = {
   signUp,
   signIn,
   loginRequired,
-  checkOwnership,
 };

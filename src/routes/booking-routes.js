@@ -12,8 +12,9 @@ const {
 
 bookingRouter.get("/bookings", getBookings);
 bookingRouter.get("/booking/:id", getBooking);
-// verify logged in user matches req.params.id (check ownership)
-bookingRouter.get("/bookings/user/:id", getAllUserBookings);
+
+// verify bookings belong to the user making the request (check ownership)
+bookingRouter.get("/bookings/user/:username", getAllUserBookings);
 bookingRouter.post("/booking/new", createBooking);
 bookingRouter.put("/booking/:id", updateBooking);
 bookingRouter.delete("/booking/:id", deleteBooking);

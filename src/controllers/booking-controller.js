@@ -44,10 +44,24 @@ async function createBooking(req, res) {
   }
 }
 
-async function getAllUserBookings(req, res) {
+async function createBooking(req, res) {
   const data = { ...req.body };
   try {
-    const bookings = await getUserBookings(req.params.id);
+    await sequelize.transaction(async (t) => {
+      const booking = await Booking.create(data, { transaction: t });
+      res.status(201).json(booking);
+    });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+}
+
+// TODO: Check ownership of user bookings
+async function getAllUserBookings(req, res) {
+  try {
+    const bookings = await getUserBookings(req.user.id);
+
+    // check all bookings for req.user.username === bookings.
     res.status(200).json(bookings);
   } catch (err) {
     res.status(500).json({ err: err.message });
