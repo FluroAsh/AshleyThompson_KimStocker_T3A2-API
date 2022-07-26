@@ -16,10 +16,13 @@ module.exports = {
     dialect: "postgres",
   },
   production: {
-    username: "root",
-    password: null,
-    database: "DATABASE_URL",
-    host: "127.0.0.1",
+    use_env_variable: "DATABASE_URL",
     dialect: "postgres",
+    dialectOptions: {
+      ssl: {
+        require: true,
+        rejectUnauthorized: false,
+      },
+    },
   },
 };

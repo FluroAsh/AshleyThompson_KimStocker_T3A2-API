@@ -6,19 +6,16 @@ function getRandomInt(min, max) {
   return Math.floor(Math.random() * (max - min) + min);
 }
 
-
 const casual = require("casual");
 
 const vehicles = [...Array(10)].map((vehicle) => ({
   make: "Audi",
   model: "e-tron SUV",
   variant: "e-tron SUV 50",
-  PlugId: getRandomInt(1,3),
+  PlugId: getRandomInt(1, 3),
   createdAt: new Date(),
   updatedAt: new Date(),
 }));
-
-
 
 module.exports = {
   async up(queryInterface, Sequelize) {
