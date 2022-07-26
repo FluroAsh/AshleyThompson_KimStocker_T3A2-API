@@ -19,11 +19,14 @@ const bookings = [...Array(15)].map((booking) => {
   const status = ["approved", "rejected", "pending", "cancelled"];
   const statusIndex = getRandomInt(0, 3);
 
+
   return {
     UserId: getRandomInt(1, 10),
     ChargerId: getRandomInt(1, 15),
     bookingDate: randomDate(),
-    price: getRandomInt(20, 50),
+    // price can be random as owner may change the charging price every now and then, 
+    // this price is at time of booking :)
+    price: getRandomInt(2000, 5000),
     status: status[statusIndex],
     createdAt: new Date(),
     updatedAt: new Date(),
