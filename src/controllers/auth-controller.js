@@ -68,10 +68,16 @@ const loginRequired = (req, res, next) => {
   }
 };
 
+const checkOwnership = (req, res, next) => {
+  // TBC
+  console.log(req);
+};
+
 // const checkOwnership to handle update and delete
 
 module.exports = {
   signUp,
   signIn,
   loginRequired,
+  checkOwnership,
 };
