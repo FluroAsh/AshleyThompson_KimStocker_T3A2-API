@@ -44,18 +44,6 @@ async function createBooking(req, res) {
   }
 }
 
-async function createBooking(req, res) {
-  const data = { ...req.body };
-  try {
-    await sequelize.transaction(async (t) => {
-      const booking = await Booking.create(data, { transaction: t });
-      res.status(201).json(booking);
-    });
-  } catch (err) {
-    res.status(500).json({ error: err.message });
-  }
-}
-
 // TODO: Check ownership of user bookings
 async function getAllUserBookings(req, res) {
   try {
