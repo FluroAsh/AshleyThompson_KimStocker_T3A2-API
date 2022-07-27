@@ -1,5 +1,5 @@
 const db = require("../models");
-const { Booking, User, Charger } = db;
+const { Booking, User, Charger, Address } = db;
 
 exports.getBookingById = (id) =>
   Booking.findByPk(id, {
@@ -25,6 +25,9 @@ exports.getUserBookings = (UserId) =>
             model: User,
             as: "Host",
             attributes: { exclude: ["username", "password"] },
+          },
+          {
+            model: Address,
           },
         ],
       },
