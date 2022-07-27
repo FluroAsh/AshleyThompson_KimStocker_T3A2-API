@@ -7,10 +7,26 @@ const {
   createBooking,
   updateBooking,
   deleteBooking,
+  getAllUserBookings,
+  getAllBookingRequests,
 } = require("../controllers/booking-controller");
 
 bookingRouter.get("/bookings", getBookings);
 bookingRouter.get("/booking/:id", getBooking);
+
+// verify bookings belong to the user making the request (check ownership)
+
+// bookingRouter.get("/bookings/user/:username?type=bookings", getAllUserBookings)
+bookingRouter.get("/bookings/user/:username", (req, res, next) => {
+  console.log(req.user);
+  if (req.query.type === "bookings") {
+    getAllUserBookings(req, res);
+  }
+
+  if (req.query.type === "requests") {
+    getAllBookingRequests(req, res);
+  }
+});
 bookingRouter.post("/booking/new", createBooking);
 bookingRouter.put("/booking/:id", updateBooking);
 bookingRouter.delete("/booking/:id", deleteBooking);

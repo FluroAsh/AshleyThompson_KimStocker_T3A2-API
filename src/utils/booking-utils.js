@@ -1,5 +1,5 @@
 const db = require("../models");
-const { Booking, User } = db;
+const { Booking, User, Charger, Address } = db;
 
 exports.getBookingById = (id) =>
   Booking.findByPk(id, {
@@ -8,6 +8,50 @@ exports.getBookingById = (id) =>
         model: User,
         as: "User",
         attributes: { exclude: ["password", "createdAt", "updatedAt"] },
+      },
+    ],
+  });
+
+exports.getUserBookings = (UserId) =>
+  Booking.findAll({
+    where: { UserId },
+    order: [["status", "DESC"]],
+    include: [
+      { model: User, attributes: { exclude: ["username", "password"] } },
+      {
+        model: Charger,
+        include: [
+          {
+            model: User,
+            as: "Host",
+            attributes: { exclude: ["username", "password"] },
+          },
+          {
+            model: Address,
+          },
+        ],
+      },
+    ],
+  });
+
+exports.getBookingRequests = (UserId) =>
+  Booking.findAll({
+    order: [["status", "ASC"]],
+    include: [
+      { model: User, attributes: { exclude: ["username", "password"] } },
+      {
+        model: Charger,
+        include: [
+          {
+            model: User,
+            as: "Host",
+            where: { id: UserId },
+            attributes: { exclude: ["username", "password"] },
+          },
+          {
+            model: Address,
+          },
+        ],
       },
     ],
   });
