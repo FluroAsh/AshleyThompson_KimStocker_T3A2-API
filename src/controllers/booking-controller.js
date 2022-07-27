@@ -5,6 +5,7 @@ const {
   getBookingById,
   getAllBookings,
   getUserBookings,
+  getBookingRequests,
 } = require("../utils/booking-utils");
 
 async function getBooking(req, res) {
@@ -57,6 +58,18 @@ async function getAllUserBookings(req, res) {
   }
 }
 
+async function getAllBookingRequests(req, res) {
+  try {
+    const requests = await getBookingRequests(req.user.id);
+    if (req.user.username !== req.params.username) {
+      throw Error("You are not allowed to do that");
+    }
+    res.status(200).json(requests);
+  } catch (err) {
+    res.status(422).json({ err: err.message });
+  }
+}
+
 /** TODOs: */
 async function updateBooking() {}
 async function deleteBooking() {}
@@ -68,4 +81,5 @@ module.exports = {
   updateBooking,
   deleteBooking,
   getAllUserBookings,
+  getAllBookingRequests,
 };

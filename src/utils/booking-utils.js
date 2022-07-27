@@ -34,6 +34,28 @@ exports.getUserBookings = (UserId) =>
     ],
   });
 
+exports.getBookingRequests = (UserId) =>
+  Booking.findAll({
+    order: [["status", "ASC"]],
+    include: [
+      { model: User, attributes: { exclude: ["username", "password"] } },
+      {
+        model: Charger,
+        include: [
+          {
+            model: User,
+            as: "Host",
+            where: { id: UserId },
+            attributes: { exclude: ["username", "password"] },
+          },
+          {
+            model: Address,
+          },
+        ],
+      },
+    ],
+  });
+
 exports.getAllBookings = () =>
   Booking.findAll({
     include: [
