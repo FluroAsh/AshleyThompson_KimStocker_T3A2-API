@@ -40,7 +40,7 @@ async function createBooking(req, res) {
       res.status(201).json(booking);
     });
   } catch (err) {
-    res.status(500).json({ error: err.message });
+    res.status(404).json({ error: err.message });
   }
 }
 
@@ -48,11 +48,12 @@ async function createBooking(req, res) {
 async function getAllUserBookings(req, res) {
   try {
     const bookings = await getUserBookings(req.user.id);
-
-    // check all bookings for req.user.username === bookings.
+    if (req.user.username !== req.params.username) {
+      throw Error("You are not allowed to do that");
+    }
     res.status(200).json(bookings);
   } catch (err) {
-    res.status(500).json({ err: err.message });
+    res.status(422).json({ err: err.message });
   }
 }
 
