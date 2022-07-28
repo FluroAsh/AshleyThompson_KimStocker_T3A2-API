@@ -8,6 +8,8 @@ const {
   getPlugId,
   getChargersByLocation,
 } = require("../utils/charger-utils");
+
+const { getBookingByChargerId } = require("../utils/booking-utils")
 const { findUser } = require("../utils/auth-utils");
 const { v4: uuidv4 } = require("uuid");
 const {
@@ -176,10 +178,21 @@ async function updateCharger(req, res) {
 }
 async function deleteCharger(req, res) {
   try {
-    await deleteChargerById(req.params.id);
-    //TODO: res status
-    res.status(204);
-    // res.json({message: "charger details deleted"})
+
+    const booking = getBookingByChargerId(req.params.id)
+
+    if (booking) {
+      res.status(401)
+      res.json({"message": "Unable to delete charger as it is in a booking, please update status to disable instead"})
+    } else {
+      const result = await deleteChargerById(req.params.id);
+      //TODO: res status
+      res.status(204);
+      res.json({"message": "charger details deleted"})
+
+    }
+
+ 
   } catch (err) {
     res.status(404);
     return res.json({ error: err.message });

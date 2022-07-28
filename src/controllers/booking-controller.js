@@ -6,6 +6,7 @@ const {
   getAllBookings,
   getUserBookings,
   getBookingRequests,
+  
 } = require("../utils/booking-utils");
 
 const { authoriseUser } = require("./auth-controller");
@@ -21,6 +22,8 @@ async function getBooking(req, res) {
     res.status(404).json({ error: err.message });
   }
 }
+
+
 
 async function getBookings(req, res) {
   try {
