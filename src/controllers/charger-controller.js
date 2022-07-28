@@ -1,6 +1,6 @@
 const db = require("../models");
 const sequelize = db.sequelize;
-const { Charger, Address, User } = db;
+const { Charger, Address, User, Booking } = db;
 const {
   getAllChargers,
   getChargerById,
@@ -179,9 +179,17 @@ async function updateCharger(req, res) {
 async function deleteCharger(req, res) {
   try {
 
-    const booking = getBookingByChargerId(req.params.id)
+    console.log(req.params.id)
 
-    if (booking) {
+    const bookings = await Booking.findAll({
+      where: {
+        ChargerId: req.params.id,
+      }
+    })
+
+    // const booking = getBookingByChargerId(req.params.id)
+
+    if (bookings === undefined) {
       res.status(401)
       res.json({"message": "Unable to delete charger as it is in a booking, please update status to disable instead"})
     } else {

@@ -16,6 +16,8 @@ exports.getBookingByChargerId = (chargerId) => {
   // TODO: Exists?
   return Booking.findOne({ where: { ChargerId: chargerId } });
 };
+
+
 exports.getUserBookings = (UserId) =>
   Booking.findAll({
     where: { UserId },
