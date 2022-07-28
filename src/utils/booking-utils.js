@@ -60,6 +60,7 @@ exports.getBookingRequests = (UserId) =>
           {
             model: User,
             as: "Host",
+            // requesting User ID must match the Host ID, otherwise returns NULL for charger
             where: { id: UserId },
             attributes: { exclude: ["username", "password"] },
           },

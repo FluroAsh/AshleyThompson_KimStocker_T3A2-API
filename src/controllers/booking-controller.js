@@ -73,10 +73,18 @@ async function getAllBookingRequests(req, res) {
     if (req.user.username !== req.params.username) {
       throw Error("You are not allowed to do that");
     }
-    // The charger must not be null, if it's null that's a
+    /**
+     * Returned requests must have booking status 'pending' &
+     * Charger status 'active'
+     */
     const filteredRequests = requests.filter(
       (request) => request.status === "pending" && request.Charger !== null
     );
+
+    if (filteredRequests.length === 0) {
+      throw Error("No requests found");
+    }
+
     res.status(200).json(filteredRequests);
   } catch (err) {
     res.status(404).json({ error: err.message });
