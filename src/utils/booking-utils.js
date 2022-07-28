@@ -42,6 +42,7 @@ exports.getBookingRequests = (UserId) =>
       { model: User, attributes: { exclude: ["username", "password"] } },
       {
         model: Charger,
+        where: { status: "active" },
         include: [
           {
             model: User,
