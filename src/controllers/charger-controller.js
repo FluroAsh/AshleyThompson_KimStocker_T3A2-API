@@ -172,7 +172,7 @@ async function updateCharger(req, res) {
       res.json(updatedCharger);
     });
   } catch (err) {
-    res.status(404);
+    res.status(500);
     return res.json({ error: err.message });
   }
 }
