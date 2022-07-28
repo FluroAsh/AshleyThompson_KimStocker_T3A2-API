@@ -36,6 +36,7 @@ exports.getUserBookings = (UserId) =>
 
 exports.getBookingRequests = (UserId) =>
   Booking.findAll({
+    where: { status: "pending" },
     order: [["status", "ASC"]],
     include: [
       { model: User, attributes: { exclude: ["username", "password"] } },
