@@ -1,4 +1,5 @@
 const express = require("express");
+const { authoriseUser } = require("../controllers/auth-controller");
 const bookingRouter = express.Router();
 
 const {
@@ -18,7 +19,6 @@ bookingRouter.get("/booking/:id", getBooking);
 
 // bookingRouter.get("/bookings/user/:username?type=bookings", getAllUserBookings)
 bookingRouter.get("/bookings/user/:username", (req, res, next) => {
-  console.log(req.user);
   if (req.query.type === "bookings") {
     getAllUserBookings(req, res);
   }

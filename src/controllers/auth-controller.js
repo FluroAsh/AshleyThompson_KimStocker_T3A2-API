@@ -12,7 +12,7 @@ async function signUp(req, res) {
     try {
       const newUser = await User.create(req.body);
 
-      const { username, email, id } = newUser.dataValues;
+      const { firstName, username, email, id } = newUser.dataValues;
 
       console.log("new User----", newUser.dataValues);
       console.log("username----", username);
@@ -21,7 +21,7 @@ async function signUp(req, res) {
 
       res.status(201);
 
-      return res.json({ username, jwt: token });
+      return res.json({ firstName, username, jwt: token });
     } catch (err) {
       res.status(500);
       return res.json({ error: err.message });
@@ -40,7 +40,7 @@ async function signIn(req, res) {
 
     const user = await findUser(req.body.username);
 
-    const { username, email, id, password } = user;
+    const { firstName, lastName, username, email, id, password } = user;
 
     if (!user || !bcrypt.compareSync(req.body.password, password)) {
       res.status(400);
@@ -49,7 +49,7 @@ async function signIn(req, res) {
       res.status(200);
       //res.send(user.username)
       const token = jwt.sign({ username, email, id }, process.env.SECRET_KEY);
-      return res.json({ username, jwt: token });
+      return res.json({ firstName, lastName, username, jwt: token });
     }
   } catch (err) {
     res.status(500);
@@ -68,10 +68,20 @@ const loginRequired = (req, res, next) => {
   }
 };
 
+const authoriseUser = (reqUserId, ownerId) => {
+  // console.log(reqUserId, ownerId);
+
+  if (reqUserId != ownerId) {
+    throw Error("Unauthorised Operation");
+  }
+  console.log("[✓] User Verified");
+};
+
 // const checkOwnership to handle update and delete
 
 module.exports = {
   signUp,
   signIn,
   loginRequired,
+  authoriseUser,
 };

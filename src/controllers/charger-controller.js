@@ -52,7 +52,7 @@ async function searchChargersLocation(req, res) {
      * Chargers that return empty object === true, so raise an error if it doesn't have any keys in the object
      * .filter returns empty array, so check if it's length is equal to 0 and raise an error if true
      */
-    if (!Object.keys(chargers) || filteredChargers.length === 0) {
+    if (Object.keys(chargers).length === 0 || filteredChargers.length === 0) {
       return res.status(404).json({ error: "No chargers found" });
     }
 
