@@ -181,15 +181,12 @@ async function deleteCharger(req, res) {
 
     console.log(req.params.id)
 
-    const bookings = await Booking.findAll({
-      where: {
-        ChargerId: req.params.id,
-      }
-    })
+    const booking = await Booking.findOne({ where: { ChargerId: parseInt(req.params.id) } });
+
 
     // const booking = getBookingByChargerId(req.params.id)
 
-    if (bookings === undefined) {
+    if (booking) {
       res.status(401)
       res.json({"message": "Unable to delete charger as it is in a booking, please update status to disable instead"})
     } else {
