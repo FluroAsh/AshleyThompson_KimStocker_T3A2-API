@@ -9,7 +9,7 @@ const {
   getChargersByLocation,
 } = require("../utils/charger-utils");
 
-const { getBookingByChargerId } = require("../utils/booking-utils")
+const { getBookingByChargerId } = require("../utils/booking-utils");
 const { findUser } = require("../utils/auth-utils");
 const { v4: uuidv4 } = require("uuid");
 const {
@@ -107,7 +107,7 @@ async function createCharger(req, res) {
   } catch (err) {
     console.log(err.message);
     res.status(500);
-    return res.json({ error: err.message });
+    res.json({ message: "Unable to create charger, pls try again later" });
   }
 }
 
@@ -140,64 +140,77 @@ async function getCharger(req, res) {
 }
 
 async function updateCharger(req, res) {
+  // const charger = await getChargerById(req.params.id);
+
+  // if (!charger) {
+  //   res.status(404);
+  //   res.json({ error: "No charger found" });
+  //   return;
+  // }
+
+  // TODO: Create function for the below
+  const data = { ...req.body };
+
+  console.log("THIS IS DATA", data);
+  const user = await findUser(data.username);
+
+  const plugId = await getPlugId(data.plugName);
+
+  data["UserId"] = user.id;
+  data["AddressId"] = user.Address.dataValues.id;
+  data["PlugId"] = plugId;
+
+  const key = `uploads/${uuidv4()}`;
+  // -${req.file.originalname}
+
+  data["bucket"] = process.env.AWS_BUCKET_NAME;
+  data["key"] = key;
+  ////
+
   try {
     await sequelize.transaction(async (t) => {
-      const charger = await getChargerById(req.params.id);
-
-      if (!charger) {
-        res.status(404);
-        res.json({ error: "No charger found" });
-        return;
-      }
-
-      // TODO: Create function for the below
-      const data = { ...req.body };
-
-      const key = `uploads/${uuidv4()}`;
-      // -${req.file.originalname}
-
-      data["bucket"] = process.env.AWS_BUCKET_NAME;
-      data["key"] = key;
-      ////
-
-      const updatedCharger = await charger.update(data, { transaction: t });
-
-      // TODO: handle reupload image
+      const updatedCharger = await Charger.update(data, {
+        where: { id: parseInt(req.params.id) },
+      });
       await uploadImageToS3(req.file, key);
 
-      res.status(200);
+      res.status(204);
 
       // TODO: Exclude key, bucket and region out of the returned charger data
-      // return res.json(updatedCharger);
       res.json(updatedCharger);
     });
   } catch (err) {
     res.status(500);
-    return res.json({ error: err.message });
+    res.json({ message: "Unable to update charger, pls try again later" });
   }
+
+  // TODO: handle reupload image
+
+  // TODO: Exclude key, bucket and region out of the returned charger data
+  // return res.json(updatedCharger);
 }
 async function deleteCharger(req, res) {
   try {
+    console.log(req.params.id);
 
-    console.log(req.params.id)
-
-    const booking = await Booking.findOne({ where: { ChargerId: parseInt(req.params.id) } });
-
+    const booking = await Booking.findOne({
+      where: { ChargerId: parseInt(req.params.id) },
+    });
 
     // const booking = getBookingByChargerId(req.params.id)
 
     if (booking) {
-      res.status(401)
-      res.json({"message": "Unable to delete charger as it is in a booking, please update status to disable instead"})
+      res.status(401);
+      res.json({
+        message:
+          "Unable to delete charger as it is in a booking, please update status to disable instead",
+      });
     } else {
       const result = await deleteChargerById(req.params.id);
       //TODO: res status
       res.status(204);
-      res.json({"message": "charger details deleted"})
-
+      res.json({ message: "charger details deleted" });
     }
-
- 
   } catch (err) {
     res.status(404);
     return res.json({ error: err.message });
