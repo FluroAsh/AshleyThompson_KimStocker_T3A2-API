@@ -68,10 +68,20 @@ const loginRequired = (req, res, next) => {
   }
 };
 
+const authoriseUser = (reqUserId, ownerId) => {
+  // console.log(reqUserId, ownerId);
+
+  if (reqUserId != ownerId) {
+    throw Error("Unauthorised Operation");
+  }
+  console.log("[✓] User Verified");
+};
+
 // const checkOwnership to handle update and delete
 
 module.exports = {
   signUp,
   signIn,
   loginRequired,
+  authoriseUser,
 };

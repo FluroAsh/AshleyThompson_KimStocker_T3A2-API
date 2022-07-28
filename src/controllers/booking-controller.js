@@ -8,6 +8,8 @@ const {
   getBookingRequests,
 } = require("../utils/booking-utils");
 
+const { authoriseUser } = require("./auth-controller");
+
 async function getBooking(req, res) {
   try {
     const booking = await getBookingById(req.params.id);
@@ -35,7 +37,10 @@ async function getBookings(req, res) {
 
 async function createBooking(req, res) {
   const data = { ...req.body };
+  const reqUserId = req.user.id;
   try {
+    authoriseUser(reqUserId, data.UserId);
+
     await sequelize.transaction(async (t) => {
       const booking = await Booking.create(data, { transaction: t });
       res.status(201).json(booking);
@@ -58,7 +63,7 @@ async function getAllUserBookings(req, res) {
     }
     res.status(200).json(bookings);
   } catch (err) {
-    res.status(404).json({ err: err.message });
+    res.status(404).json({ error: err.message });
   }
 }
 
@@ -74,13 +79,28 @@ async function getAllBookingRequests(req, res) {
     );
     res.status(200).json(filteredRequests);
   } catch (err) {
-    res.status(404).json({ err: err.message });
+    res.status(404).json({ error: err.message });
   }
 }
 
-/** TODOs: */
+// TODO: Create UpdateBooking Function
 async function updateBooking() {}
-async function deleteBooking() {}
+
+async function deleteBooking(req, res) {
+  const { id } = req.params;
+  const reqUserId = req.user.id;
+
+  try {
+    const booking = await Booking.findByPk(id);
+    // Verify ownership, pass the 'Owners ID'
+    authoriseUser(reqUserId, booking.UserId);
+
+    booking.destroy();
+    res.status(200).json({ message: `Booking ${id} successfully deleted` });
+  } catch (err) {
+    res.status(404).json({ error: err.message });
+  }
+}
 
 module.exports = {
   getBooking,

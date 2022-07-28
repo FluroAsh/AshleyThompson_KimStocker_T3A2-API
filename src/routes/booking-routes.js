@@ -1,4 +1,5 @@
 const express = require("express");
+const { authoriseUser } = require("../controllers/auth-controller");
 const bookingRouter = express.Router();
 
 const {
