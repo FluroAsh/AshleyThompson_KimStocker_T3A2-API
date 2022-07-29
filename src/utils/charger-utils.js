@@ -21,8 +21,6 @@ async function getAllChargers() {
 }
 
 async function getChargerById(id) {
-  // TODO: eager loading doesnt work
-
   return await Charger.findByPk(id, {
     include: [
       {

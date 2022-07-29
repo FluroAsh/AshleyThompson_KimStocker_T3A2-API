@@ -5,7 +5,7 @@ const {
 const unavailabilityRouter = express.Router();
 
 unavailabilityRouter.post("/unavailability/new", createUnavailability);
-unavailabilityRouter.delete("/unavailability");
+unavailabilityRouter.delete("/unavailability/:id");
 
 module.exports = {
   unavailabilityRouter,

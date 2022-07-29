@@ -19,6 +19,7 @@ module.exports = {
       UnavailabilityDate: {
         type: Sequelize.DATE,
         allowNull: false,
+        unique: true,
       },
       createdAt: {
         allowNull: false,
