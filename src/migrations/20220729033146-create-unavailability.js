@@ -13,7 +13,7 @@ module.exports = {
         allowNull: false,
         references: {
           model: "Chargers",
-          key: "ChargerId",
+          key: "id",
         },
       },
       UnavailabilityDate: {
