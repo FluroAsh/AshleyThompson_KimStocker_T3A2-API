@@ -12,7 +12,7 @@ async function signUp(req, res) {
     try {
       const newUser = await User.create(req.body);
 
-      const { firstName, username, email, id } = newUser.dataValues;
+      const { firstName, username, email, id } = newUser;
 
       console.log("new User----", newUser.dataValues);
       console.log("username----", username);
@@ -39,18 +39,17 @@ async function signIn(req, res) {
     // const user = findUser(req.body.email);
 
     const user = await findUser(req.body.username);
-
-    const { firstName, lastName, username, email, id, password } = user;
+    // if destructure fails (no user) then it's assigned an empty object
+    const { firstName, lastName, username, email, id, password } = user || {};
 
     if (!user || !bcrypt.compareSync(req.body.password, password)) {
       res.status(400);
-      return res.json({ error: "authentication failed" });
-    } else {
-      res.status(200);
-      //res.send(user.username)
-      const token = jwt.sign({ username, email, id }, process.env.SECRET_KEY);
-      return res.json({ firstName, lastName, username, jwt: token });
+      return res.json({ error: "Authentication failed" });
     }
+
+    res.status(200);
+    const token = jwt.sign({ username, email, id }, process.env.SECRET_KEY);
+    return res.json({ firstName, lastName, username, jwt: token });
   } catch (err) {
     res.status(500);
     return res.json({ error: err.message });

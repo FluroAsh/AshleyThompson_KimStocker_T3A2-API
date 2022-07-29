@@ -95,11 +95,11 @@ async function getAllBookingRequests(req, res) {
 async function updateBooking() {}
 
 async function deleteBooking(req, res) {
-  const { id } = req.params;
+  const { id: BookingId } = req.params;
   const reqUserId = req.user.id;
 
   try {
-    const booking = await Booking.findByPk(id);
+    const booking = await Booking.findByPk(BookingId);
     // Verify ownership, pass the 'Owners ID'
     authoriseUser(reqUserId, booking.UserId);
 
