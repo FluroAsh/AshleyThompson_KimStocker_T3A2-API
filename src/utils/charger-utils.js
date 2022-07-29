@@ -1,6 +1,6 @@
 const { PublicAccessBlockConfiguration } = require("@aws-sdk/client-s3");
 const db = require("../models");
-const { Charger, User, Address, Plug } = db;
+const { Charger, User, Address, Plug, Unavailability } = db;
 const Op = db.Sequelize.Op;
 
 /** Returns a promise */
@@ -9,7 +9,7 @@ async function getAllChargers() {
     include: [
       {
         model: User,
-        as: "User",
+        as: "Host",
         attributes: { exclude: ["password", "createdAt", "updatedAt"] },
       },
       {
@@ -21,18 +21,19 @@ async function getAllChargers() {
 }
 
 async function getChargerById(id) {
-  // TODO: eager loading doesnt work
-
   return await Charger.findByPk(id, {
     include: [
       {
         model: User,
-        as: "User",
+        as: "Host",
         attributes: { exclude: ["password", "createdAt", "updatedAt"] },
       },
       {
         model: Address,
         as: "Address",
+      },
+      {
+        model: Unavailability,
       },
     ],
   });
@@ -64,7 +65,7 @@ async function getChargersByLocation(location) {
       },
       {
         model: User,
-        as: "User",
+        as: "Host",
         attributes: { exclude: ["password", "createdAt", "updatedAt"] },
       },
     ],

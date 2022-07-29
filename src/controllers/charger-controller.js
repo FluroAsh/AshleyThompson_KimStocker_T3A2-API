@@ -45,7 +45,7 @@ async function searchChargersLocation(req, res) {
     const filteredChargers = chargers.filter(
       (charger) =>
         charger.status === "active" &&
-        req.user?.username !== charger.User.username
+        req.user?.username !== charger.Host.username
     );
 
     /**
@@ -198,7 +198,7 @@ async function getChargers(req, res) {
   const filteredChargers = chargers.filter(
     (charger) =>
       charger.status === "active" &&
-      req.user?.username !== charger.User.username
+      req.user?.username !== charger.Host.username
   );
 
   const chargersWithUrls = await getChargersWithUrl(filteredChargers);
@@ -226,7 +226,7 @@ async function getMyChargers(req, res) {
           },
           {
             model: User,
-            as: "User",
+            as: "Host",
           },
         ],
       });

@@ -2,20 +2,12 @@ const db = require("../models");
 const { User, Address, Booking, Charger, Vehicle } = db;
 const Op = db.Sequelize.Op;
 
-async function findUser(username) {
-  try {
-    const user = await User.findOne({
-      where: { username },
-      include: Address,
-      // [{ model: Address }, { model: Booking }, { model: Charger }, {model: Vehicle}],
-    });
-    return user.dataValues;
-  } catch (err) {
-    console.log(err.message);
-
-    // res.status(500);
-    // return res.json({ error: err.message });
-  }
+async function findUser(userInput) {
+  return User.findOne({
+    // can login with either username OR email
+    where: { [Op.or]: [{ username: userInput }, { email: userInput }] },
+    include: Address,
+  });
 }
 
 module.exports = {

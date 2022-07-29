@@ -8,13 +8,14 @@ const bcrypt = require("bcrypt");
 // TODO check the password and password_confirmation match can be done in front end?
 
 async function signUp(req, res) {
+  // check password + confirmation first
   if (req.body.password === req.body.password_confirmation) {
     try {
+      console.log(req.body);
       const newUser = await User.create(req.body);
+      const { firstName, username, email, id } = newUser;
 
-      const { firstName, username, email, id } = newUser.dataValues;
-
-      console.log("new User----", newUser.dataValues);
+      console.log("new User----", newUser);
       console.log("username----", username);
 
       const token = jwt.sign({ username, email, id }, process.env.SECRET_KEY);
@@ -23,12 +24,13 @@ async function signUp(req, res) {
 
       return res.json({ firstName, username, jwt: token });
     } catch (err) {
+      console.log(err.errors[0].message);
       res.status(500);
-      return res.json({ error: err.message });
+      return res.json({ error: err.errors[0].message || err });
     }
   } else {
     // res.status(402)
-    return res.json({
+    return res.status(422).json({
       error: "Password confirmation does not match password entered",
     });
   }
@@ -39,18 +41,17 @@ async function signIn(req, res) {
     // const user = findUser(req.body.email);
 
     const user = await findUser(req.body.username);
-
-    const { firstName, lastName, username, email, id, password } = user;
+    // if destructure fails (no user) then it's assigned an empty object
+    const { firstName, lastName, username, email, id, password } = user || {};
 
     if (!user || !bcrypt.compareSync(req.body.password, password)) {
       res.status(400);
-      return res.json({ error: "authentication failed" });
-    } else {
-      res.status(200);
-      //res.send(user.username)
-      const token = jwt.sign({ username, email, id }, process.env.SECRET_KEY);
-      return res.json({ firstName, lastName, username, jwt: token });
+      return res.json({ error: "Username or password is incorrect" });
     }
+
+    res.status(200);
+    const token = jwt.sign({ username, email, id }, process.env.SECRET_KEY);
+    return res.json({ firstName, lastName, username, jwt: token });
   } catch (err) {
     res.status(500);
     return res.json({ error: err.message });
@@ -60,7 +61,6 @@ async function signIn(req, res) {
 // use loginRequired in other model routes. See example in user_controller (similar to before action authenticate in rails)
 const loginRequired = (req, res, next) => {
   if (req.user) {
-    // TODO: Add navigate back instead of go back to the root route
     next();
   } else {
     res.status(401);
@@ -69,8 +69,6 @@ const loginRequired = (req, res, next) => {
 };
 
 const authoriseUser = (reqUserId, ownerId) => {
-  // console.log(reqUserId, ownerId);
-
   if (reqUserId != ownerId) {
     throw Error("Unauthorised Operation");
   }
