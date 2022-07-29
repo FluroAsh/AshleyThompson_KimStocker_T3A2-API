@@ -9,7 +9,7 @@ async function getAllChargers() {
     include: [
       {
         model: User,
-        as: "User",
+        as: "Host",
         attributes: { exclude: ["password", "createdAt", "updatedAt"] },
       },
       {
@@ -67,7 +67,7 @@ async function getChargersByLocation(location) {
       },
       {
         model: User,
-        as: "User",
+        as: "Host",
         attributes: { exclude: ["password", "createdAt", "updatedAt"] },
       },
     ],
