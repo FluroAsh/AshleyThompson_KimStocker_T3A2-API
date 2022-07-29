@@ -11,6 +11,7 @@ async function signUp(req, res) {
   // check password + confirmation first
   if (req.body.password === req.body.password_confirmation) {
     try {
+      console.log(req.body);
       const newUser = await User.create(req.body);
       const { firstName, username, email, id } = newUser;
 
@@ -23,6 +24,7 @@ async function signUp(req, res) {
 
       return res.json({ firstName, username, jwt: token });
     } catch (err) {
+      console.log(err.errors[0].message);
       res.status(500);
       return res.json({ error: err.errors[0].message || err });
     }
