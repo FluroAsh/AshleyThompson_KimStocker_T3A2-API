@@ -68,23 +68,15 @@ async function searchChargersLocation(req, res) {
 async function createCharger(req, res) {
   const data = { ...req.body };
 
-  console.log("THIS IS FORM DATA", data);
-
   // TODO: Handle error when user not found
   const user = await findUser(data.username);
 
-  // if (user) {
-  //   // res.status(500)
-  //   res.json({error: "Pls log in first"})
-  // }
   const plugId = await getPlugId(data.plugName);
 
-  console.log("THIS IS USER ", user);
   data["UserId"] = user.id;
   data["AddressId"] = user.Address.dataValues.id;
   data["PlugId"] = plugId;
 
-  console.log("FILE NAME", req.file);
   const key = `uploads/${uuidv4()}`;
   // -${req.file.originalname}
 
@@ -189,9 +181,33 @@ async function updateCharger(req, res) {
   // TODO: Exclude key, bucket and region out of the returned charger data
   // return res.json(updatedCharger);
 }
+
+async function updateChargerStatus(req, res) {
+
+  console.log("THIS IS DATA RECEIVED FROM FRONT END", req.body);
+
+  try {
+    await sequelize.transaction(async (t) => {
+
+
+      const charger = await getChargerById(req.params.id)
+      charger.status = req.body.status
+      charger.save();
+
+      console.log("THIS IS UPDATED CHARGER AFTER UPDATING THE STATUS", charger)
+      res.status(204);
+      res.json(charger);
+    });
+  } catch (err) {
+    res.status(500);
+    res.json({
+      message: "Unable to update charger status, pls try again later",
+    });
+  }
+}
+
 async function deleteCharger(req, res) {
   try {
-    console.log(req.params.id);
 
     const booking = await Booking.findOne({
       where: { ChargerId: parseInt(req.params.id) },
@@ -262,7 +278,6 @@ async function getMyChargers(req, res) {
         ],
       });
 
-      console.log("THIS IS MY CHARGERS", chargers);
 
       const UserChargersWithUrls = await getChargersWithUrl(chargers);
 
@@ -286,4 +301,5 @@ module.exports = {
   deleteCharger,
   getMyChargers,
   searchChargersLocation,
+  updateChargerStatus,
 };

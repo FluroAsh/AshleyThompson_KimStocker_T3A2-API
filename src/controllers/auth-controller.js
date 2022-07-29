@@ -14,9 +14,6 @@ async function signUp(req, res) {
 
       const { firstName, username, email, id } = newUser.dataValues;
 
-      console.log("new User----", newUser.dataValues);
-      console.log("username----", username);
-
       const token = jwt.sign({ username, email, id }, process.env.SECRET_KEY);
 
       res.status(201);
