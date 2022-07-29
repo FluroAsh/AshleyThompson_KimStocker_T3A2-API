@@ -44,7 +44,7 @@ async function signIn(req, res) {
 
     if (!user || !bcrypt.compareSync(req.body.password, password)) {
       res.status(400);
-      return res.json({ error: "Authentication failed" });
+      return res.json({ error: "Username or password is incorrect" });
     }
 
     res.status(200);

@@ -58,12 +58,9 @@ async function getAllUserBookings(req, res) {
       throw Error("You are not allowed to do that");
     }
 
-    if (Object.keys(bookings).length === 0) {
-      throw Error("No bookings found");
-    }
     res.status(200).json(bookings);
   } catch (err) {
-    res.status(404).json({ error: err.message });
+    res.status(500).json({ error: err.message });
   }
 }
 
@@ -81,13 +78,9 @@ async function getAllBookingRequests(req, res) {
       (request) => request.status === "pending" && request.Charger !== null
     );
 
-    if (filteredRequests.length === 0) {
-      throw Error("No requests found");
-    }
-
     res.status(200).json(filteredRequests);
   } catch (err) {
-    res.status(404).json({ error: err.message });
+    res.status(500).json({ error: err.message });
   }
 }
 
@@ -106,7 +99,7 @@ async function deleteBooking(req, res) {
     booking.destroy();
     res.status(200).json({ message: `Booking ${id} successfully deleted` });
   } catch (err) {
-    res.status(404).json({ error: err.message });
+    res.status(500).json({ error: err.message });
   }
 }
 
