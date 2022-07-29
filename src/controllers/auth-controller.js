@@ -8,13 +8,14 @@ const bcrypt = require("bcrypt");
 // TODO check the password and password_confirmation match can be done in front end?
 
 async function signUp(req, res) {
+  // check password + confirmation first
   if (req.body.password === req.body.password_confirmation) {
     try {
+      console.log(req.body);
       const newUser = await User.create(req.body);
-
       const { firstName, username, email, id } = newUser;
 
-      console.log("new User----", newUser.dataValues);
+      console.log("new User----", newUser);
       console.log("username----", username);
 
       const token = jwt.sign({ username, email, id }, process.env.SECRET_KEY);
@@ -23,12 +24,13 @@ async function signUp(req, res) {
 
       return res.json({ firstName, username, jwt: token });
     } catch (err) {
+      console.log(err.errors[0].message);
       res.status(500);
-      return res.json({ error: err.message });
+      return res.json({ error: err.errors[0].message || err });
     }
   } else {
     // res.status(402)
-    return res.json({
+    return res.status(422).json({
       error: "Password confirmation does not match password entered",
     });
   }
