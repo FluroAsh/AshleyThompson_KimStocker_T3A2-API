@@ -38,8 +38,8 @@ chargerRouter.get("/search", searchChargersLocation);
 // chargerRouter.use(loginRequired);
 chargerRouter.get("/chargers/mychargers", getMyChargers);
 chargerRouter.post("/chargers/new", upload.single("image"), createCharger);
-chargerRouter.put("/charger/:id", updateCharger);
-chargerRouter.patch("/charger/:id", updateCharger);
+chargerRouter.put("/charger/:id", upload.single("image"), updateCharger);
+//chargerRouter.patch("/charger/:id", updateCharger);
 chargerRouter.delete("/charger/:id", deleteCharger);
 
 module.exports = {
