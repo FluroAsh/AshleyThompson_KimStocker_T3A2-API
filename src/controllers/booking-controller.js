@@ -1,5 +1,4 @@
 const db = require("../models");
-const user = require("../models/user");
 const sequelize = db.sequelize;
 const Op = db.Sequelize.Op;
 const { Booking } = db;
@@ -8,6 +7,7 @@ const {
   getAllBookings,
   getUserBookings,
   getBookingRequests,
+  findInvalidBookings,
 } = require("../utils/booking-utils");
 
 const { authoriseUser } = require("./auth-controller");
@@ -39,30 +39,32 @@ async function getBookings(req, res) {
 
 async function createBooking(req, res) {
   const UserId = req.user.id || null;
-  const { ChargerId, bookingDate, price, status } = req.body;
+  const bookings = req.body;
 
   try {
     if (UserId === null) {
       throw Error("You need to be logged in to do that");
     }
-    // Check to see if there is a duplicate booking belonging to the request user
-    const invalidBooking = Booking.findOne({
-      where: {
-        [Op.and]: [{ UserId, bookingDate }],
-      },
-    });
 
-    if (invalidBooking) {
-      throw Error(`You've already requested ${req.body.localTime}!`);
+    // Check to see if there is a duplicate booking belonging to the request user
+    const invalidBookings = await findInvalidBookings(UserId, bookings);
+
+    console.log("Invalid bookings", invalidBookings);
+    if (invalidBookings.length !== 0) {
+      throw Error(`You've already requested ${bookings[0].localTime}!`);
     }
 
-    await sequelize.transaction(async (t) => {
-      const booking = await Booking.create(
-        { UserId, ChargerId, bookingDate, price, status },
-        { transaction: t }
-      );
-      res.status(201).json(booking);
+    bookings.map((booking) => {
+      const { ChargerId, bookingDate, price, status } = booking;
+      sequelize.transaction(async (t) => {
+        await Booking.create(
+          { UserId, ChargerId, bookingDate, price, status },
+          { transaction: t }
+        );
+      });
     });
+
+    res.status(201).json(bookings);
   } catch (err) {
     res.status(404).json({ error: err.message });
   }
