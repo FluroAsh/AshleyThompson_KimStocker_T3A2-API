@@ -1,17 +1,15 @@
 "use strict";
 
+const userVehicles = [...Array(10)].map((e, index) => {
+  return {
+    VehicleId: index + 1,
+    UserId: index + 1,
+  };
+});
+
 module.exports = {
   async up(queryInterface, Sequelize) {
-    return queryInterface.bulkInsert("UserVehicles", [
-      {
-        VehicleId: 1,
-        UserId: 1,
-      },
-      {
-        VehicleId: 2,
-        UserId: 2,
-      },
-    ]);
+    return queryInterface.bulkInsert("UserVehicles", userVehicles);
   },
 
   async down(queryInterface, Sequelize) {

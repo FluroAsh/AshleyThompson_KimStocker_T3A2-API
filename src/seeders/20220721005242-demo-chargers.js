@@ -1,6 +1,5 @@
 "use strict";
 const db = require("../models");
-const { User } = db;
 const casual = require("casual");
 
 function getRandomInt(min, max) {
@@ -9,32 +8,21 @@ function getRandomInt(min, max) {
   return Math.floor(Math.random() * (max - min) + min);
 }
 
+const chargers = [...Array(5)].map((e, index) => {
 
-
-// async function getUser(id) {
-
-//   return await User.findByPk(id);
-
-
-// }
-
-const chargers = [...Array(15)].map((charger) => {
   const status = ["pending", "active", "disabled"];
   const statusIndex = getRandomInt(0, 2);
-
-  const randomUserAndAddressId = getRandomInt(1, 5);
-  
-  // const user = getUser(randomUserId);
-  // const addressId = user.Address.id;
+  // const randomUserAndAddressId = getRandomInt(1, 5);
+  const indEl = index + 1;
 
   return {
     name: casual.title,
     instructions: casual.description,
     price: getRandomInt(2000, 5000),
     status: status[statusIndex],
-    UserId: randomUserAndAddressId,
+    UserId: indEl,
     PlugId: getRandomInt(1, 3),
-    AddressId: randomUserAndAddressId,
+    AddressId: indEl,
     bucket: process.env.AWS_BUCKET_NAME,
     key: "uploads/turtle.png",
     createdAt: new Date(),

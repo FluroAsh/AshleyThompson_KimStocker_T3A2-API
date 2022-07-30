@@ -38,6 +38,48 @@ module.exports = {
         state: "Victoria",
         UserId: 5,
       },
+      {
+        address: "113 Pitt Street",
+        city: "Melbourne",
+        postcode: "3000",
+        state: "Victoria",
+        UserId: 5,
+      },
+      {
+        address: "113 Pitt Street",
+        city: "Melbourne",
+        postcode: "3000",
+        state: "Victoria",
+        UserId: 6,
+      },
+      {
+        address: "113 Pitt Street",
+        city: "Melbourne",
+        postcode: "3000",
+        state: "Victoria",
+        UserId: 7,
+      },
+      {
+        address: "113 Pitt Street",
+        city: "Melbourne",
+        postcode: "3000",
+        state: "Victoria",
+        UserId: 8,
+      },
+      {
+        address: "113 Pitt Street",
+        city: "Melbourne",
+        postcode: "3000",
+        state: "Victoria",
+        UserId: 9,
+      },
+      {
+        address: "123 Clyde Road",
+        city: "Berwick",
+        postcode: "3806",
+        state: "Victoria",
+        UserId: 10,
+      },
     ]);
   },
 
