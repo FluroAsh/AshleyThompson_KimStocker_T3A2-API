@@ -4,7 +4,7 @@ module.exports = (sequelize, DataTypes) => {
   class Charger extends Model {
     static associate(models) {
       Charger.belongsTo(models.User, { as: "Host", foreignKey: "UserId" });
-      Charger.belongsTo(models.User, { as: "User", foreignKey: "UserId" });
+      // Charger.belongsTo(models.User, { as: "User", foreignKey: "UserId" });
       Charger.belongsTo(models.Address);
       Charger.belongsTo(models.Plug);
       Charger.hasMany(models.Booking);

@@ -231,7 +231,7 @@ async function getMyChargers(req, res) {
         ],
       });
 
-      console.log("THIS IS MY CHARGERS", chargers);
+      // console.log("THIS IS MY CHARGERS", chargers);
 
       const UserChargersWithUrls = await getChargersWithUrl(chargers);
 
@@ -247,6 +247,31 @@ async function getMyChargers(req, res) {
   }
 }
 
+
+async function updateChargerStatus(req, res) {
+
+  console.log("THIS IS DATA RECEIVED FROM FRONT END", req.body);
+
+  try {
+    await sequelize.transaction(async (t) => {
+
+
+      const charger = await getChargerById(req.params.id)
+      charger.status = req.body.status
+      charger.save();
+
+      console.log("THIS IS UPDATED CHARGER AFTER UPDATING THE STATUS", charger)
+      res.status(204);
+      res.json(charger);
+    });
+  } catch (err) {
+    res.status(500);
+    res.json({
+      message: "Unable to update charger status, pls try again later",
+    });
+  }
+}
+
 module.exports = {
   getCharger,
   getChargers,
@@ -255,4 +280,5 @@ module.exports = {
   deleteCharger,
   getMyChargers,
   searchChargersLocation,
+  updateChargerStatus
 };
