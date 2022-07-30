@@ -6,6 +6,7 @@ const {
   deleteCharger,
   getMyChargers,
   searchChargersLocation,
+  updateChargerStatus,
 } = require("../controllers/charger-controller");
 const express = require("express");
 const multer = require("multer");
@@ -38,8 +39,8 @@ chargerRouter.get("/search", searchChargersLocation);
 // chargerRouter.use(loginRequired);
 chargerRouter.get("/chargers/mychargers", getMyChargers);
 chargerRouter.post("/charger/new", upload.single("image"), createCharger);
-chargerRouter.put("/charger/:id", updateCharger);
-chargerRouter.patch("/charger/:id", updateCharger);
+chargerRouter.put("/charger/:id", upload.single("image"), updateCharger);
+chargerRouter.patch("/charger/:id", updateChargerStatus);
 chargerRouter.delete("/charger/:id", deleteCharger);
 
 module.exports = {
