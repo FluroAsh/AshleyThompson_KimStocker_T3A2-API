@@ -7,7 +7,7 @@ const salt = bcrypt.genSaltSync(saltRounds);
 const pw = "123456";
 const hashedPassword = bcrypt.hashSync(pw, salt);
 
-const users = [...Array(9)].map((e, index) => {
+const users = [...Array(9)].map(() => {
   return {
     firstName: casual.first_name,
     lastName: casual.last_name,

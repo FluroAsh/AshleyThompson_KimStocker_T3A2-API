@@ -1,5 +1,7 @@
 const db = require("../models");
+const user = require("../models/user");
 const sequelize = db.sequelize;
+const Op = db.Sequelize.Op;
 const { Booking } = db;
 const {
   getBookingById,
@@ -36,13 +38,29 @@ async function getBookings(req, res) {
 }
 
 async function createBooking(req, res) {
-  const data = { ...req.body };
-  const reqUserId = req.user.id;
+  const UserId = req.user.id || null;
+  const { ChargerId, bookingDate, price, status } = req.body;
+
   try {
-    authoriseUser(reqUserId, data.UserId);
+    if (UserId === null) {
+      throw Error("You need to be logged in to do that");
+    }
+    // Check to see if there is a duplicate booking belonging to the request user
+    const invalidBooking = Booking.findOne({
+      where: {
+        [Op.and]: [{ UserId, bookingDate }],
+      },
+    });
+
+    if (invalidBooking) {
+      throw Error(`${req.body.localTime} already exists`);
+    }
 
     await sequelize.transaction(async (t) => {
-      const booking = await Booking.create(data, { transaction: t });
+      const booking = await Booking.create(
+        { UserId, ChargerId, bookingDate, price, status },
+        { transaction: t }
+      );
       res.status(201).json(booking);
     });
   } catch (err) {
