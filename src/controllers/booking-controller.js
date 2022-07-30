@@ -1,4 +1,5 @@
 const db = require("../models");
+const user = require("../models/user");
 const sequelize = db.sequelize;
 const Op = db.Sequelize.Op;
 const { Booking } = db;
