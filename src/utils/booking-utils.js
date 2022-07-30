@@ -1,5 +1,6 @@
 const db = require("../models");
 const { Booking, User, Charger, Address, UserVehicle, Vehicle } = db;
+const Op = db.Sequelize.Op;
 
 exports.getBookingById = (id) =>
   Booking.findByPk(id, {
@@ -82,3 +83,17 @@ exports.getAllBookings = () =>
       },
     ],
   });
+
+exports.findInvalidBookings = (UserId, bookings) => {
+  const invalidBookings = Booking.findAll({
+    where: {
+      [Op.or]: bookings.map((booking) => {
+        return {
+          UserId,
+          bookingDate: booking.bookingDate,
+        };
+      }),
+    },
+  });
+  return invalidBookings;
+};
