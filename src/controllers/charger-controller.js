@@ -119,11 +119,14 @@ async function getCharger(req, res) {
 
     const imageUrl = await getSignedS3Url(charger.bucket, charger.key);
 
+    // TODO: handle return data excluding key,bucket info
+    delete charger.bucket;
+    delete charger.key;
+
     const chargerWithUrl = {
       ...charger.toJSON(),
       imageUrl,
     };
-    // TODO: handle return data excluding key,bucket info
 
     res.status(200);
     res.json(chargerWithUrl);
@@ -131,7 +134,6 @@ async function getCharger(req, res) {
     res.status(500);
     return res.json({ error: err.message });
   }
-  // TODO: Exclude key, bucket and region out of the returned charger data
 }
 
 async function updateCharger(req, res) {
