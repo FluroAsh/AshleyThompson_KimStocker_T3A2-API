@@ -1,5 +1,6 @@
 const db = require("../models");
-const { User, Address, Vehicle, UserVehicle } = db;
+const Op = db.Sequelize.Op;
+const { User, Address, Vehicle, UserVehicle, Charger } = db;
 
 exports.getAllUsers = () => User.findAll();
 
@@ -21,4 +22,11 @@ exports.getUserById = (id) =>
         ],
       },
     ],
+  });
+
+exports.checkHost = (UserId) =>
+  Charger.findOne({
+    where: {
+      [Op.and]: [{ UserId: UserId }, { status: "active" }],
+    },
   });
