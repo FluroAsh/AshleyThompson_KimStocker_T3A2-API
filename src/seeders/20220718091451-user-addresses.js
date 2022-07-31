@@ -22,7 +22,7 @@ module.exports = {
         city: "Sydney",
         postcode: "2000",
         state: "New South Wales",
-        UserId: 3,
+        UserId: 1,
       },
       {
         address: "19 Pitt Street",

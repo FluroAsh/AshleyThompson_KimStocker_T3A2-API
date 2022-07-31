@@ -247,20 +247,16 @@ async function getMyChargers(req, res) {
   }
 }
 
-
 async function updateChargerStatus(req, res) {
-
   console.log("THIS IS DATA RECEIVED FROM FRONT END", req.body);
 
   try {
     await sequelize.transaction(async (t) => {
-
-
-      const charger = await getChargerById(req.params.id)
-      charger.status = req.body.status
+      const charger = await getChargerById(req.params.id);
+      charger.status = req.body.status;
       charger.save();
 
-      console.log("THIS IS UPDATED CHARGER AFTER UPDATING THE STATUS", charger)
+      console.log("THIS IS UPDATED CHARGER AFTER UPDATING THE STATUS", charger);
       res.status(204);
       res.json(charger);
     });
@@ -280,5 +276,5 @@ module.exports = {
   deleteCharger,
   getMyChargers,
   searchChargersLocation,
-  updateChargerStatus
+  updateChargerStatus,
 };
