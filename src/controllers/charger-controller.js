@@ -68,21 +68,18 @@ async function createCharger(req, res) {
 
   console.log("THIS IS FORM DATA", data);
 
-  // TODO: Handle error when user not found
   const user = await findUser(data.username);
+  if (user === null) {
+    res.status(500);
+    return res.json({ error: `Unknown user ${data.username}` });
+  }
 
-  // if (user) {
-  //   // res.status(500)
-  //   res.json({error: "Pls log in first"})
-  // }
   const plugId = await getPlugId(data.plugName);
 
-  console.log("THIS IS USER ", user);
   data["UserId"] = user.id;
   data["AddressId"] = user.Address.dataValues.id;
   data["PlugId"] = plugId;
 
-  console.log("FILE NAME", req.file);
   const key = `uploads/${uuidv4()}`;
   // -${req.file.originalname}
 
@@ -95,15 +92,15 @@ async function createCharger(req, res) {
       const newCharger = await Charger.create(data, { transaction: t });
       await uploadImageToS3(req.file, key);
 
+      // Exclude key, bucket out of the returned charger data
+      delete newCharger.bucket;
+      delete newCharger.key;
+
       res.status(204);
-
-      // TODO: Exclude key, bucket and region out of the returned charger data
       return res.json(newCharger);
-
-      // res.send(chargersWithUrls);
     });
   } catch (err) {
-    console.log(err.message);
+    console.log(err);
     res.status(500);
     return res.json({ error: err.message });
   }
