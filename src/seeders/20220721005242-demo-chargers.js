@@ -30,6 +30,19 @@ const chargers = [...Array(5)].map((e, index) => {
 });
 
 // Chargers below are static for testing purposes
+chargers.unshift({
+  name: "Ash's Charger",
+  instructions: "Go to the garage and plug in",
+  price: 3500,
+  status: "active",
+  UserId: 2,
+  PlugId: 1,
+  AddressId: 2,
+  bucket: process.env.AWS_BUCKET_NAME,
+  key: "uploads/turtle.png",
+  createdAt: new Date(),
+  updatedAt: new Date(),
+});
 
 chargers.unshift({
   name: "Super Charger Test 3",

@@ -184,6 +184,9 @@ describe("updateCharger function", () => {
       params: {
         id: 3,
       },
+      user: {
+        username: "Kim"
+      }
     };
 
     const status = jest.fn();
@@ -216,6 +219,9 @@ describe("updateCharger function", () => {
       params: {
         id: 100,
       },
+      user: {
+        username: "Kim"
+      }
     };
 
     const status = jest.fn();
@@ -236,14 +242,18 @@ describe("updateCharger function", () => {
         price: "40",
         status: "active",
         plugName: "typeOne",
-        username: "Ash",
+        username: "Kim",
       },
       file: {
         buffer: "my file contents",
       },
       params: {
-        id: 3,
+        // charger id 4 belongs to Ash user but loggedInUser is Kim
+        id: 4,
       },
+      user: {
+        username: "Kim"
+      }
     };
 
     const status = jest.fn();
