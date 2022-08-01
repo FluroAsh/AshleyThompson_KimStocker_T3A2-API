@@ -3,12 +3,16 @@ const { Charger } = db;
 const {
   createCharger,
   getCharger,
+  updateCharger,
+  deleteCharger,
 } = require("../controllers/charger-controller");
 
 jest.mock("../services/awsS3-services", () => ({
   getSignedS3Url: () => "imageUrl",
   uploadImageToS3: () => {},
 }));
+
+// TODO: TEST WHEN DB or Internal server down for all tests
 
 describe("createCharger function", () => {
   afterEach(async () => {
@@ -68,7 +72,7 @@ describe("createCharger function", () => {
     expect(json).toHaveBeenCalledWith({ error: "Unknown user doesnotexist" });
   });
 
-  test("errors when wrong status send", async () => {
+  test("errors when wrong status sent", async () => {
     const req = {
       body: {
         name: "TEST Create Charger",
@@ -91,6 +95,34 @@ describe("createCharger function", () => {
       error: `invalid input value for enum \"enum_Chargers_status\": \"live\"`,
     });
   });
+
+  // test("send error when server is down", async () => {
+  //   const req = {
+  //     body: {
+  //       name: "TEST Create Charger",
+  //       instructions: "Go to basement and plug in",
+  //       price: "35",
+  //       status: "pending",
+  //       plugName: "typeOne",
+  //       username: "Kim",
+  //     },
+  //   };
+
+  //   const status = jest.fn();
+  //   const json = jest.fn();
+  //   const res = { status, json };
+
+  //   jest.mock("../utils/auth-utils", () => ({
+  //     findUser: () => new Error("Async error message"),
+  //   }));
+
+  //   await createCharger(req, res);
+
+  //   expect(status).toHaveBeenCalledWith(500);
+  //   expect(json).toHaveBeenCalledWith({
+  //     error: "Server error",
+  //   });
+  // });
 });
 
 describe("getCharger function", () => {
@@ -126,5 +158,188 @@ describe("getCharger function", () => {
 
     expect(status).toHaveBeenCalledWith(404);
     expect(json).toHaveBeenCalledWith({ error: "No charger found" });
+  });
+});
+
+describe("updateCharger function", () => {
+  test("update charger record from form data received", async () => {
+    const req = {
+      body: {
+        name: "Updated name",
+        instructions: "Go to basement and plug in",
+        price: "40",
+        status: "active",
+        plugName: "typeOne",
+        username: "Kim",
+      },
+      file: {
+        buffer: "my file contents",
+      },
+      params: {
+        id: 3,
+      },
+    };
+
+    const status = jest.fn();
+    const json = jest.fn();
+    const res = { status, json };
+
+    await updateCharger(req, res);
+
+    expect(status).toHaveBeenCalledWith(200);
+    expect(json).toHaveBeenCalled();
+
+    const data = json.mock.calls[0][0];
+    expect(data.name).toEqual("Updated name");
+    expect(data.status).toEqual("active");
+  });
+
+  test("errors when unknown chargerId sent", async () => {
+    const req = {
+      body: {
+        name: "Updated name",
+        instructions: "Go to basement and plug in",
+        price: "40",
+        status: "active",
+        plugName: "typeOne",
+        username: "Kim",
+      },
+      file: {
+        buffer: "my file contents",
+      },
+      params: {
+        id: 100,
+      },
+    };
+
+    const status = jest.fn();
+    const json = jest.fn();
+    const res = { status, json };
+
+    await updateCharger(req, res);
+
+    expect(status).toHaveBeenCalledWith(404);
+    expect(json).toHaveBeenCalledWith({ error: "No charger found" });
+  });
+
+  test("throw unauthorised error when request username does not match host's username", async () => {
+    const req = {
+      body: {
+        name: "Updated name",
+        instructions: "Go to basement and plug in",
+        price: "40",
+        status: "active",
+        plugName: "typeOne",
+        username: "Ash",
+      },
+      file: {
+        buffer: "my file contents",
+      },
+      params: {
+        id: 3,
+      },
+    };
+
+    const status = jest.fn();
+    const json = jest.fn();
+    const res = { status, json };
+
+    await updateCharger(req, res);
+
+    expect(status).toHaveBeenCalledWith(401);
+    expect(json).toHaveBeenCalledWith({
+      error: "Unauthorised operation",
+    });
+  });
+});
+
+describe("deleteCharger function", () => {
+  let chargerId;
+  // Create charger to test delete function
+  beforeEach(async () => {
+    const req = {
+      body: {
+        name: "TEST Create Charger",
+        instructions: "Go to basement and plug in",
+        price: "35",
+        status: "active",
+        plugName: "typeOne",
+        username: "Kim",
+      },
+      file: {
+        buffer: "my file contents",
+      },
+    };
+
+    const status = jest.fn();
+    const json = jest.fn();
+    const res = { status, json };
+
+    await createCharger(req, res);
+
+    expect(status).toHaveBeenCalledWith(204);
+    const data = json.mock.calls[0][0];
+
+    chargerId = data.id;
+
+    console.log("THIS IS CHARGERID", chargerId);
+  });
+
+  afterEach(async () => {
+    await Charger.destroy({
+      where: { name: "TEST Create Charger" },
+    });
+  });
+
+  test("delete a charger with a valid id", async () => {
+    const req = {
+      params: { id: chargerId },
+      user: { username: "Kim" },
+    };
+
+    const status = jest.fn();
+    const json = jest.fn();
+    const res = { status, json };
+
+    await deleteCharger(req, res);
+
+    expect(status).toHaveBeenCalledWith(204);
+    expect(json).toHaveBeenCalledWith({ message: "charger details deleted" });
+  });
+
+  test("does not execute with invalid charger id", async () => {
+    const req = {
+      params: { id: "100" },
+      user: {
+        username: "Kim",
+      },
+    };
+
+    const status = jest.fn();
+    const json = jest.fn();
+    const res = { status, json };
+
+    await deleteCharger(req, res);
+
+    expect(status).toHaveBeenCalledWith(404);
+    expect(json).toHaveBeenCalledWith({ error: "No charger found" });
+  });
+
+  test("does not execute with unauthorised user", async () => {
+    const req = {
+      params: { id: chargerId },
+      user: {
+        username: "Ash",
+      },
+    };
+
+    const status = jest.fn();
+    const json = jest.fn();
+    const res = { status, json };
+
+    await deleteCharger(req, res);
+
+    expect(status).toHaveBeenCalledWith(401);
+    expect(json).toHaveBeenCalledWith({ error: "Unauthorised operation" });
   });
 });

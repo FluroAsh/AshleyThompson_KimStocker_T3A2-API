@@ -15,6 +15,7 @@ const {
   getSignedS3Url,
 } = require("../services/awsS3-services");
 const plug = require("../models/plug");
+const { UploadPartCopyRequest } = require("@aws-sdk/client-s3");
 
 // TODO: Double check all res.status
 
@@ -128,6 +129,7 @@ async function getCharger(req, res) {
       imageUrl,
     };
 
+    console.log("THIS IS CHARGER CREATED", chargerWithUrl)
     res.status(200);
     res.json(chargerWithUrl);
   } catch (err) {
@@ -147,6 +149,12 @@ async function updateCharger(req, res) {
         return;
       }
 
+      if (charger.Host.username !== req.body.username) {
+        res.status(401);
+        res.json({ error: "Unauthorised operation" });
+        return;
+      }
+
       // TODO: Create function for the below
       const data = { ...req.body };
 
@@ -162,25 +170,38 @@ async function updateCharger(req, res) {
       // TODO: handle reupload image
       await uploadImageToS3(req.file, key);
 
-      res.status(200);
+      // Exclude key, bucket out of the returned charger data
+      delete updatedCharger.bucket;
+      delete updatedCharger.key;
 
-      // TODO: Exclude key, bucket and region out of the returned charger data
-      // return res.json(updatedCharger);
+      res.status(200);
       res.json(updatedCharger);
     });
   } catch (err) {
-    res.status(404);
+    res.status(500);
     return res.json({ error: err.message });
   }
 }
 async function deleteCharger(req, res) {
   try {
+    const charger = await getChargerById(req.params.id);
+
+    if (!charger) {
+      res.status(404);
+      res.json({ error: "No charger found" });
+      return;
+    } else if (charger && charger.Host.username !== req.user.username) {
+      res.status(401);
+      res.json({ error: "Unauthorised operation" });
+      return;
+    }
+
     await deleteChargerById(req.params.id);
-    //TODO: res status
     res.status(204);
-    // res.json({message: "charger details deleted"})
+    res.json({ message: "charger details deleted" });
   } catch (err) {
-    res.status(404);
+    console.log("Error deleting charger", err);
+    res.status(500);
     return res.json({ error: err.message });
   }
 }

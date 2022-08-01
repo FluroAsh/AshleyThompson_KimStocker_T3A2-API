@@ -6,7 +6,6 @@ const {
 } = require("@aws-sdk/client-s3");
 
 async function uploadImageToS3(file, key) {
-  throw Error("Hello?");
   const s3client = new S3Client();
 
   return await s3client.send(
