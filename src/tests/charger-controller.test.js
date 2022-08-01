@@ -163,7 +163,7 @@ describe("getCharger function", () => {
     await getCharger(req, res);
 
     expect(status).toHaveBeenCalledWith(404);
-    expect(json).toHaveBeenCalledWith({ error: "No charger found" });
+    expect(json).toHaveBeenCalledWith({ error: "No record found" });
   });
 });
 
@@ -231,7 +231,7 @@ describe("updateCharger function", () => {
     await updateCharger(req, res);
 
     expect(status).toHaveBeenCalledWith(404);
-    expect(json).toHaveBeenCalledWith({ error: "No charger found" });
+    expect(json).toHaveBeenCalledWith({ error: "No record found" });
   });
 
   test("throw unauthorised error when request username does not match host's username", async () => {
@@ -336,7 +336,7 @@ describe("deleteCharger function", () => {
     await deleteCharger(req, res);
 
     expect(status).toHaveBeenCalledWith(404);
-    expect(json).toHaveBeenCalledWith({ error: "No charger found" });
+    expect(json).toHaveBeenCalledWith({ error: "No record found" });
   });
 
   test("does not execute with unauthorised user", async () => {
@@ -534,7 +534,7 @@ describe("updateChargerStatus function", () => {
     await updateChargerStatus(req, res);
 
     expect(status).toHaveBeenCalledWith(404);
-    expect(json).toHaveBeenCalledWith({ error: "No charger found" });
+    expect(json).toHaveBeenCalledWith({ error: "No record found" });
   });
 
   test("throw unauthorised error when request username does not match host's username", async () => {

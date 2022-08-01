@@ -19,7 +19,21 @@ const plug = require("../models/plug");
 const { UploadPartCopyRequest } = require("@aws-sdk/client-s3");
 
 // TODO: Double check all res.status
+function handleNotFound(record, res) {
+  if (!record) {
+    res.status(404);
+    res.json({ error: "No record found" });
+    return;
+  }
+}
 
+function handleUnauthorised(record, res, req) {
+  if (record.Host.username !== req.user.username) {
+    res.status(401);
+    res.json({ error: "Unauthorised operation" });
+    return;
+  }
+}
 /** S3 Charger URL Helper Method */
 async function getChargersWithUrl(chargers) {
   const chargersWithUrls = await Promise.all(
@@ -59,15 +73,15 @@ async function searchChargersLocation(req, res) {
      */
     if (Object.keys(chargers).length === 0 || filteredChargers.length === 0) {
       // return 200 as this is not user error. No records match searched keyword
-      res.status(200)
+      res.status(200);
       return res.json({ error: "No matched chargers found" });
     }
 
     const urlChargers = await getChargersWithUrl(filteredChargers);
-    res.status(200)
+    res.status(200);
     return res.json(urlChargers);
   } catch (err) {
-    res.status(500)
+    res.status(500);
     return res.json({ error: err.message });
   }
 }
@@ -117,16 +131,10 @@ async function getCharger(req, res) {
   try {
     const charger = await getChargerById(req.params.id);
 
-    // TODO: handle all no found data like this
-    if (charger === null) {
-      res.status(404);
-      res.json({ error: "No charger found" });
-      return;
-    }
+    handleNotFound(charger, res)
 
     const imageUrl = await getSignedS3Url(charger.bucket, charger.key);
 
-    // TODO: handle return data excluding key,bucket info
     charger.bucket = undefined;
     charger.key = undefined;
 
@@ -148,17 +156,9 @@ async function updateCharger(req, res) {
     await sequelize.transaction(async (t) => {
       const charger = await getChargerById(req.params.id);
 
-      if (!charger) {
-        res.status(404);
-        res.json({ error: "No charger found" });
-        return;
-      } else if (charger.Host.username !== req.user.username) {
-        res.status(401);
-        res.json({ error: "Unauthorised operation" });
-        return;
-      }
+      handleNotFound(charger, res)
+      handleUnauthorised(charger, res, req)
 
-      // TODO: Create function for the below
       const data = { ...req.body };
 
       const key = `uploads/${uuidv4()}`;
@@ -181,7 +181,7 @@ async function updateCharger(req, res) {
       res.json(updatedCharger);
     });
   } catch (err) {
-    console.log(err)
+    console.log(err);
     res.status(500);
     return res.json({ error: err.message });
   }
@@ -190,15 +190,8 @@ async function deleteCharger(req, res) {
   try {
     const charger = await getChargerById(req.params.id);
 
-    if (!charger) {
-      res.status(404);
-      res.json({ error: "No charger found" });
-      return;
-    } else if (charger.Host.username !== req.user.username) {
-      res.status(401);
-      res.json({ error: "Unauthorised operation" });
-      return;
-    }
+    handleNotFound(charger, res)
+    handleUnauthorised(charger, res, req)
 
     await deleteChargerById(req.params.id);
     res.status(204);
@@ -213,12 +206,7 @@ async function deleteCharger(req, res) {
 async function getChargers(req, res) {
   try {
     const chargers = await getAllChargers();
-
-    if (chargers === null) {
-      res.status(404);
-      res.json({ error: "No chargers found" });
-      return;
-    }
+    handleNotFound(chargers, res)
 
     const filteredChargers = chargers.filter(
       (charger) =>
@@ -239,10 +227,11 @@ async function getChargers(req, res) {
 async function getMyChargers(req, res) {
   try {
     if (req.user) {
-      // TODO handle errors and make userchargerwithurls a separated function
       const user = await findUser(req.user.username);
 
       const chargers = await getChargerByUserId(user.id);
+
+      handleNotFound(chargers, res)
 
       const UserChargersWithUrls = await getChargersWithUrl(chargers);
 
@@ -263,15 +252,9 @@ async function updateChargerStatus(req, res) {
     await sequelize.transaction(async (t) => {
       const charger = await getChargerById(req.params.id);
 
-      if (!charger) {
-        res.status(404);
-        res.json({ error: "No charger found" });
-        return;
-      } else if (charger.Host.username !== req.user.username) {
-        res.status(401);
-        res.json({ error: "Unauthorised operation" });
-        return;
-      }
+      handleNotFound(charger, res)
+      handleUnauthorised(charger, res, req)
+
       charger.status = req.body.status;
       charger.save();
 
