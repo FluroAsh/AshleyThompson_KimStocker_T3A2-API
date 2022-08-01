@@ -6,7 +6,7 @@ function getRandomInt(min, max) {
   return Math.floor(Math.random() * (max - min) + min);
 }
 
-const vehicles = [...Array(10)].map(() => ({
+const vehicles = [...Array(12)].map(() => ({
   make: "Audi",
   model: "e-tron SUV",
   variant: "e-tron SUV 50",

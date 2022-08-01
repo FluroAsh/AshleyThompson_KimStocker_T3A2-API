@@ -15,6 +15,7 @@ const {
   getSignedS3Url,
 } = require("../services/awsS3-services");
 const plug = require("../models/plug");
+const { UploadPartCopyRequest } = require("@aws-sdk/client-s3");
 
 // TODO: Double check all res.status
 
@@ -68,21 +69,18 @@ async function createCharger(req, res) {
 
   console.log("THIS IS FORM DATA", data);
 
-  // TODO: Handle error when user not found
   const user = await findUser(data.username);
+  if (user === null) {
+    res.status(500);
+    return res.json({ error: `Unknown user ${data.username}` });
+  }
 
-  // if (user) {
-  //   // res.status(500)
-  //   res.json({error: "Pls log in first"})
-  // }
   const plugId = await getPlugId(data.plugName);
 
-  console.log("THIS IS USER ", user);
   data["UserId"] = user.id;
   data["AddressId"] = user.Address.dataValues.id;
   data["PlugId"] = plugId;
 
-  console.log("FILE NAME", req.file);
   const key = `uploads/${uuidv4()}`;
   // -${req.file.originalname}
 
@@ -95,15 +93,15 @@ async function createCharger(req, res) {
       const newCharger = await Charger.create(data, { transaction: t });
       await uploadImageToS3(req.file, key);
 
+      // Exclude key, bucket out of the returned charger data
+      delete newCharger.bucket;
+      delete newCharger.key;
+
       res.status(204);
-
-      // TODO: Exclude key, bucket and region out of the returned charger data
       return res.json(newCharger);
-
-      // res.send(chargersWithUrls);
     });
   } catch (err) {
-    console.log(err.message);
+    console.log(err);
     res.status(500);
     return res.json({ error: err.message });
   }
@@ -122,19 +120,22 @@ async function getCharger(req, res) {
 
     const imageUrl = await getSignedS3Url(charger.bucket, charger.key);
 
+    // TODO: handle return data excluding key,bucket info
+    delete charger.bucket;
+    delete charger.key;
+
     const chargerWithUrl = {
       ...charger.toJSON(),
       imageUrl,
     };
-    // TODO: handle return data excluding key,bucket info
 
+    console.log("THIS IS CHARGER CREATED", chargerWithUrl)
     res.status(200);
     res.json(chargerWithUrl);
   } catch (err) {
     res.status(500);
     return res.json({ error: err.message });
   }
-  // TODO: Exclude key, bucket and region out of the returned charger data
 }
 
 async function updateCharger(req, res) {
@@ -145,6 +146,12 @@ async function updateCharger(req, res) {
       if (!charger) {
         res.status(404);
         res.json({ error: "No charger found" });
+        return;
+      }
+
+      if (charger.Host.username !== req.body.username) {
+        res.status(401);
+        res.json({ error: "Unauthorised operation" });
         return;
       }
 
@@ -163,25 +170,38 @@ async function updateCharger(req, res) {
       // TODO: handle reupload image
       await uploadImageToS3(req.file, key);
 
-      res.status(200);
+      // Exclude key, bucket out of the returned charger data
+      delete updatedCharger.bucket;
+      delete updatedCharger.key;
 
-      // TODO: Exclude key, bucket and region out of the returned charger data
-      // return res.json(updatedCharger);
+      res.status(200);
       res.json(updatedCharger);
     });
   } catch (err) {
-    res.status(404);
+    res.status(500);
     return res.json({ error: err.message });
   }
 }
 async function deleteCharger(req, res) {
   try {
+    const charger = await getChargerById(req.params.id);
+
+    if (!charger) {
+      res.status(404);
+      res.json({ error: "No charger found" });
+      return;
+    } else if (charger && charger.Host.username !== req.user.username) {
+      res.status(401);
+      res.json({ error: "Unauthorised operation" });
+      return;
+    }
+
     await deleteChargerById(req.params.id);
-    //TODO: res status
     res.status(204);
-    // res.json({message: "charger details deleted"})
+    res.json({ message: "charger details deleted" });
   } catch (err) {
-    res.status(404);
+    console.log("Error deleting charger", err);
+    res.status(500);
     return res.json({ error: err.message });
   }
 }
@@ -247,20 +267,16 @@ async function getMyChargers(req, res) {
   }
 }
 
-
 async function updateChargerStatus(req, res) {
-
   console.log("THIS IS DATA RECEIVED FROM FRONT END", req.body);
 
   try {
     await sequelize.transaction(async (t) => {
-
-
-      const charger = await getChargerById(req.params.id)
-      charger.status = req.body.status
+      const charger = await getChargerById(req.params.id);
+      charger.status = req.body.status;
       charger.save();
 
-      console.log("THIS IS UPDATED CHARGER AFTER UPDATING THE STATUS", charger)
+      console.log("THIS IS UPDATED CHARGER AFTER UPDATING THE STATUS", charger);
       res.status(204);
       res.json(charger);
     });
@@ -280,5 +296,5 @@ module.exports = {
   deleteCharger,
   getMyChargers,
   searchChargersLocation,
-  updateChargerStatus
+  updateChargerStatus,
 };

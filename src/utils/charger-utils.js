@@ -40,7 +40,7 @@ async function getChargerById(id) {
 }
 
 async function deleteChargerById(id) {
-  Charger.destroy({
+  await Charger.destroy({
     where: { id },
   });
 }

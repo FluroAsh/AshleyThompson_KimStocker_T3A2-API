@@ -15,12 +15,17 @@ function randomDate() {
   );
 }
 
+function plusDays(num) {
+  let today = new Date();
+  return new Date(today.getTime() + num)
+}
+
 const bookings = [...Array(15)].map(() => {
   const status = ["approved", "rejected", "pending", "cancelled"];
   const statusIndex = getRandomInt(0, 3);
 
   return {
-    UserId: getRandomInt(1, 10),
+    UserId: getRandomInt(3, 10),
     ChargerId: getRandomInt(1, 5),
     bookingDate: randomDate(),
     // price can be random as owner may change the charging price every now and then,
@@ -30,6 +35,55 @@ const bookings = [...Array(15)].map(() => {
     createdAt: new Date(),
     updatedAt: new Date(),
   };
+});
+
+// Bookings below are static for testing purposes
+bookings.unshift({
+  UserId: 2,
+  ChargerId: 1,
+  bookingDate: plusDays(1),
+  // price can be random as owner may change the charging price every now and then,
+  // this price is at time of booking :)
+  price: 3000,
+  status: "pending",
+  createdAt: new Date(),
+  updatedAt: new Date(),
+});
+
+bookings.unshift({
+  UserId: 2,
+  ChargerId: 1,
+  bookingDate: plusDays(2),
+  // price can be random as owner may change the charging price every now and then,
+  // this price is at time of booking :)
+  price: 3000,
+  status: "approved",
+  createdAt: new Date(),
+  updatedAt: new Date(),
+});
+
+bookings.unshift({
+  UserId: 2,
+  ChargerId: 1,
+  bookingDate: plusDays(3),
+  // price can be random as owner may change the charging price every now and then,
+  // this price is at time of booking :)
+  price: 3000,
+  status: "rejected",
+  createdAt: new Date(),
+  updatedAt: new Date(),
+});
+
+bookings.unshift({
+  UserId: 2,
+  ChargerId: 1,
+  bookingDate: plusDays(4),
+  // price can be random as owner may change the charging price every now and then,
+  // this price is at time of booking :)
+  price: 3000,
+  status: "cancelled",
+  createdAt: new Date(),
+  updatedAt: new Date(),
 });
 
 module.exports = {
