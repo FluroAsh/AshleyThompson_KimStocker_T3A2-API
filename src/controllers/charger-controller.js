@@ -7,6 +7,7 @@ const {
   deleteChargerById,
   getPlugId,
   getChargersByLocation,
+  getChargerByUserId,
 } = require("../utils/charger-utils");
 const { findUser } = require("../utils/auth-utils");
 const { v4: uuidv4 } = require("uuid");
@@ -24,6 +25,9 @@ async function getChargersWithUrl(chargers) {
   const chargersWithUrls = await Promise.all(
     chargers.map(async (charger) => {
       const imageUrl = await getSignedS3Url(charger.bucket, charger.key);
+      // Exclude key, bucket out of the returned charger data
+      charger.bucket = undefined;
+      charger.key = undefined;
       return {
         ...charger.toJSON(),
         imageUrl,
@@ -54,24 +58,26 @@ async function searchChargersLocation(req, res) {
      * .filter returns empty array, so check if it's length is equal to 0 and raise an error if true
      */
     if (Object.keys(chargers).length === 0 || filteredChargers.length === 0) {
-      return res.status(404).json({ error: "No chargers found" });
+      // return 200 as this is not user error. No records match searched keyword
+      res.status(200)
+      return res.json({ error: "No matched chargers found" });
     }
 
     const urlChargers = await getChargersWithUrl(filteredChargers);
-    res.status(200).json(urlChargers);
+    res.status(200)
+    return res.json(urlChargers);
   } catch (err) {
-    res.status(500).json({ error: err.message });
+    res.status(500)
+    return res.json({ error: err.message });
   }
 }
 
 async function createCharger(req, res) {
   const data = { ...req.body };
 
-  console.log("THIS IS FORM DATA", data);
-
   const user = await findUser(data.username);
-  if (user === null) {
-    res.status(500);
+  if (!user) {
+    res.status(404);
     return res.json({ error: `Unknown user ${data.username}` });
   }
 
@@ -94,8 +100,8 @@ async function createCharger(req, res) {
       await uploadImageToS3(req.file, key);
 
       // Exclude key, bucket out of the returned charger data
-      delete newCharger.bucket;
-      delete newCharger.key;
+      newCharger.bucket = undefined;
+      newCharger.key = undefined;
 
       res.status(204);
       return res.json(newCharger);
@@ -121,15 +127,14 @@ async function getCharger(req, res) {
     const imageUrl = await getSignedS3Url(charger.bucket, charger.key);
 
     // TODO: handle return data excluding key,bucket info
-    delete charger.bucket;
-    delete charger.key;
+    charger.bucket = undefined;
+    charger.key = undefined;
 
     const chargerWithUrl = {
       ...charger.toJSON(),
       imageUrl,
     };
 
-    console.log("THIS IS CHARGER CREATED", chargerWithUrl)
     res.status(200);
     res.json(chargerWithUrl);
   } catch (err) {
@@ -147,9 +152,7 @@ async function updateCharger(req, res) {
         res.status(404);
         res.json({ error: "No charger found" });
         return;
-      }
-
-      if (charger.Host.username !== req.body.username) {
+      } else if (charger.Host.username !== req.user.username) {
         res.status(401);
         res.json({ error: "Unauthorised operation" });
         return;
@@ -171,8 +174,8 @@ async function updateCharger(req, res) {
       await uploadImageToS3(req.file, key);
 
       // Exclude key, bucket out of the returned charger data
-      delete updatedCharger.bucket;
-      delete updatedCharger.key;
+      updatedCharger.bucket = undefined;
+      updatedCharger.key = undefined;
 
       res.status(200);
       res.json(updatedCharger);
@@ -190,7 +193,7 @@ async function deleteCharger(req, res) {
       res.status(404);
       res.json({ error: "No charger found" });
       return;
-    } else if (charger && charger.Host.username !== req.user.username) {
+    } else if (charger.Host.username !== req.user.username) {
       res.status(401);
       res.json({ error: "Unauthorised operation" });
       return;
@@ -207,76 +210,70 @@ async function deleteCharger(req, res) {
 }
 
 async function getChargers(req, res) {
-  const chargers = await getAllChargers();
+  try {
+    const chargers = await getAllChargers();
 
-  if (chargers === null) {
-    res.status(404);
-    res.json({ error: "No chargers found" });
-    return;
+    if (chargers === null) {
+      res.status(404);
+      res.json({ error: "No chargers found" });
+      return;
+    }
+
+    const filteredChargers = chargers.filter(
+      (charger) =>
+        charger.status === "active" &&
+        req.user?.username !== charger.Host.username
+    );
+
+    const chargersWithUrls = await getChargersWithUrl(filteredChargers);
+
+    res.status(200);
+    res.send(chargersWithUrls);
+  } catch (err) {
+    res.status(500);
+    return res.json({ error: err.message });
   }
-
-  const filteredChargers = chargers.filter(
-    (charger) =>
-      charger.status === "active" &&
-      req.user?.username !== charger.Host.username
-  );
-
-  const chargersWithUrls = await getChargersWithUrl(filteredChargers);
-
-  res.status(200);
-  // TODO: Exclude key, bucket and region out of the returned charger data
-  res.send(chargersWithUrls);
 }
 
 async function getMyChargers(req, res) {
-  console.log("req.user", req.user);
-  if (req.user) {
-    try {
+  try {
+    if (req.user) {
       // TODO handle errors and make userchargerwithurls a separated function
       const user = await findUser(req.user.username);
 
-      const chargers = await Charger.findAll({
-        where: {
-          UserId: user.id,
-        },
-        include: [
-          {
-            model: Address,
-            as: "Address",
-          },
-          {
-            model: User,
-            as: "Host",
-          },
-        ],
-      });
-
-      // console.log("THIS IS MY CHARGERS", chargers);
+      const chargers = await getChargerByUserId(user.id);
 
       const UserChargersWithUrls = await getChargersWithUrl(chargers);
 
       res.status(200);
       res.send(UserChargersWithUrls);
-    } catch (err) {
-      console.trace();
-      res.status(500);
-      res.json({ error: err.message });
+    } else {
+      res.status(401);
+      res.json({ error: "log in the see your list of chargers" });
     }
-  } else {
-    res.json({ error: "log in the see your list of chargers" });
+  } catch (err) {
+    res.status(500);
+    res.json({ error: err.message });
   }
 }
 
 async function updateChargerStatus(req, res) {
-  console.log("THIS IS DATA RECEIVED FROM FRONT END", req.body);
-
   try {
     await sequelize.transaction(async (t) => {
       const charger = await getChargerById(req.params.id);
+
+      if (!charger) {
+        res.status(404);
+        res.json({ error: "No charger found" });
+        return;
+      } else if (charger.Host.username !== req.user.username) {
+        res.status(401);
+        res.json({ error: "Unauthorised operation" });
+        return;
+      }
       charger.status = req.body.status;
       charger.save();
 
-      console.log("THIS IS UPDATED CHARGER AFTER UPDATING THE STATUS", charger);
       res.status(204);
       res.json(charger);
     });
