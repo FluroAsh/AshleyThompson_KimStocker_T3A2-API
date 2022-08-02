@@ -17,8 +17,7 @@ const {
 } = require("../services/awsS3-services");
 const plug = require("../models/plug");
 const { UploadPartCopyRequest } = require("@aws-sdk/client-s3");
-const {loginRequired} = require("../controllers/auth-controller")
-
+const { loginRequired } = require("../controllers/auth-controller");
 
 // TODO: Double check all res.status
 function handleNotFound(record, res) {
@@ -29,8 +28,8 @@ function handleNotFound(record, res) {
   }
 }
 
-function handleUnauthorised(record, res, req) {
-  if (record.Host.username !== req.user.username) {
+function handleUnauthorised(charger, res, req) {
+  if (charger.Host.username !== req.user.username) {
     res.status(401);
     res.json({ error: "Unauthorised operation" });
     return;
@@ -38,19 +37,23 @@ function handleUnauthorised(record, res, req) {
 }
 /** S3 Charger URL Helper Method */
 async function getChargersWithUrl(chargers) {
-  const chargersWithUrls = await Promise.all(
-    chargers.map(async (charger) => {
-      const imageUrl = await getSignedS3Url(charger.bucket, charger.key);
-      // Exclude key, bucket out of the returned charger data
-      charger.bucket = undefined;
-      charger.key = undefined;
-      return {
-        ...charger.toJSON(),
-        imageUrl,
-      };
-    })
-  );
-  return chargersWithUrls;
+  try {
+    const chargersWithUrls = await Promise.all(
+      chargers.map(async (charger) => {
+        const imageUrl = await getSignedS3Url(charger.bucket, charger.key);
+        // Exclude key, bucket out of the returned charger data
+        charger.bucket = undefined;
+        charger.key = undefined;
+        return {
+          ...charger.toJSON(),
+          imageUrl,
+        };
+      })
+    );
+    return chargersWithUrls;
+  } catch (err) {
+    console.log(err);
+  }
 }
 
 /** Action Methods */
@@ -228,16 +231,19 @@ async function getChargers(req, res) {
 }
 
 async function getMyChargers(req, res, next) {
-
-  loginRequired(req, res, next);
+  // loginRequired(req, res, next);
   try {
+
+    if (!req.user) {
+      res.status(401);
+      return res.json({ error: "Please sign in to continue" });
+    }
     const user = await findUser(req.user.username);
 
     const chargers = await getChargerByUserId(user.id);
 
-    if (chargers.length === 0) {
-      handleNotFound(chargers, res);
-    }
+    console.log("THIS IS SAMPLE OF chargers list before URL", chargers);
+    handleNotFound(chargers, res);
     const UserChargersWithUrls = await getChargersWithUrl(chargers);
 
     res.status(200);
@@ -279,4 +285,5 @@ module.exports = {
   getMyChargers,
   searchChargersLocation,
   updateChargerStatus,
+  getChargersWithUrl,
 };

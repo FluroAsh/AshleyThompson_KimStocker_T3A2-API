@@ -8,7 +8,8 @@ const {
   getChargers,
   getMyChargers,
   updateChargerStatus,
-  searchChargersLocation
+  searchChargersLocation,
+  getChargersWithUrl
 } = require("../controllers/charger-controller");
 
 jest.mock("../services/awsS3-services", () => ({

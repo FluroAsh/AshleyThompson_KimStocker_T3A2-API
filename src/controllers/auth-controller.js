@@ -68,6 +68,7 @@ const loginRequired = (req, res, next) => {
   }
 };
 
+// TODO: May need to handle this differently. Refer to handleUnauthorised function
 const authoriseUser = (reqUserId, ownerId) => {
   if (reqUserId != ownerId) {
     throw Error("Unauthorised Operation");
