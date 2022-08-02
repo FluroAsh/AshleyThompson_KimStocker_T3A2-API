@@ -8,7 +8,7 @@ function getRandomInt(min, max) {
   return Math.floor(Math.random() * (max - min) + min);
 }
 
-const chargers = [...Array(5)].map((e, index) => {
+const chargers = [...Array(10)].map((e, index) => {
   const status = ["pending", "active", "disabled"];
   const statusIndex = getRandomInt(0, 2);
   // const randomUserAndAddressId = getRandomInt(1, 5);
