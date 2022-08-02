@@ -97,3 +97,24 @@ exports.findInvalidBookings = (UserId, bookings) => {
   });
   return invalidBookings;
 };
+
+// Return the updated object for the frontend in both Approval/Rejection methods
+exports.handleHostApproval = (userBooking) => {
+  userBooking.update(
+    { status: "approved" },
+    {
+      returning: true,
+      plain: true,
+    }
+  );
+};
+
+exports.handleHostRejection = async (userBooking) => {
+  userBooking.update(
+    { status: "rejected" },
+    {
+      returning: true,
+      plain: true,
+    }
+  );
+};
