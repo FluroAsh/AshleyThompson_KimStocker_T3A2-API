@@ -50,7 +50,7 @@ describe("createCharger function", () => {
 
     await createCharger(req, res);
 
-    expect(status).toHaveBeenCalledWith(204);
+    expect(status).toHaveBeenCalledWith(201);
     expect(json).toHaveBeenCalled();
 
     const data = json.mock.calls[0][0];
@@ -297,7 +297,7 @@ describe("deleteCharger function", () => {
 
     await createCharger(req, res);
 
-    expect(status).toHaveBeenCalledWith(204);
+    expect(status).toHaveBeenCalledWith(201);
     const data = json.mock.calls[0][0];
 
     chargerId = data.id;
@@ -481,7 +481,7 @@ describe("updateChargerStatus function", () => {
 
     await createCharger(req, res);
 
-    expect(status).toHaveBeenCalledWith(204);
+    expect(status).toHaveBeenCalledWith(201);
     const data = json.mock.calls[0][0];
 
     chargerId = data.id;

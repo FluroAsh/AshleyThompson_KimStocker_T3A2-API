@@ -122,7 +122,7 @@ async function createCharger(req, res) {
       newCharger.bucket = undefined;
       newCharger.key = undefined;
 
-      res.status(204);
+      res.status(201);
       return res.json(newCharger);
     });
   } catch (err) {
