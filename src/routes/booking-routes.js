@@ -10,21 +10,34 @@ const {
   deleteBooking,
   getAllUserBookings,
   getAllBookingRequests,
+  handleUserResponse,
+  handleHostRequest,
 } = require("../controllers/booking-controller");
 
 bookingRouter.get("/bookings", getBookings);
 bookingRouter.get("/booking/:id", getBooking);
 
-// verify bookings belong to the user making the request (check ownership)
-
-// bookingRouter.get("/bookings/user/:username?type=bookings", getAllUserBookings)
 bookingRouter.get("/bookings/user/:username", (req, res, next) => {
-  if (req.query.type === "bookings") {
+  const { type } = req.query;
+
+  if (type === "bookings") {
     getAllUserBookings(req, res);
   }
 
-  if (req.query.type === "requests") {
+  if (type === "requests") {
     getAllBookingRequests(req, res);
+  }
+});
+
+bookingRouter.put("/booking/request", (req, res) => {
+  const { response } = req.query;
+
+  if (response === "approve" || "reject") {
+    handleHostRequest(req, res);
+  }
+
+  if (response === "pay" || "cancel") {
+    handleUserResponse(req, res);
   }
 });
 bookingRouter.post("/booking/new", createBooking);

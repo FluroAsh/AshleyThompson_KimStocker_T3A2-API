@@ -1,7 +1,7 @@
 const db = require("../models");
 const sequelize = db.sequelize;
 const Op = db.Sequelize.Op;
-const { Booking } = db;
+const { Booking, Charger } = db;
 const {
   getBookingById,
   getAllBookings,
@@ -123,6 +123,46 @@ async function deleteBooking(req, res) {
   }
 }
 
+async function handleHostRequest(req, res) {
+  try {
+    const { BookingId } = req.body;
+    const { response } = req.query;
+    const reqUserId = req.user.id;
+    // console.log(req.body);
+
+    // find a charger that that matches the requesting Hosts ID
+    const charger = await Charger.findOne({ where: { UserId: reqUserId } });
+    if (!charger) {
+      throw Error(`No associated charger found for user: ${reqUserId}`);
+    }
+
+    authoriseUser(reqUserId, charger.UserId);
+
+    const booking = Booking.findByPk(BookingId);
+    if (!booking) {
+      throw Error(`No booking found for booking: ${BookingId}`);
+    }
+
+    // if response.approve
+    // then append Booking.status to 'approved'
+    if (response === "approve") {
+      console.log("✅ Approved");
+    }
+
+    // if response.reject
+    // then modify Booking.status to 'rejected'
+    if (response === "reject") {
+      console.log("❌ Rejected");
+    }
+
+    res.status(200).json({ message: "You made a request!" });
+  } catch (err) {
+    res.status(401).json({ error: err.message });
+  }
+}
+
+async function handleUserResponse(req, res) {}
+
 module.exports = {
   getBooking,
   getBookings,
@@ -131,4 +171,6 @@ module.exports = {
   deleteBooking,
   getAllUserBookings,
   getAllBookingRequests,
+  handleHostRequest,
+  handleUserResponse,
 };
