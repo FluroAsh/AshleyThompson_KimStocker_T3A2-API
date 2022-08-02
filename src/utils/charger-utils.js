@@ -17,8 +17,34 @@ async function getAllChargers() {
         as: "Address",
       },
     ],
+    attributes: { exclude: ["createdAt", "updatedAt"] },
+
   });
+
 }
+
+async function getChargerByUserId(id) {
+  return await Charger.findAll({
+    where: {
+      UserId: id,
+    },
+    include: [
+      {
+        model: Address,
+        as: "Address",
+      },
+      {
+        model: User,
+        as: "Host",
+      },
+    ],
+  });
+
+
+}
+
+
+
 
 async function getChargerById(id) {
   return await Charger.findByPk(id, {
@@ -36,11 +62,12 @@ async function getChargerById(id) {
         model: Unavailability,
       },
     ],
+    
   });
 }
 
 async function deleteChargerById(id) {
-  Charger.destroy({
+  await Charger.destroy({
     where: { id },
   });
 }
@@ -88,4 +115,5 @@ module.exports = {
   deleteChargerById,
   getPlugId,
   getChargersByLocation,
+  getChargerByUserId
 };

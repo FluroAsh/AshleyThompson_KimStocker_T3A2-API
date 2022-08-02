@@ -9,11 +9,10 @@ function getRandomInt(min, max) {
 }
 
 const chargers = [...Array(5)].map((e, index) => {
-
   const status = ["pending", "active", "disabled"];
   const statusIndex = getRandomInt(0, 2);
   // const randomUserAndAddressId = getRandomInt(1, 5);
-  const indEl = index + 1;
+  const indEl = index + 3;
 
   return {
     name: casual.title,
@@ -28,6 +27,63 @@ const chargers = [...Array(5)].map((e, index) => {
     createdAt: new Date(),
     updatedAt: new Date(),
   };
+});
+
+// Chargers below are static for testing purposes
+chargers.unshift({
+  name: "Ash's Charger",
+  instructions: "Go to the garage and plug in",
+  price: 3500,
+  status: "active",
+  UserId: 2,
+  PlugId: 1,
+  AddressId: 2,
+  bucket: process.env.AWS_BUCKET_NAME,
+  key: "uploads/turtle.png",
+  createdAt: new Date(),
+  updatedAt: new Date(),
+});
+
+chargers.unshift({
+  name: "Super Charger Test 3",
+  instructions: "Go to the garage and plug in",
+  price: 5000,
+  status: "disabled",
+  UserId: 1,
+  PlugId: 1,
+  AddressId: 1,
+  bucket: process.env.AWS_BUCKET_NAME,
+  key: "uploads/turtle.png",
+  createdAt: new Date(),
+  updatedAt: new Date(),
+});
+
+chargers.unshift({
+  name: "Super Charger Test 2",
+  instructions: "Go to the garage and plug in",
+  price: 4000,
+  status: "pending",
+  UserId: 1,
+  PlugId: 1,
+  AddressId: 1,
+  bucket: process.env.AWS_BUCKET_NAME,
+  key: "uploads/turtle.png",
+  createdAt: new Date(),
+  updatedAt: new Date(),
+});
+
+chargers.unshift({
+  name: "Super Charger Test 1",
+  instructions: "Go to the garage and plug in",
+  price: 3000,
+  status: "active",
+  UserId: 1,
+  PlugId: 1,
+  AddressId: 1,
+  bucket: process.env.AWS_BUCKET_NAME,
+  key: "uploads/turtle.png",
+  createdAt: new Date(),
+  updatedAt: new Date(),
 });
 
 module.exports = {

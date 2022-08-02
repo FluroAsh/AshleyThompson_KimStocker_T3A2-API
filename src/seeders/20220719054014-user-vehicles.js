@@ -1,6 +1,6 @@
 "use strict";
 
-const userVehicles = [...Array(10)].map((e, index) => {
+const userVehicles = [...Array(12)].map((e, index) => {
   return {
     VehicleId: index + 1,
     UserId: index + 1,
