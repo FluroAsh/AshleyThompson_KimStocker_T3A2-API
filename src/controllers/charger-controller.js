@@ -17,6 +17,8 @@ const {
 } = require("../services/awsS3-services");
 const plug = require("../models/plug");
 const { UploadPartCopyRequest } = require("@aws-sdk/client-s3");
+const {loginRequired} = require("../controllers/auth-controller")
+
 
 // TODO: Double check all res.status
 function handleNotFound(record, res) {
@@ -131,10 +133,11 @@ async function getCharger(req, res) {
   try {
     const charger = await getChargerById(req.params.id);
 
-    handleNotFound(charger, res)
+    handleNotFound(charger, res);
 
     const imageUrl = await getSignedS3Url(charger.bucket, charger.key);
 
+    // TODO: handle return data excluding key,bucket info
     charger.bucket = undefined;
     charger.key = undefined;
 
@@ -156,8 +159,8 @@ async function updateCharger(req, res) {
     await sequelize.transaction(async (t) => {
       const charger = await getChargerById(req.params.id);
 
-      handleNotFound(charger, res)
-      handleUnauthorised(charger, res, req)
+      handleNotFound(charger, res);
+      handleUnauthorised(charger, res, req);
 
       const data = { ...req.body };
 
@@ -190,8 +193,8 @@ async function deleteCharger(req, res) {
   try {
     const charger = await getChargerById(req.params.id);
 
-    handleNotFound(charger, res)
-    handleUnauthorised(charger, res, req)
+    handleNotFound(charger, res);
+    handleUnauthorised(charger, res, req);
 
     await deleteChargerById(req.params.id);
     res.status(204);
@@ -206,7 +209,7 @@ async function deleteCharger(req, res) {
 async function getChargers(req, res) {
   try {
     const chargers = await getAllChargers();
-    handleNotFound(chargers, res)
+    handleNotFound(chargers, res);
 
     const filteredChargers = chargers.filter(
       (charger) =>
@@ -224,23 +227,21 @@ async function getChargers(req, res) {
   }
 }
 
-async function getMyChargers(req, res) {
+async function getMyChargers(req, res, next) {
+
+  loginRequired(req, res, next);
   try {
-    if (req.user) {
-      const user = await findUser(req.user.username);
+    const user = await findUser(req.user.username);
 
-      const chargers = await getChargerByUserId(user.id);
+    const chargers = await getChargerByUserId(user.id);
 
-      handleNotFound(chargers, res)
-
-      const UserChargersWithUrls = await getChargersWithUrl(chargers);
-
-      res.status(200);
-      res.send(UserChargersWithUrls);
-    } else {
-      res.status(401);
-      res.json({ error: "log in the see your list of chargers" });
+    if (chargers.length === 0) {
+      handleNotFound(chargers, res);
     }
+    const UserChargersWithUrls = await getChargersWithUrl(chargers);
+
+    res.status(200);
+    res.send(UserChargersWithUrls);
   } catch (err) {
     res.status(500);
     res.json({ error: err.message });
@@ -252,8 +253,8 @@ async function updateChargerStatus(req, res) {
     await sequelize.transaction(async (t) => {
       const charger = await getChargerById(req.params.id);
 
-      handleNotFound(charger, res)
-      handleUnauthorised(charger, res, req)
+      handleNotFound(charger, res);
+      handleUnauthorised(charger, res, req);
 
       charger.status = req.body.status;
       charger.save();

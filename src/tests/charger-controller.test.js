@@ -38,6 +38,9 @@ describe("createCharger function", () => {
       file: {
         buffer: "my file contents",
       },
+      user: {
+        username: "Kim"
+      }
     };
 
     const status = jest.fn();
@@ -418,9 +421,10 @@ describe("getMyChargers function", () => {
 
     const status = jest.fn();
     const send = jest.fn();
+    const next = jest.fn();
     const res = { status, send };
 
-    await getMyChargers(req, res);
+    await getMyChargers(req, res, next);
 
     expect(status).toHaveBeenCalledWith(200);
     expect(send).toHaveBeenCalled();
@@ -447,7 +451,7 @@ describe("getMyChargers function", () => {
 
     expect(status).toHaveBeenCalledWith(401);
     expect(json).toHaveBeenCalledWith({
-      error: "log in the see your list of chargers",
+      error: "Please sign in to continue",
     });
   });
 });
