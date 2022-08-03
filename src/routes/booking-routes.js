@@ -1,7 +1,7 @@
 const express = require("express");
 const { authoriseUser } = require("../controllers/auth-controller");
 const bookingRouter = express.Router();
-
+const { loginRequired } = require("../controllers/auth-controller");
 const {
   getBooking,
   getBookings,
@@ -11,6 +11,8 @@ const {
   getAllUserBookings,
   getAllBookingRequests,
 } = require("../controllers/booking-controller");
+
+bookingRouter.use(loginRequired);
 
 bookingRouter.get("/bookings", getBookings);
 bookingRouter.get("/booking/:id", getBooking);
