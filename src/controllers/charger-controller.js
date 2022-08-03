@@ -15,6 +15,8 @@ const {
   uploadImageToS3,
   getSignedS3Url,
 } = require("../services/awsS3-services");
+require("dotenv").config();
+
 const plug = require("../models/plug");
 const { UploadPartCopyRequest } = require("@aws-sdk/client-s3");
 const { loginRequired } = require("../controllers/auth-controller");

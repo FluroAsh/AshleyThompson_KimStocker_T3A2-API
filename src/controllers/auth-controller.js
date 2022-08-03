@@ -4,6 +4,7 @@ const Op = db.Sequelize.Op;
 const jwt = require("jsonwebtoken");
 const { findUser } = require("../utils/auth-utils.js");
 const bcrypt = require("bcrypt");
+require("dotenv").config();
 
 // TODO check the password and password_confirmation match can be done in front end?
 
