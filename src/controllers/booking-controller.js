@@ -171,6 +171,7 @@ async function handleUserResponse(req, res) {
     let responseMessage;
 
     if (response === "pay") {
+      // stripe/payment logic should go in here
       console.log(`${reqUserId} paid for their booking!`);
       responseMessage = `Payment complete for booking ${reqBookingId}`;
     }
