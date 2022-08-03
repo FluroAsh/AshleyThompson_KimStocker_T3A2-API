@@ -32,7 +32,7 @@ const chargers = [...Array(10)].map((e, index) => {
 // Chargers below are static for testing purposes
 chargers.unshift({
   name: "Ash's Charger",
-  instructions: "Go to the garage and plug in",
+  instructions: "Go to basement and plug in",
   price: 3500,
   status: "active",
   UserId: 2,
@@ -46,7 +46,7 @@ chargers.unshift({
 
 chargers.unshift({
   name: "Super Charger Test 3",
-  instructions: "Go to the garage and plug in",
+  instructions: "Go to basement and plug in",
   price: 5000,
   status: "disabled",
   UserId: 1,
@@ -60,7 +60,7 @@ chargers.unshift({
 
 chargers.unshift({
   name: "Super Charger Test 2",
-  instructions: "Go to the garage and plug in",
+  instructions: "Go to basement and plug in",
   price: 4000,
   status: "pending",
   UserId: 1,
@@ -74,7 +74,7 @@ chargers.unshift({
 
 chargers.unshift({
   name: "Super Charger Test 1",
-  instructions: "Go to the garage and plug in",
+  instructions: "Go to basement and plug in",
   price: 3000,
   status: "active",
   UserId: 1,
