@@ -36,7 +36,7 @@ chargerRouter.get("/chargers", getChargers);
 chargerRouter.get("/charger/:id", getCharger);
 chargerRouter.get("/search", searchChargersLocation);
 
-// chargerRouter.use(loginRequired);
+chargerRouter.use(loginRequired);
 chargerRouter.get("/chargers/mychargers", getMyChargers);
 chargerRouter.post("/charger/new", upload.single("image"), createCharger);
 chargerRouter.put("/charger/:id", upload.single("image"), updateCharger);

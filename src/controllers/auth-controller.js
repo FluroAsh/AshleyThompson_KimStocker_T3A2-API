@@ -29,8 +29,8 @@ async function signUp(req, res) {
       return res.json({ error: err.errors[0].message || err });
     }
   } else {
-    // res.status(402)
-    return res.status(422).json({
+    res.status(422)
+    return res.json({
       error: "Password confirmation does not match password entered",
     });
   }
@@ -64,10 +64,11 @@ const loginRequired = (req, res, next) => {
     next();
   } else {
     res.status(401);
-    return res.json({ error: "Unauthorised operation" });
+    return res.json({ error: "Please sign in to continue" });
   }
 };
 
+// TODO: May need to handle this differently. Refer to handleUnauthorised function
 const authoriseUser = (reqUserId, ownerId) => {
   if (reqUserId != ownerId) {
     throw Error("Unauthorised Operation");

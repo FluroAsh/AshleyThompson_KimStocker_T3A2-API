@@ -40,14 +40,19 @@ async function getBookings(req, res) {
   }
 }
 
-async function createBooking(req, res) {
-  const UserId = req.user.id || null;
+async function createBooking(req, res, next) {
+
+  if (req.user) {
+    next();
+  } else {
+    res.status(401);
+    return res.json({ error: "Please sign in to continue" });
+  }
+
   const bookings = req.body;
+  const UserId = req.user.id;
 
   try {
-    if (UserId === null) {
-      throw Error("You need to be logged in to do that");
-    }
 
     // Check to see if there is a duplicate booking belonging to the request user
     const invalidBookings = await findInvalidBookings(UserId, bookings);
@@ -67,9 +72,12 @@ async function createBooking(req, res) {
       });
     });
 
-    res.status(201).json(bookings);
+    res.status(201);
+    return res.json(bookings);
   } catch (err) {
-    res.status(404).json({ error: err.message });
+    console.log("THIS IS ERROR", err);
+    res.status(500);
+    return res.json({ error: err.message });
   }
 }
 
