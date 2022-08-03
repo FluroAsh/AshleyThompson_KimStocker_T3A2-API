@@ -116,7 +116,9 @@ async function deleteBooking(req, res) {
     authoriseUser(reqUserId, booking.UserId);
 
     booking.destroy();
-    res.status(200).json({ message: `Booking ${id} successfully deleted` });
+    res
+      .status(200)
+      .json({ message: `Booking ${BookingId} successfully deleted` });
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
@@ -134,6 +136,7 @@ async function handleHostRequest(req, res) {
     }
 
     authoriseUser(reqUserId, charger.UserId);
+    let responseMessage;
 
     let booking = await getBookingById(reqBookingId);
     if (!booking) {
@@ -142,13 +145,15 @@ async function handleHostRequest(req, res) {
 
     if (response === "approve") {
       booking = await booking.update({ status: "approved" });
+      responseMessage = `Booking ${reqBookingId} approved`;
     }
 
     if (response === "reject") {
+      responseMessage = `Booking ${reqBookingId}  rejected`;
       booking = await booking.update({ status: "rejected" });
     }
 
-    res.status(200).json(booking);
+    res.status(200).json({ message: responseMessage });
   } catch (err) {
     res.status(401).json({ error: err.message });
   }
@@ -166,16 +171,19 @@ async function handleUserResponse(req, res) {
     }
 
     authoriseUser(reqUserId, booking.UserId);
+    let responseMessage;
 
     if (response === "pay") {
       console.log(`${reqUserId} paid for their booking!`);
+      responseMessage = `Payment complete for booking ${reqBookingId}`;
     }
 
     if (response === "cancel") {
       booking = await booking.update({ status: "cancelled" });
+      responseMessage = `Booking ${reqBookingId} cancelled`;
     }
 
-    res.status(200).json(booking);
+    res.status(200).json({ message: responseMessage });
   } catch (err) {
     console.log(err);
     res.status(500).json({ error: err.message });
