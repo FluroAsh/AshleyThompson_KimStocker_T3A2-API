@@ -10,28 +10,40 @@ const {
   deleteBooking,
   getAllUserBookings,
   getAllBookingRequests,
+  handleUserResponse,
+  handleHostRequest,
 } = require("../controllers/booking-controller");
 
 bookingRouter.use(loginRequired);
 
 bookingRouter.get("/bookings", getBookings);
 bookingRouter.get("/booking/:id", getBooking);
-
-// verify bookings belong to the user making the request (check ownership)
-
-// bookingRouter.get("/bookings/user/:username?type=bookings", getAllUserBookings)
-bookingRouter.get("/bookings/user/:username", (req, res, next) => {
-  if (req.query.type === "bookings") {
-    getAllUserBookings(req, res);
-  }
-
-  if (req.query.type === "requests") {
-    getAllBookingRequests(req, res);
-  }
-});
 bookingRouter.post("/booking/new", createBooking);
 bookingRouter.put("/booking/:id", updateBooking);
 bookingRouter.delete("/booking/:id", deleteBooking);
+bookingRouter.get("/bookings/user/:username", (req, res) => {
+  const { type } = req.query;
+
+  if (type === "bookings") {
+    getAllUserBookings(req, res);
+  }
+
+  if (type === "requests") {
+    getAllBookingRequests(req, res);
+  }
+});
+
+bookingRouter.put("/booking/request", (req, res) => {
+  const { response } = req.query;
+
+  if (response === "approve" || response === "reject") {
+    handleHostRequest(req, res);
+  }
+
+  if (response === "pay" || response === "cancel") {
+    handleUserResponse(req, res);
+  }
+});
 
 module.exports = {
   bookingRouter,

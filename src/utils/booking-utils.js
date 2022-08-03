@@ -16,7 +16,7 @@ exports.getBookingById = (id) =>
 exports.getUserBookings = (UserId) =>
   Booking.findAll({
     where: { UserId },
-    order: [["status", "DESC"]],
+    order: [["status", "ASC"]],
     include: [
       { model: User, attributes: { exclude: ["username", "password"] } },
       {
@@ -37,7 +37,7 @@ exports.getUserBookings = (UserId) =>
 
 exports.getBookingRequests = (UserId) =>
   Booking.findAll({
-    where: { status: "pending" },
+    where: { [Op.or]: [{ status: "pending" }, { status: "approved" }] },
     order: [["status", "ASC"]],
     include: [
       {
@@ -96,4 +96,25 @@ exports.findInvalidBookings = (UserId, bookings) => {
     },
   });
   return invalidBookings;
+};
+
+// Return the updated object for the frontend in both Approval/Rejection methods
+exports.handleHostApproval = (userBooking) => {
+  userBooking.update(
+    { status: "approved" },
+    {
+      returning: true,
+      plain: true,
+    }
+  );
+};
+
+exports.handleHostRejection = async (userBooking) => {
+  userBooking.update(
+    { status: "rejected" },
+    {
+      returning: true,
+      plain: true,
+    }
+  );
 };
