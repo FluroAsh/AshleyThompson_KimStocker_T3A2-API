@@ -142,11 +142,11 @@ async function handleHostRequest(req, res) {
 
     if (response === "approve") {
       booking = await booking.update({ status: "approved" });
-      responseMessage = `Booking ${reqBookingId} approved`;
+      responseMessage = `${booking.User.firstName}'s booking approved`;
     }
 
     if (response === "reject") {
-      responseMessage = `Booking ${reqBookingId}  rejected`;
+      responseMessage = `${booking.User.firstName}'s booking rejected`;
       booking = await booking.update({ status: "rejected" });
     }
 
