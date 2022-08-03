@@ -174,11 +174,11 @@ async function handleUserResponse(req, res) {
     if (response === "cancel") {
       booking = await booking.update({ status: "cancelled" });
     }
-    //
-    return res.status(200).json(booking);
+
+    res.status(200).json(booking);
   } catch (err) {
-    console.log("error -> ", err);
-    res.status(401).json({ error: err.message });
+    console.log(err);
+    res.status(500).json({ error: err.message });
   }
 }
 

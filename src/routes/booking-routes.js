@@ -1,5 +1,4 @@
 const express = require("express");
-const { authoriseUser } = require("../controllers/auth-controller");
 const bookingRouter = express.Router();
 const { loginRequired } = require("../controllers/auth-controller");
 const {
@@ -17,10 +16,6 @@ const {
 bookingRouter.use(loginRequired);
 
 bookingRouter.get("/bookings", getBookings);
-bookingRouter.get("/booking/:id", getBooking);
-bookingRouter.post("/booking/new", createBooking);
-bookingRouter.put("/booking/:id", updateBooking);
-bookingRouter.delete("/booking/:id", deleteBooking);
 bookingRouter.get("/bookings/user/:username", (req, res) => {
   const { type } = req.query;
 
@@ -32,7 +27,6 @@ bookingRouter.get("/bookings/user/:username", (req, res) => {
     getAllBookingRequests(req, res);
   }
 });
-
 bookingRouter.put("/booking/request", (req, res) => {
   const { response } = req.query;
 
@@ -44,6 +38,11 @@ bookingRouter.put("/booking/request", (req, res) => {
     handleUserResponse(req, res);
   }
 });
+
+bookingRouter.post("/booking/new", createBooking);
+bookingRouter.get("/booking/:id", getBooking);
+bookingRouter.put("/booking/:id", updateBooking);
+bookingRouter.delete("/booking/:id", deleteBooking);
 
 module.exports = {
   bookingRouter,
