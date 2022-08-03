@@ -85,19 +85,16 @@ async function getAllUserBookings(req, res) {
 
 async function getAllBookingRequests(req, res) {
   try {
-    const requests = await getBookingRequests(req.user.id);
-    if (req.user.username !== req.params.username) {
-      throw Error("You are not allowed to do that");
-    }
     /**
      * Returned requests must have booking status 'pending' &
      * Charger status 'active'
      */
-    const filteredRequests = requests.filter(
-      (request) => request.status === "pending" && request.Charger !== null
-    );
+    const requests = await getBookingRequests(req.user.id);
+    if (req.user.username !== req.params.username) {
+      throw Error("You are not allowed to do that");
+    }
 
-    res.status(200).json(filteredRequests);
+    res.status(200).json(requests);
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
@@ -155,7 +152,7 @@ async function handleHostRequest(req, res) {
 
     res.status(200).json({ message: responseMessage });
   } catch (err) {
-    res.status(401).json({ error: err.message });
+    res.status(500).json({ error: err.message });
   }
 }
 
