@@ -40,27 +40,18 @@ async function getBookings(req, res) {
   }
 }
 
-async function createBooking(req, res, next) {
-
-  if (req.user) {
-    next();
-  } else {
-    res.status(401);
-    return res.json({ error: "Please sign in to continue" });
-  }
-
+async function createBooking(req, res) {
   const bookings = req.body;
   const UserId = req.user.id;
 
   try {
-
     // Check to see if there is a duplicate booking belonging to the request user
     const invalidBookings = await findInvalidBookings(UserId, bookings);
 
-    console.log("Invalid bookings", invalidBookings);
     if (invalidBookings.length !== 0) {
       throw Error(`You've already requested ${bookings[0].localTime}!`);
     }
+    console.log("Invalid bookings", invalidBookings);
 
     bookings.map((booking) => {
       const { ChargerId, bookingDate, price, status } = booking;
@@ -72,12 +63,9 @@ async function createBooking(req, res, next) {
       });
     });
 
-    res.status(201);
-    return res.json(bookings);
+    res.status(201).json(bookings);
   } catch (err) {
-    console.log("THIS IS ERROR", err);
-    res.status(500);
-    return res.json({ error: err.message });
+    res.status(500).json({ error: err.message });
   }
 }
 
@@ -91,7 +79,7 @@ async function getAllUserBookings(req, res) {
 
     res.status(200).json(bookings);
   } catch (err) {
-    res.status(500).json({ error: err.message });
+    res.status(400).json({ error: err.message });
   }
 }
 
@@ -147,7 +135,7 @@ async function handleHostRequest(req, res) {
 
     authoriseUser(reqUserId, charger.UserId);
 
-    let booking = await Booking.findByPk(reqBookingId);
+    let booking = await getBookingById(reqBookingId);
     if (!booking) {
       throw Error(`No booking found for booking: ${reqBookingId}`);
     }
@@ -166,7 +154,33 @@ async function handleHostRequest(req, res) {
   }
 }
 
-async function handleUserResponse(req, res) {}
+async function handleUserResponse(req, res) {
+  try {
+    const { BookingId: reqBookingId } = req.body;
+    const { response } = req.query;
+    const reqUserId = req.user.id;
+
+    let booking = await getBookingById(reqBookingId);
+    if (!booking) {
+      throw Error(`No booking found for booking: ${reqBookingId}`);
+    }
+
+    authoriseUser(reqUserId, booking.UserId);
+
+    if (response === "pay") {
+      console.log(`${reqUserId} paid for their booking!`);
+    }
+
+    if (response === "cancel") {
+      booking = await booking.update({ status: "cancelled" });
+    }
+    //
+    return res.status(200).json(booking);
+  } catch (err) {
+    console.log("error -> ", err);
+    res.status(401).json({ error: err.message });
+  }
+}
 
 module.exports = {
   getBooking,

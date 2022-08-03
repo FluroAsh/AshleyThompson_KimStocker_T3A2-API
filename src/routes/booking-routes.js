@@ -18,8 +18,10 @@ bookingRouter.use(loginRequired);
 
 bookingRouter.get("/bookings", getBookings);
 bookingRouter.get("/booking/:id", getBooking);
-
-bookingRouter.get("/bookings/user/:username", (req, res, next) => {
+bookingRouter.post("/booking/new", createBooking);
+bookingRouter.put("/booking/:id", updateBooking);
+bookingRouter.delete("/booking/:id", deleteBooking);
+bookingRouter.get("/bookings/user/:username", (req, res) => {
   const { type } = req.query;
 
   if (type === "bookings") {
@@ -34,17 +36,14 @@ bookingRouter.get("/bookings/user/:username", (req, res, next) => {
 bookingRouter.put("/booking/request", (req, res) => {
   const { response } = req.query;
 
-  if (response === "approve" || "reject") {
+  if (response === "approve" || response === "reject") {
     handleHostRequest(req, res);
   }
 
-  if (response === "pay" || "cancel") {
+  if (response === "pay" || response === "cancel") {
     handleUserResponse(req, res);
   }
 });
-bookingRouter.post("/booking/new", createBooking);
-bookingRouter.put("/booking/:id", updateBooking);
-bookingRouter.delete("/booking/:id", deleteBooking);
 
 module.exports = {
   bookingRouter,

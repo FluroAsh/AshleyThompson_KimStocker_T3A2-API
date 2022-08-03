@@ -58,7 +58,6 @@ async function getChargersWithUrl(chargers) {
 
 /** Action Methods */
 async function searchChargersLocation(req, res) {
-  // Query will always be received as a string
   let { location } = req.query;
   // frontend replaces spaces with +'s and trims leading and trailing spaces
   location = location.replaceAll("+", " ");
@@ -233,7 +232,6 @@ async function getChargers(req, res) {
 async function getMyChargers(req, res, next) {
   // loginRequired(req, res, next);
   try {
-
     if (!req.user) {
       res.status(401);
       return res.json({ error: "Please sign in to continue" });
