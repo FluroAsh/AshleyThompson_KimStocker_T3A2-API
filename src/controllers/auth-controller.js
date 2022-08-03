@@ -29,7 +29,7 @@ async function signUp(req, res) {
       return res.json({ error: err.errors[0].message || err });
     }
   } else {
-    res.status(422)
+    res.status(422);
     return res.json({
       error: "Password confirmation does not match password entered",
     });
@@ -75,8 +75,6 @@ const authoriseUser = (reqUserId, ownerId) => {
   }
   console.log("[✓] User Verified");
 };
-
-// const checkOwnership to handle update and delete
 
 module.exports = {
   signUp,
