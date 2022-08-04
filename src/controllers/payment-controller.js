@@ -58,8 +58,8 @@ async function createCheckoutSession(req, res) {
 
 // const webhookSecret = process.env.STRIPE_WEBHOOK_SECRET;
 
-const webhookSecret = "whsec_024a4088719c941ebb0e7c5a90b6739c0b2dc22fbb19f7b4409d12c83830309b"
-// const endpointSecret = testEndpointSecret || process.env.STRIPE_WEBHOOK_SECRET;
+const testEndpointSecret = "whsec_024a4088719c941ebb0e7c5a90b6739c0b2dc22fbb19f7b4409d12c83830309b"
+const endpointSecret = testEndpointSecret || process.env.STRIPE_WEBHOOK_SECRET;
 
 async function webHook(req, res) {
 
@@ -72,7 +72,7 @@ async function webHook(req, res) {
   let event;
 
   try {
-    event = stripe.webhooks.constructEvent(req.body, sig, webhookSecret);
+    event = stripe.webhooks.constructEvent(req.body, sig, endpointSecret);
     console.log("THIS IS STRIPE EVENT", event)
   } catch (err) {
     console.log("ERROR FROM WEBHOOK", err)

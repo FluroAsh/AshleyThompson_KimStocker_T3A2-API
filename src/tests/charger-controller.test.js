@@ -624,7 +624,7 @@ describe("searchChargersLocation function", () => {
 
     await searchChargersLocation(req, res);
 
-    expect(status).toHaveBeenCalledWith(200);
+    expect(status).toHaveBeenCalledWith(404);
     expect(json).toHaveBeenCalledWith({ error: "No matched chargers found" });
 
   });
