@@ -39,7 +39,6 @@ exports.getUserBookings = (UserId) =>
 
 exports.getBookingRequests = (UserId) =>
   Booking.findAll({
-    where: { [Op.or]: [{ status: "pending" }, { status: "approved" }] },
     order: [["status", "ASC"]],
     include: [
       {
