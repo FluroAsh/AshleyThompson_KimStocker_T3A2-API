@@ -101,7 +101,12 @@ async function getAllBookingRequests(req, res) {
 }
 
 // TODO: Create UpdateBooking Function
-async function updateBooking() {}
+async function updateBooking(id, status, value) {
+  const booking = await getBookingById(id)
+  booking[status] = value
+  booking.save()
+
+}
 
 async function deleteBooking(req, res) {
   const { id: BookingId } = req.params;
