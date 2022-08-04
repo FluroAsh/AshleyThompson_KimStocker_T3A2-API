@@ -4,7 +4,7 @@ const express = require("express");
 const paymentRouter = express.Router();
 
 paymentRouter.post("/create-checkout-session", createCheckoutSession);
-paymentRouter.post("/payments/webhook", webHook);
+paymentRouter.post("/webhook", webHook);
 
 
 module.exports = {

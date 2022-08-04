@@ -65,6 +65,7 @@ async function webHook(req, res) {
 
   try {
     event = stripe.webhooks.constructEvent(req.body, sig, endpointSecret);
+    console.log("THIS IS STRIPE EVENT", event)
   } catch (err) {
     response.status(400).send(`Webhook Error: ${err.message}`);
     return;
@@ -75,7 +76,7 @@ async function webHook(req, res) {
     case "payment_intent.succeeded":
       const paymentIntent = event.data.object;
       //TODO: Handle sucess event such as update booking status, unavailability table etc.
-
+      console.log("THIS IS PAYMENT INTENT WHEN SUCCESS", paymentIntent)
       // Then define and call a function to handle the event payment_intent.succeeded
       break;
     // ... handle other event types
