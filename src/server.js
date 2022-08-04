@@ -14,14 +14,22 @@ const { bookingRouter } = require("./routes/booking-routes");
 const { addressRouter } = require("./routes/address-routes");
 const { userVehicleRouter } = require("./routes/uservehicle-routes");
 const { unavailabilityRouter } = require("./routes/unavailability-routes");
+const { paymentRouter } = require("./routes/payment-routes")
 
 const corsOptions = {
-  origin: ["http://localhost:3000", "https://iev-client.netlify.app"],
+  origin: ["http://localhost:3000", "https://iev-client.netlify.app", "https://checkout.stripe.com", "https://hooks.stripe.com"],
   optionSuccessStatus: 200,
 };
 app.use(cors(corsOptions));
 
-app.use(express.json());
+// Use JSON parser for all non-webhook routes as Stripe function only accept raw req.body
+app.use((req, res, next) => {
+  if (req.originalUrl === '/webhook') {
+    next();
+  } else {
+    express.json()(req, res, next);
+  }
+});
 app.use(express.urlencoded({ extended: true }));
 // TODO: Add CORS once localhost version stable
 
@@ -71,6 +79,8 @@ app.use((req, res, next) => {
 });
 
 app.use("/auth", authRouter);
+app.use("/", paymentRouter);
+
 app.use("/", userRouter);
 app.use("/", addressRouter);
 app.use("/", userVehicleRouter);
@@ -78,6 +88,8 @@ app.use("/", chargerRouter);
 app.use("/", bookingRouter);
 app.use("/", vehiclesRouter);
 app.use("/", unavailabilityRouter);
+
+
 
 module.exports = {
   app,

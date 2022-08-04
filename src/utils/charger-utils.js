@@ -37,6 +37,9 @@ async function getChargerByUserId(id) {
         model: User,
         as: "Host",
       },
+      {
+        model: Plug,
+      },
     ],
   });
 }
@@ -55,6 +58,9 @@ async function getChargerById(id) {
       },
       {
         model: Unavailability,
+      },
+      {
+        model: Plug,
       },
     ],
   });

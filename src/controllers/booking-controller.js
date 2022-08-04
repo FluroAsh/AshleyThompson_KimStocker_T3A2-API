@@ -15,6 +15,17 @@ const {
 
 const { authoriseUser } = require("./auth-controller");
 
+function padTo2Digits(num) {
+  return num.toString().padStart(2, '0');
+}
+function formatDate(date) {
+  return [
+    padTo2Digits(date.getDate()),
+    padTo2Digits(date.getMonth() + 1),
+    date.getFullYear(),
+  ].join('/');
+}
+
 async function getBooking(req, res) {
   try {
     const booking = await getBookingById(req.params.id);
@@ -53,6 +64,7 @@ async function createBooking(req, res) {
     }
     console.log("Invalid bookings", invalidBookings);
 
+    const bookingDates = []
     bookings.map((booking) => {
       const { ChargerId, bookingDate, price, status } = booking;
       sequelize.transaction(async (t) => {
@@ -61,9 +73,11 @@ async function createBooking(req, res) {
           { transaction: t }
         );
       });
+      bookingDates.push(formatDate(new Date(bookingDate)))
     });
 
-    res.status(201).json(bookings);
+    res.status(201)
+    res.json({message: `Booking for ${bookingDates.join(", ")} successfully created, go to Bookings for more details`});
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
@@ -101,7 +115,12 @@ async function getAllBookingRequests(req, res) {
 }
 
 // TODO: Create UpdateBooking Function
-async function updateBooking() {}
+async function updateBooking(id, status, value) {
+  const booking = await getBookingById(id)
+  booking[status] = value
+  booking.save()
+
+}
 
 async function deleteBooking(req, res) {
   const { id: BookingId } = req.params;
