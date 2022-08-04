@@ -4,44 +4,56 @@ const Stripe = require("stripe");
 const stripe = Stripe(process.env.STRIPE_SECRET_KEY);
 
 let sessionId;
-async function createStripeSession(req, res) {
+async function createCheckoutSession(req, res) {
   const booking = req.body;
 
   console.log("BOOKING AKA ROW", booking);
   const { id, city, stationName, price, date, status } = booking;
 
+  stripe.customers.create({
+    email: req.user.email,
+  })
+    .then(customer => console.log(customer.id))
+    .catch(error => console.error(error));
+
   try {
     //TODO: DOUBLE CHECK SESSION OR SESSIONS?
     const session = await stripe.checkout.sessions.create({
       payment_method_types: ["card"],
+      customer_email: req.user.email,
       line_items: [
         {
-          // name: stationName,
-          price: price,
-          // currency: "AUD",
+          price_data: {
+            currency: "aud",
+            product_data: {
+              name: stationName
+            },
+            unit_amount: price
+          }
+          ,
           quantity: 1,
         },
       ],
       payment_intent_data: {
         metadata: {
-          userId: req.user && req.user.id,
+          userId: req.user.id,
           bookingId: booking.id,
         },
       },
       mode: "payment",
 
       //TODO: set success and canceled URLs
-      success_url: `http://localhost:3000/?success=true`,
-      cancel_url: `http://localhost:3000/?canceled=true`,
+      success_url: `http://localhost:3000/mychargers`,
+      cancel_url: `http://localhost:3000`,
     });
 
     sessionId = session.id;
-    stripe.redirectToCheckout({
-      sessionId: sessionId,
-    });
+    // stripe.redirectToCheckout({
+    //   sessionId: sessionId,
+    // });
     // res.redirect(303, session.url);
-
-    // res.json({ url: session.url });
+    res.json({url: session.url, sessionId})
+    // res.json({ sessionId });
   } catch (err) {
     console.log("THIS IS ERROR FROM STRIPE CHECKOUT", err);
     res.json({ error: "Stripe Error" });
@@ -81,6 +93,6 @@ async function webHook(req, res) {
 }
 
 module.exports = {
-  createStripeSession,
+  createCheckoutSession,
   webHook,
 };
