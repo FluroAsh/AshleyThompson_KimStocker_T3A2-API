@@ -8,7 +8,7 @@ async function createCheckoutSession(req, res) {
   const booking = req.body;
 
   console.log("BOOKING AKA ROW", booking);
-  const { id, city, stationName, price, date, status } = booking;
+  const { stationName, price } = booking;
 
   stripe.customers.create({
     email: req.user.email,
@@ -26,7 +26,7 @@ async function createCheckoutSession(req, res) {
           price_data: {
             currency: "aud",
             product_data: {
-              name: stationName
+              name: stationName,
             },
             unit_amount: price
           }
@@ -43,17 +43,13 @@ async function createCheckoutSession(req, res) {
       mode: "payment",
 
       //TODO: set success and canceled URLs
-      success_url: `http://localhost:3000/mychargers`,
+      success_url: `http://localhost:3000/bookings/${req.user.username}`,
       cancel_url: `http://localhost:3000`,
     });
 
     sessionId = session.id;
-    // stripe.redirectToCheckout({
-    //   sessionId: sessionId,
-    // });
-    // res.redirect(303, session.url);
     res.json({url: session.url, sessionId})
-    // res.json({ sessionId });
+
   } catch (err) {
     console.log("THIS IS ERROR FROM STRIPE CHECKOUT", err);
     res.json({ error: "Stripe Error" });
