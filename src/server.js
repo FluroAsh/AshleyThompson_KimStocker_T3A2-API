@@ -22,7 +22,14 @@ const corsOptions = {
 };
 app.use(cors(corsOptions));
 
-app.use(express.json());
+// Use JSON parser for all non-webhook routes as Stripe function only accept raw req.body
+app.use((req, res, next) => {
+  if (req.originalUrl === '/webhook') {
+    next();
+  } else {
+    express.json()(req, res, next);
+  }
+});
 app.use(express.urlencoded({ extended: true }));
 // TODO: Add CORS once localhost version stable
 

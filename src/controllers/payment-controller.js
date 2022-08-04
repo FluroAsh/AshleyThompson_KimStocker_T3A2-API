@@ -58,16 +58,16 @@ async function createCheckoutSession(req, res) {
 
 // const webhookSecret = process.env.STRIPE_WEBHOOK_SECRET;
 
-const testEndpointSecret = "whsec_024a4088719c941ebb0e7c5a90b6739c0b2dc22fbb19f7b4409d12c83830309b"
+const testEndpointSecret = "whsec_024a4088719c941ebb0e7c5a90b6739c0b2dc22fbb19f7b4409d12c83830309b";
 const endpointSecret = testEndpointSecret || process.env.STRIPE_WEBHOOK_SECRET;
 
 async function webHook(req, res) {
 
-  console.log("THIS IS WEBHOOK REQ", req)
+  //console.log("THIS IS WEBHOOK REQ", req)
 
-  console.log("WEBHOOK FUNCTION TRIGGER");
+  //console.log("WEBHOOK FUNCTION TRIGGER");
 
-  const sig = req.headers["stripe-signature"];
+  const sig = req.headers['stripe-signature'];
 
   let event;
 
