@@ -1,6 +1,6 @@
 const db = require("../models");
 const sequelize = db.sequelize;
-const { Charger, Address, User } = db;
+const { Charger } = db;
 const {
   getAllChargers,
   getChargerById,
@@ -15,9 +15,6 @@ const {
   uploadImageToS3,
   getSignedS3Url,
 } = require("../services/awsS3-services");
-const plug = require("../models/plug");
-const { UploadPartCopyRequest } = require("@aws-sdk/client-s3");
-const { loginRequired } = require("../controllers/auth-controller");
 
 // TODO: Double check all res.status
 function handleNotFound(record, res) {
@@ -77,16 +74,13 @@ async function searchChargersLocation(req, res) {
      */
     if (Object.keys(chargers).length === 0 || filteredChargers.length === 0) {
       // return 200 as this is not user error. No records match searched keyword
-      res.status(200);
-      return res.json({ error: "No matched chargers found" });
+      return res.status(404).json({ error: "No matched chargers found" });
     }
 
     const urlChargers = await getChargersWithUrl(filteredChargers);
-    res.status(200);
-    return res.json(urlChargers);
+    res.status(200).json(urlChargers);
   } catch (err) {
-    res.status(500);
-    return res.json({ error: err.message });
+    res.status(500).json({ error: err.message });
   }
 }
 
@@ -113,7 +107,7 @@ async function createCharger(req, res) {
 
   try {
     // transaction ensure the record will be rolledback if an error occured during the try/catch block
-    const result = await sequelize.transaction(async (t) => {
+    await sequelize.transaction(async (t) => {
       const newCharger = await Charger.create(data, { transaction: t });
       await uploadImageToS3(req.file, key);
 
