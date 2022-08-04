@@ -85,19 +85,16 @@ async function getAllUserBookings(req, res) {
 
 async function getAllBookingRequests(req, res) {
   try {
-    const requests = await getBookingRequests(req.user.id);
-    if (req.user.username !== req.params.username) {
-      throw Error("You are not allowed to do that");
-    }
     /**
      * Returned requests must have booking status 'pending' &
      * Charger status 'active'
      */
-    const filteredRequests = requests.filter(
-      (request) => request.status === "pending" && request.Charger !== null
-    );
+    const requests = await getBookingRequests(req.user.id);
+    if (req.user.username !== req.params.username) {
+      throw Error("You are not allowed to do that");
+    }
 
-    res.status(200).json(filteredRequests);
+    res.status(200).json(requests);
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
@@ -145,17 +142,17 @@ async function handleHostRequest(req, res) {
 
     if (response === "approve") {
       booking = await booking.update({ status: "approved" });
-      responseMessage = `Booking ${reqBookingId} approved`;
+      responseMessage = `${booking.User.firstName}'s booking approved`;
     }
 
     if (response === "reject") {
-      responseMessage = `Booking ${reqBookingId}  rejected`;
+      responseMessage = `${booking.User.firstName}'s booking rejected`;
       booking = await booking.update({ status: "rejected" });
     }
 
     res.status(200).json({ message: responseMessage });
   } catch (err) {
-    res.status(401).json({ error: err.message });
+    res.status(500).json({ error: err.message });
   }
 }
 
@@ -174,6 +171,7 @@ async function handleUserResponse(req, res) {
     let responseMessage;
 
     if (response === "pay") {
+      // stripe/payment logic should go in here
       console.log(`${reqUserId} paid for their booking!`);
       responseMessage = `Payment complete for booking ${reqBookingId}`;
     }

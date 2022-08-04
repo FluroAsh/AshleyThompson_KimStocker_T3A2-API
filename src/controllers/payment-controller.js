@@ -63,6 +63,8 @@ const webhookSecret = "whsec_024a4088719c941ebb0e7c5a90b6739c0b2dc22fbb19f7b4409
 
 async function webHook(req, res) {
 
+  console.log("THIS IS WEBHOOK REQ", req)
+
   console.log("WEBHOOK FUNCTION TRIGGER");
 
   const sig = req.headers["stripe-signature"];

@@ -72,7 +72,7 @@ app.use((req, res, next) => {
 });
 
 app.use("/auth", authRouter);
-app.use("/", express.raw({type: 'application/json'}), paymentRouter);
+app.use("/", paymentRouter);
 
 app.use("/", userRouter);
 app.use("/", addressRouter);
