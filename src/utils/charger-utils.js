@@ -1,4 +1,3 @@
-const { PublicAccessBlockConfiguration } = require("@aws-sdk/client-s3");
 const db = require("../models");
 const { Charger, User, Address, Plug, Unavailability } = db;
 const Op = db.Sequelize.Op;
@@ -16,11 +15,12 @@ async function getAllChargers() {
         model: Address,
         as: "Address",
       },
+      {
+        model: Plug,
+      },
     ],
     attributes: { exclude: ["createdAt", "updatedAt"] },
-
   });
-
 }
 
 async function getChargerByUserId(id) {
@@ -39,12 +39,7 @@ async function getChargerByUserId(id) {
       },
     ],
   });
-
-
 }
-
-
-
 
 async function getChargerById(id) {
   return await Charger.findByPk(id, {
@@ -62,7 +57,6 @@ async function getChargerById(id) {
         model: Unavailability,
       },
     ],
-    
   });
 }
 
@@ -115,5 +109,5 @@ module.exports = {
   deleteChargerById,
   getPlugId,
   getChargersByLocation,
-  getChargerByUserId
+  getChargerByUserId,
 };
