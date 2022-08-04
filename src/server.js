@@ -17,7 +17,7 @@ const { unavailabilityRouter } = require("./routes/unavailability-routes");
 const { paymentRouter } = require("./routes/payment-routes")
 
 const corsOptions = {
-  origin: ["http://localhost:3000", "https://iev-client.netlify.app", "https://checkout.stripe.com"],
+  origin: ["http://localhost:3000", "https://iev-client.netlify.app", "https://checkout.stripe.com", "https://hooks.stripe.com"],
   optionSuccessStatus: 200,
 };
 app.use(cors(corsOptions));
@@ -72,6 +72,8 @@ app.use((req, res, next) => {
 });
 
 app.use("/auth", authRouter);
+app.use("/", express.raw({type: 'application/json'}), paymentRouter);
+
 app.use("/", userRouter);
 app.use("/", addressRouter);
 app.use("/", userVehicleRouter);
@@ -79,7 +81,6 @@ app.use("/", chargerRouter);
 app.use("/", bookingRouter);
 app.use("/", vehiclesRouter);
 app.use("/", unavailabilityRouter);
-app.use("/", paymentRouter);
 
 
 

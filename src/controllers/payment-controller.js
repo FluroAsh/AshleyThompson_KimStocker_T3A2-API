@@ -43,7 +43,7 @@ async function createCheckoutSession(req, res) {
       mode: "payment",
 
       //TODO: set success and canceled URLs
-      success_url: `http://localhost:3000/bookings/${req.user.username}`,
+      success_url: `http://localhost:3000`,
       cancel_url: `http://localhost:3000`,
     });
 
@@ -56,21 +56,29 @@ async function createCheckoutSession(req, res) {
   }
 }
 
-const endpointSecret = "Somesecret";
+// const webhookSecret = process.env.STRIPE_WEBHOOK_SECRET;
+
+const webhookSecret = "whsec_024a4088719c941ebb0e7c5a90b6739c0b2dc22fbb19f7b4409d12c83830309b"
+// const endpointSecret = testEndpointSecret || process.env.STRIPE_WEBHOOK_SECRET;
 
 async function webHook(req, res) {
+
+  console.log("WEBHOOK FUNCTION TRIGGER");
+
   const sig = req.headers["stripe-signature"];
 
   let event;
 
   try {
-    event = stripe.webhooks.constructEvent(req.body, sig, endpointSecret);
+    event = stripe.webhooks.constructEvent(req.body, sig, webhookSecret);
     console.log("THIS IS STRIPE EVENT", event)
   } catch (err) {
-    response.status(400).send(`Webhook Error: ${err.message}`);
+    console.log("ERROR FROM WEBHOOK", err)
+    res.status(400).send(`Webhook Error: ${err.message}`);
     return;
   }
 
+  console.log("EVENT PASSED", event)
   // Handle the event
   switch (event.type) {
     case "payment_intent.succeeded":
@@ -85,8 +93,8 @@ async function webHook(req, res) {
   }
 
   // Return a 200 response to acknowledge receipt of the event
-  res.status(200);
-  res.send();
+  res.json({received: true});
+    // res.send();
 }
 
 module.exports = {
