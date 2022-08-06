@@ -104,33 +104,7 @@ describe("createCharger function", () => {
     });
   });
 
-  // test("send error when server is down", async () => {
-  //   const req = {
-  //     body: {
-  //       name: "TEST Create Charger",
-  //       instructions: "Go to basement and plug in",
-  //       price: "35",
-  //       status: "pending",
-  //       plugName: "typeOne",
-  //       username: "Kim",
-  //     },
-  //   };
 
-  //   const status = jest.fn();
-  //   const json = jest.fn();
-  //   const res = { status, json };
-
-  //   jest.mock("../utils/auth-utils", () => ({
-  //     findUser: () => new Error("Async error message"),
-  //   }));
-
-  //   await createCharger(req, res);
-
-  //   expect(status).toHaveBeenCalledWith(500);
-  //   expect(json).toHaveBeenCalledWith({
-  //     error: "Server error",
-  //   });
-  // });
 });
 
 describe("getCharger function", () => {

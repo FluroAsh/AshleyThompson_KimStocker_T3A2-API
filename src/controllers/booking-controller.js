@@ -91,9 +91,11 @@ async function getAllUserBookings(req, res) {
       throw Error("You are not allowed to do that");
     }
 
-    res.status(200).json(bookings);
+    res.status(200)
+    res.json(bookings);
   } catch (err) {
-    res.status(400).json({ error: err.message });
+    res.status(400)
+    res.json({ error: err.message });
   }
 }
 
@@ -108,9 +110,11 @@ async function getAllBookingRequests(req, res) {
       throw Error("You are not allowed to do that");
     }
 
-    res.status(200).json(requests);
+    res.status(200)
+    res.json(requests);
   } catch (err) {
-    res.status(500).json({ error: err.message });
+    res.status(500)
+    res.json({ error: err.message });
   }
 }
 
@@ -136,7 +140,8 @@ async function deleteBooking(req, res) {
       .status(200)
       .json({ message: `Booking ${BookingId} successfully deleted` });
   } catch (err) {
-    res.status(500).json({ error: err.message });
+    res.status(500)
+    res.json({ error: err.message });
   }
 }
 
