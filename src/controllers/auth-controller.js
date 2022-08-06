@@ -41,7 +41,7 @@ async function signUp(req, res) {
           transaction: t,
         });
         res.status(201);
-        return json({ firstName, lastName, username, jwt: token });
+        return res.json({ firstName, lastName, username, jwt: token });
       });
     } catch (err) {
       console.log(err);
