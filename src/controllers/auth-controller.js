@@ -45,7 +45,7 @@ async function signUp(req, res) {
       res.status(201);
       return res.json({ firstName, username, jwt: token });
     } catch (err) {
-      // console.log(err.errors[0].message);
+      console.log(err.message);
       res.status(500);
       return res.json({ error: err.message || err.errors[0].message });
     }
