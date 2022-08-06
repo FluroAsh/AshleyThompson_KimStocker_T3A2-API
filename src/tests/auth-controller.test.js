@@ -154,14 +154,4 @@ describe("loginRequired function", () => {
   });
 });
 
-// TODO: add test for the below fucntion
-// describe("authoriseUser function", () => {
-//   test("throw errors when requested user id does not match record owner id", async () => {
-//     const userId = 1;
-//     const recordOwnerId = 2
 
-//     const result = authoriseUser(userId, recordOwnerId);
-
-//     expect(result).toEqual(Error("Unauthorised Operation"));
-//   });
-// });
