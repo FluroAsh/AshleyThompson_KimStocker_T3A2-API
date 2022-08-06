@@ -95,10 +95,10 @@ async function searchChargersLocation(req, res) {
 async function createCharger(req, res) {
   const data = { ...req.body };
 
-  const user = await findUser(data.username);
+  const user = await findUser(req.user.username);
   if (!user) {
     res.status(404);
-    return res.json({ error: `Unknown user ${data.username}` });
+    return res.json({ error: `Unknown user ${req.user.username}` });
   }
 
   const plugId = await getPlugId(data.plugName);
@@ -242,7 +242,7 @@ async function getMyChargers(req, res, next) {
 
     const chargers = await getChargerByUserId(user.id);
 
-    console.log("THIS IS SAMPLE OF chargers list before URL", chargers);
+    // console.log("THIS IS SAMPLE OF chargers list before URL", chargers);
     handleNotFound(chargers, res);
     const UserChargersWithUrls = await getChargersWithUrl(chargers);
 
