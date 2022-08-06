@@ -389,6 +389,9 @@ describe("getChargers function", () => {
 describe("getMyChargers function", () => {
   test("return a list of current user chargers", async () => {
     const req = {
+      body: {
+        username: "Kim"
+      },
       user: {
         username: "Kim",
       },
@@ -396,10 +399,10 @@ describe("getMyChargers function", () => {
 
     const status = jest.fn();
     const send = jest.fn();
-    const next = jest.fn();
-    const res = { status, send };
+    const json = jest.fn();
+    const res = { status, send, json };
 
-    await getMyChargers(req, res, next);
+    await getMyChargers(req, res);
 
     expect(status).toHaveBeenCalledWith(200);
     expect(send).toHaveBeenCalled();

@@ -12,21 +12,29 @@ const {
 
 
 describe("signUp function", () => {
+
+  let testUsername = "TestMrTest"
+  let testEmail = "mrtest123@mail.com"
+
   afterEach(async () => {
     await User.destroy({
-      where: { username: "Test_User" },
+      where: { username: testUsername },
     });
   });
 
   test("create user record from form data received", async () => {
     const req = {
       body: {
-        firstName: "Test",
+        firstName: "Test1",
         lastName: "Sir",
-        username: "Test_User",
-        email: "mrtest@mail.com",
+        username: testUsername,
+        email: testEmail,
         password: "123456",
         password_confirmation: "123456",
+        address: "12 Sutherland Street",
+        city: "Sydney",
+        postcode: "2001",
+        state: "New South Wales",
       },
     };
 
@@ -39,20 +47,24 @@ describe("signUp function", () => {
     expect(status).toHaveBeenCalledWith(201);
     expect(json).toHaveBeenCalled();
 
-    const data = json.mock.calls[0][0];
-    expect(data.username).toEqual("Test_User");
-    expect(data.firstName).toEqual("Test");
+    const data = json.mock.calls[0];
+    expect(data.username).toEqual(testUsername);
+    expect(data.firstName).toEqual("Test1");
   });
 
   test("errors when password does not match password confirmation", async () => {
     const req = {
       body: {
-        firstName: "Test",
+        firstName: "Test1",
         lastName: "Sir",
-        username: "Test_User",
-        email: "mrtest@mail.com",
+        username: testUsername,
+        email: testEmail,
         password: "123456",
-        password_confirmation: "123456abc",
+        password_confirmation: "123456",
+        address: "12 Sutherland Street",
+        city: "Sydney",
+        postcode: "2001",
+        state: "New South Wales",
       },
     };
 
