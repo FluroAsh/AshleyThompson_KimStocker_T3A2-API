@@ -12,6 +12,8 @@ module.exports = (sequelize, DataTypes) => {
     static associate(models) {
       Vehicle.belongsTo(models.Plug);
       Vehicle.hasMany(models.UserVehicle);
+      Vehicle.belongsTo(models.User);
+
     }
   }
   Vehicle.init(

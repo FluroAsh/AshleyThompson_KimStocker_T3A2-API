@@ -14,6 +14,8 @@ module.exports = (sequelize, DataTypes) => {
       User.hasOne(models.Address);
       User.hasOne(models.UserVehicle);
       User.hasMany(models.Charger);
+      User.hasOne(models.Vehicle);
+
       User.hasMany(models.Booking);
     }
   }
