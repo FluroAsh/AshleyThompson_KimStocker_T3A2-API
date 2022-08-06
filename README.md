@@ -23,12 +23,16 @@ Create the _iev_development_ Postgres database
 
 ```
 $ npx sequelize db:create
+$ npx sequelize-cli db:migrate
+$ npx sequelize-cli db:seed:all
+
 ```
 
 > This will create a new database using your given Postgres credentials
 
 ## Testing
 
+$ npm test
 ---
 
 TBC

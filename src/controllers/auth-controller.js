@@ -13,22 +13,41 @@ async function signUp(req, res) {
   if (req.body.password === req.body.password_confirmation) {
     try {
       console.log(req.body);
-      const newUser = await User.create(req.body);
+  
+      let userData = {};
+      userData.username = req.body.username;
+      userData.firstName = req.body.firstName;
+      userData.lastName = req.body.lastName;
+      userData.email = req.body.email;
+      userData.password = req.body.password;
+  
+      const newUser = await User.create(userData);
       const { firstName, username, email, id } = newUser;
-
+  
       console.log("new User----", newUser);
       console.log("username----", username);
-
+  
       const token = jwt.sign({ username, email, id }, process.env.SECRET_KEY);
-
+  
+      let addressData = {};
+  
+      const { address, city, postcode, state } = req.body;
+  
+      addressData.address = address;
+      addressData.city = city;
+      addressData.postcode = postcode;
+      addressData.state = state;
+  
+      await Address.create(addressData, { transaction: t });
+  
       res.status(201);
-
       return res.json({ firstName, username, jwt: token });
     } catch (err) {
       console.log(err.errors[0].message);
       res.status(500);
       return res.json({ error: err.errors[0].message || err });
     }
+ 
   } else {
     res.status(422);
     return res.json({
