@@ -1,5 +1,8 @@
 const db = require("../models");
 const User = db.User;
+const sequelize = db.sequelize;
+
+const Address = db.Address;
 const Op = db.Sequelize.Op;
 const jwt = require("jsonwebtoken");
 const { findUser } = require("../utils/auth-utils.js");
@@ -12,42 +15,49 @@ async function signUp(req, res) {
   // check password + confirmation first
   if (req.body.password === req.body.password_confirmation) {
     try {
-      console.log(req.body);
-  
-      let userData = {};
-      userData.username = req.body.username;
-      userData.firstName = req.body.firstName;
-      userData.lastName = req.body.lastName;
-      userData.email = req.body.email;
-      userData.password = req.body.password;
-  
-      const newUser = await User.create(userData);
-      const { firstName, username, email, id } = newUser;
-  
-      console.log("new User----", newUser);
-      console.log("username----", username);
-  
-      const token = jwt.sign({ username, email, id }, process.env.SECRET_KEY);
-  
-      let addressData = {};
-  
-      const { address, city, postcode, state } = req.body;
-  
-      addressData.address = address;
-      addressData.city = city;
-      addressData.postcode = postcode;
-      addressData.state = state;
-  
-      await Address.create(addressData, { transaction: t });
-  
+      await sequelize.transaction(async (t) => {
+        console.log(req.body);
+
+        let userData = {};
+        userData.username = req.body.username;
+        userData.firstName = req.body.firstName;
+        userData.lastName = req.body.lastName;
+        userData.email = req.body.email;
+        userData.password = req.body.password;
+
+        const newUser = await User.create(userData, { transaction: t });
+        const { firstName, lastName, username, email, id } = newUser;
+
+        console.log("new User----", newUser);
+        console.log("username----", username);
+
+        const token = jwt.sign({ username, email, id }, process.env.SECRET_KEY);
+
+        let addressData = {};
+
+        const { address, city, postcode, state } = req.body;
+
+        addressData.address = address;
+        addressData.city = city;
+        addressData.postcode = postcode;
+        addressData.state = state;
+        addressData.UserId = newUser.id;
+
+        const newAddress = await Address.create(addressData, {
+          transaction: t,
+        });
+        console.log("NEW ADDRESS", newAddress);
+
+      });
+
+
       res.status(201);
-      return res.json({ firstName, username, jwt: token });
+      return res.json({ firstName, lastName, username, jwt: token });
     } catch (err) {
-      console.log(err.errors[0].message);
+      // console.log(err.errors[0].message);
       res.status(500);
-      return res.json({ error: err.errors[0].message || err });
+      return res.json({ error: err.message || err });
     }
- 
   } else {
     res.status(422);
     return res.json({

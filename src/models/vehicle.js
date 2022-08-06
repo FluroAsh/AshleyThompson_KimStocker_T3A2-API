@@ -22,6 +22,8 @@ module.exports = (sequelize, DataTypes) => {
       model: DataTypes.STRING,
       variant: DataTypes.STRING,
       PlugId: DataTypes.INTEGER,
+      UserId: DataTypes.INTEGER,
+
     },
     {
       sequelize,

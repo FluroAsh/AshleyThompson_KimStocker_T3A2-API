@@ -11,6 +11,7 @@ const vehicles = [...Array(12)].map(() => ({
   model: "e-tron SUV",
   variant: "e-tron SUV 50",
   PlugId: getRandomInt(1, 3),
+  UserId: getRandomInt(1, 10),
   createdAt: new Date(),
   updatedAt: new Date(),
 }));
