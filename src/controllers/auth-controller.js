@@ -16,7 +16,6 @@ async function signUp(req, res) {
     try {
       await sequelize.transaction(async (t) => {
         console.log(req.body);
-
         let userData = {};
         userData.username = req.body.username;
         userData.firstName = req.body.firstName;
@@ -27,15 +26,11 @@ async function signUp(req, res) {
         const newUser = await User.create(userData, { transaction: t });
         const { firstName, lastName, username, email, id } = newUser;
 
-        console.log("new User----", newUser);
-        console.log("username----", username);
-
         const token = jwt.sign({ username, email, id }, process.env.SECRET_KEY);
 
         let addressData = {};
 
         const { address, city, postcode, state } = req.body;
-
         addressData.address = address;
         addressData.city = city;
         addressData.postcode = postcode;
@@ -45,15 +40,11 @@ async function signUp(req, res) {
         const newAddress = await Address.create(addressData, {
           transaction: t,
         });
-        console.log("NEW ADDRESS", newAddress);
-
+        res.status(201);
+        return json({ firstName, lastName, username, jwt: token });
       });
-
-
-      res.status(201);
-      return res.json({ firstName, lastName, username, jwt: token });
     } catch (err) {
-      // console.log(err.errors[0].message);
+      console.log(err);
       res.status(500);
       return res.json({ error: err.message || err.errors[0].message });
     }
