@@ -1,5 +1,6 @@
 const db = require("../models");
 const User = db.User;
+const Address = db.Address
 const Op = db.Sequelize.Op;
 const jwt = require("jsonwebtoken");
 const { findUser } = require("../utils/auth-utils.js");
@@ -37,15 +38,16 @@ async function signUp(req, res) {
       addressData.city = city;
       addressData.postcode = postcode;
       addressData.state = state;
+      addressData.UserId = newUser.id
   
-      await Address.create(addressData, { transaction: t });
-  
+      const newAddress = await Address.create(addressData);
+      console.log("NEW ADDRESS", newAddress)
       res.status(201);
       return res.json({ firstName, username, jwt: token });
     } catch (err) {
-      console.log(err.errors[0].message);
+      console.log(err.message);
       res.status(500);
-      return res.json({ error: err.errors[0].message || err });
+      return res.json({ error: err.message || err.errors[0].message });
     }
  
   } else {
