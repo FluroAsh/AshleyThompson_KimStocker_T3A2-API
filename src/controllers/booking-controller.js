@@ -16,14 +16,14 @@ const {
 const { authoriseUser } = require("./auth-controller");
 
 function padTo2Digits(num) {
-  return num.toString().padStart(2, '0');
+  return num.toString().padStart(2, "0");
 }
 function formatDate(date) {
   return [
     padTo2Digits(date.getDate()),
     padTo2Digits(date.getMonth() + 1),
     date.getFullYear(),
-  ].join('/');
+  ].join("/");
 }
 
 async function getBooking(req, res) {
@@ -64,7 +64,7 @@ async function createBooking(req, res) {
     }
     console.log("Invalid bookings", invalidBookings);
 
-    const bookingDates = []
+    const bookingDates = [];
     bookings.map((booking) => {
       const { ChargerId, bookingDate, price, status } = booking;
       sequelize.transaction(async (t) => {
@@ -73,11 +73,15 @@ async function createBooking(req, res) {
           { transaction: t }
         );
       });
-      bookingDates.push(formatDate(new Date(bookingDate)))
+      bookingDates.push(formatDate(new Date(bookingDate)));
     });
 
-    res.status(201)
-    res.json({message: `Booking for ${bookingDates.join(", ")} successfully created, go to Bookings for more details`});
+    res.status(201);
+    res.json({
+      message: `Booking for ${bookingDates.join(
+        ", "
+      )} successfully created, go to Bookings for more details`,
+    });
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
@@ -91,10 +95,10 @@ async function getAllUserBookings(req, res) {
       throw Error("You are not allowed to do that");
     }
 
-    res.status(200)
+    res.status(200);
     res.json(bookings);
   } catch (err) {
-    res.status(400)
+    res.status(400);
     res.json({ error: err.message });
   }
 }
@@ -110,20 +114,19 @@ async function getAllBookingRequests(req, res) {
       throw Error("You are not allowed to do that");
     }
 
-    res.status(200)
+    res.status(200);
     res.json(requests);
   } catch (err) {
-    res.status(500)
+    res.status(500);
     res.json({ error: err.message });
   }
 }
 
 // TODO: Create UpdateBooking Function
 async function updateBooking(id, status, value) {
-  const booking = await getBookingById(id)
-  booking[status] = value
-  booking.save()
-
+  const booking = await getBookingById(id);
+  booking[status] = value;
+  booking.save();
 }
 
 async function deleteBooking(req, res) {
@@ -140,7 +143,7 @@ async function deleteBooking(req, res) {
       .status(200)
       .json({ message: `Booking ${BookingId} successfully deleted` });
   } catch (err) {
-    res.status(500)
+    res.status(500);
     res.json({ error: err.message });
   }
 }
@@ -166,11 +169,11 @@ async function handleHostRequest(req, res) {
 
     if (response === "approve") {
       booking = await booking.update({ status: "approved" });
-      responseMessage = `${booking.User.firstName}'s booking approved`;
+      responseMessage = `${booking.User.firstName}'s booking has been approved`;
     }
 
     if (response === "reject") {
-      responseMessage = `${booking.User.firstName}'s booking rejected`;
+      responseMessage = `${booking.User.firstName}'s booking has been rejected`;
       booking = await booking.update({ status: "rejected" });
     }
 
@@ -195,14 +198,12 @@ async function handleUserResponse(req, res) {
     let responseMessage;
 
     if (response === "pay") {
-      // stripe/payment logic should go in here
-      console.log(`${reqUserId} paid for their booking!`);
       responseMessage = `Payment complete for booking ${reqBookingId}`;
     }
 
     if (response === "cancel") {
       booking = await booking.update({ status: "cancelled" });
-      responseMessage = `Booking ${reqBookingId} cancelled`;
+      responseMessage = `Booking (id: ${reqBookingId}) has been cancelled`;
     }
 
     res.status(200).json({ message: responseMessage });
