@@ -17,7 +17,7 @@ const { unavailabilityRouter } = require("./routes/unavailability-routes");
 const { paymentRouter } = require("./routes/payment-routes")
 
 const corsOptions = {
-  origin: ["http://localhost:3000", "https://iev-client.netlify.app", "https://checkout.stripe.com", "https://hooks.stripe.com"],
+  origin: ["http://localhost:3000", "https://iev-client.netlify.app", "https://staging-iev-client.netlify.app", "https://checkout.stripe.com", "https://hooks.stripe.com"],
   optionSuccessStatus: 200,
 };
 app.use(cors(corsOptions));

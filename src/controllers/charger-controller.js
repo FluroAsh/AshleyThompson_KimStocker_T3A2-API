@@ -79,15 +79,15 @@ async function searchChargersLocation(req, res) {
      */
     if (Object.keys(chargers).length === 0 || filteredChargers.length === 0) {
       // return 200 as this is not user error. No records match searched keyword
-      res.status(404)
+      res.status(404);
       return res.json({ error: "No matched chargers found" });
     }
 
     const urlChargers = await getChargersWithUrl(filteredChargers);
-    res.status(200)
+    res.status(200);
     return res.json(urlChargers);
   } catch (err) {
-    res.status(500)
+    res.status(500);
     return res.json({ error: err.message });
   }
 }
@@ -136,6 +136,7 @@ async function createCharger(req, res) {
 async function getCharger(req, res) {
   try {
     const charger = await getChargerById(req.params.id);
+    console.log({ charger });
 
     handleNotFound(charger, res);
 
