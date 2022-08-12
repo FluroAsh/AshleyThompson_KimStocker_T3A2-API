@@ -37,7 +37,7 @@ async function checkHostPrivledge(req, res) {
       throw Error("User is not a host");
     }
 
-    res.status(200).json({ message: "User is a host" });
+    res.status(200).json(host);
   } catch (err) {
     res.status(404).json({ error: err.message });
   }

@@ -1,16 +1,12 @@
 const db = require("../models");
 const sequelize = db.sequelize;
-const { Booking, Charger, User } = db;
+const { Booking, Charger } = db;
 const {
   getBookingById,
   getAllBookings,
   getUserBookings,
   getBookingRequests,
   findInvalidBookings,
-  handleHostApproval,
-  handleHostRejection,
-  getUpdatedBooking,
-  getUserRequest,
 } = require("../utils/booking-utils");
 
 const { authoriseUser } = require("./auth-controller");

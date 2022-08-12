@@ -17,10 +17,6 @@ const {
 } = require("../services/awsS3-services");
 require("dotenv").config();
 
-const plug = require("../models/plug");
-const { UploadPartCopyRequest } = require("@aws-sdk/client-s3");
-const { loginRequired } = require("../controllers/auth-controller");
-
 // TODO: Double check all res.status
 function handleNotFound(record, res) {
   if (!record) {
@@ -232,8 +228,7 @@ async function getChargers(req, res) {
   }
 }
 
-async function getMyChargers(req, res, next) {
-  // loginRequired(req, res, next);
+async function getMyChargers(req, res) {
   try {
     if (!req.user) {
       res.status(401);
@@ -243,7 +238,6 @@ async function getMyChargers(req, res, next) {
 
     const chargers = await getChargerByUserId(user.id);
 
-    // console.log("THIS IS SAMPLE OF chargers list before URL", chargers);
     handleNotFound(chargers, res);
     const UserChargersWithUrls = await getChargersWithUrl(chargers);
 
