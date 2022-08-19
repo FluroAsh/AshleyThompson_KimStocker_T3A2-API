@@ -2,7 +2,6 @@ const db = require("../models");
 const User = db.User;
 const sequelize = db.sequelize;
 const Address = db.Address;
-const Op = db.Sequelize.Op;
 const jwt = require("jsonwebtoken");
 const { findUser } = require("../utils/auth-utils.js");
 const bcrypt = require("bcrypt");
@@ -15,7 +14,6 @@ async function signUp(req, res) {
   if (req.body.password === req.body.password_confirmation) {
     try {
       await sequelize.transaction(async (t) => {
-        console.log(req.body);
         let userData = {};
         userData.username = req.body.username;
         userData.firstName = req.body.firstName;

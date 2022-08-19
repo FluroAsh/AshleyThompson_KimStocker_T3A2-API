@@ -1,15 +1,8 @@
 const db = require("../models");
 const sequelize = db.sequelize;
 const { Charger } = db;
-const {
-  getAllChargers,
-  getChargerById,
-  deleteChargerById,
-  getPlugId,
-  getChargersByLocation,
-  getChargerByUserId,
-} = require("../utils/charger-utils");
-const { findUser } = require("../utils/auth-utils");
+const chargerUtils = require("../utils/charger-utils");
+const authUtils = require("../utils/auth-utils");
 const { v4: uuidv4 } = require("uuid");
 const {
   uploadImageToS3,
@@ -60,7 +53,7 @@ async function searchChargersLocation(req, res) {
   // frontend replaces spaces with +'s and trims leading and trailing spaces
   location = location.replaceAll("+", " ");
   try {
-    const chargers = await getChargersByLocation(location);
+    const chargers = await chargerUtils.getChargersByLocation(location);
     // Uses the ?. (optional chaining method) to return undefined if username doesn't exist
     // resulting in no match between req.user.username and charger.User.username
     const filteredChargers = chargers.filter(
@@ -91,13 +84,13 @@ async function searchChargersLocation(req, res) {
 async function createCharger(req, res) {
   const data = { ...req.body };
 
-  const user = await findUser(req.user.username);
+  const user = await authUtils.findUser(req.user.username);
   if (!user) {
     res.status(404);
     return res.json({ error: `Unknown user ${req.user.username}` });
   }
 
-  const plugId = await getPlugId(data.plugName);
+  const plugId = await chargerUtils.getPlugId(data.plugName);
 
   data["UserId"] = user.id;
   data["AddressId"] = user.Address.dataValues.id;
@@ -131,7 +124,7 @@ async function createCharger(req, res) {
 
 async function getCharger(req, res) {
   try {
-    const charger = await getChargerById(req.params.id);
+    const charger = await chargerUtils.getChargerById(req.params.id);
     console.log({ charger });
 
     handleNotFound(charger, res);
@@ -158,7 +151,7 @@ async function getCharger(req, res) {
 async function updateCharger(req, res) {
   try {
     await sequelize.transaction(async (t) => {
-      const charger = await getChargerById(req.params.id);
+      const charger = await chargerUtils.getChargerById(req.params.id);
 
       handleNotFound(charger, res);
       handleUnauthorised(charger, res, req);
@@ -192,12 +185,12 @@ async function updateCharger(req, res) {
 }
 async function deleteCharger(req, res) {
   try {
-    const charger = await getChargerById(req.params.id);
+    const charger = await chargerUtils.getChargerById(req.params.id);
 
     handleNotFound(charger, res);
     handleUnauthorised(charger, res, req);
 
-    await deleteChargerById(req.params.id);
+    await chargerUtils.deleteChargerById(req.params.id);
     res.status(204);
     res.json({ message: "charger details deleted" });
   } catch (err) {
@@ -209,7 +202,7 @@ async function deleteCharger(req, res) {
 
 async function getChargers(req, res) {
   try {
-    const chargers = await getAllChargers();
+    const chargers = await chargerUtils.getAllChargers();
     handleNotFound(chargers, res);
 
     const filteredChargers = chargers.filter(
@@ -234,9 +227,9 @@ async function getMyChargers(req, res) {
       res.status(401);
       return res.json({ error: "Please sign in to continue" });
     }
-    const user = await findUser(req.user.username);
+    const user = await authUtils.findUser(req.user.username);
 
-    const chargers = await getChargerByUserId(user.id);
+    const chargers = await chargerUtils.getChargerByUserId(user.id);
 
     handleNotFound(chargers, res);
     const UserChargersWithUrls = await getChargersWithUrl(chargers);
@@ -252,7 +245,7 @@ async function getMyChargers(req, res) {
 async function updateChargerStatus(req, res) {
   try {
     await sequelize.transaction(async (t) => {
-      const charger = await getChargerById(req.params.id);
+      const charger = await chargerUtils.getChargerById(req.params.id);
 
       handleNotFound(charger, res);
       handleUnauthorised(charger, res, req);

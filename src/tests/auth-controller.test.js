@@ -9,8 +9,6 @@ const {
   authoriseUser,
 } = require("../controllers/auth-controller");
 
-
-
 describe("signUp function", () => {
   afterEach(async () => {
     await User.destroy({
@@ -21,12 +19,20 @@ describe("signUp function", () => {
   test("create user record from form data received", async () => {
     const req = {
       body: {
-        firstName: "Test",
-        lastName: "Sir",
-        username: "Test_User",
-        email: "mrtest@mail.com",
-        password: "123456",
-        password_confirmation: "123456",
+        user: {
+          firstName: "Test",
+          lastName: "Sir",
+          username: "Test_User",
+          email: "mrtest@mail.com",
+          password: "123456",
+          password_confirmation: "123456",
+        },
+        address: {
+          address: "123 Fake Street",
+          city: "Melbourne",
+          postcode: "3000",
+          state: "Victoria",
+        },
       },
     };
 
@@ -153,5 +159,3 @@ describe("loginRequired function", () => {
     expect(json).toHaveBeenCalledWith({ error: "Please sign in to continue" });
   });
 });
-
-

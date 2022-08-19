@@ -12,7 +12,11 @@ async function getUsers(req, res) {
     res.status(404).json({ error: "No users found" });
   }
 }
-
+/**
+ * Used to find a specific user based on their User ID
+ * @param req - included to extract ID from the URL params
+ * @returns the found user or an error message object
+ */
 async function getUser(req, res) {
   try {
     const user = await getUserById(req.params.id);
